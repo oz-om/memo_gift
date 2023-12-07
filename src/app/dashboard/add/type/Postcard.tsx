@@ -1,11 +1,28 @@
 import React from "react";
+import { signal } from "signals-react-safe";
 import Input from "../../components/Inputs";
 import Chosed_image from "../components/Chosed_image";
+
+type postCardDataType = {
+  name: string;
+  images: string;
+};
+export const postCardData = signal<postCardDataType>({
+  name: "",
+  images: "",
+});
+
+function setPostCard({ fieldType, value }: { fieldType: string; value: string }) {
+  postCardData.value = {
+    ...postCardData.value,
+    [fieldType]: value,
+  };
+}
 
 export default function Postcard() {
   return (
     <div className='postcard_wrapper mb-20 px-3 max-w-4xl mx-auto'>
-      <Input name='name' type={"text"} placeholder='name' />
+      <Input name='name' type={"text"} placeholder='name' setValue={setPostCard} />
       <div className='item_photos_wrapper my-4'>
         <h4 className='capitalize mb-2 text-sm'>chose images:</h4>
         <label htmlFor='file' className='cursor-pointer flex flex-col border-2 border-slate-400 border-dashed rounded-md'>
