@@ -1,0 +1,6 @@
+.auth form input:focus + label,
+input:not(:placeholder-shown) + label {
+  top: -24px;
+  color: black;
+  transform: scale(0.9);
+}

@@ -1,0 +1,117 @@
+:root {
+  --acvite-step-color: rgb(45 212 191); /* teal-400 */
+  --disactive-setp-color: rgb(148 163 184); /* slate-400 */
+}
+
+.steps_bar .steps_number :not(:first-child)::after {
+  content: "";
+  position: absolute;
+  height: 2px;
+  width: 96%;
+  background-color: var(--disactive-setp-color);
+  left: -50%;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: -1;
+}
+
+.steps_bar .step_number.active_step span {
+  background-color: var(--acvite-step-color);
+  border-color: var(--acvite-step-color);
+  color: white;
+}
+.steps_bar .step_number.active_step::after {
+  background-color: var(--acvite-step-color);
+}
+
+.steps_bar .step_name.active_step {
+  color: var(--acvite-step-color);
+}
+
+/* select styles */
+.select {
+  --select-color: #f0f9f6;
+  position: relative;
+  display: flex;
+  background-color: var(--select-color);
+  padding-left: 10px;
+  flex: 1;
+}
+
+.select::after {
+  content: "\25BC";
+  position: absolute;
+  background-color: var(--select-color);
+  cursor: pointer;
+  pointer-events: none;
+  transition: 0.25s all ease;
+  transform: translateY(-50%);
+  display: grid;
+  place-content: center;
+  font-size: 10px;
+  top: 50%;
+  right: -15px;
+  width: 20px;
+  height: 100%;
+}
+.select:hover::after {
+  color: #23b499;
+}
+.filter_bar_wrapper .filter_bar select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  -ms-appearance: none;
+  appearance: none;
+  outline: 0;
+  box-shadow: none;
+  border: 0 !important;
+  background-color: var(--select-color);
+  cursor: pointer;
+  flex: 1;
+}
+.filter_bar_wrapper .filter_bar select::-ms-expand {
+  display: none;
+}
+
+input[type="checkbox"] {
+  display: none;
+}
+input[type="checkbox"]:checked + label:after {
+  left: 16px;
+}
+input[type="checkbox"]:checked + label:before {
+  background: #0fa800;
+}
+input[type="checkbox"] + label {
+  cursor: pointer;
+  user-select: none;
+  display: inline-block;
+  position: relative;
+  padding-left: 40px;
+  vertical-align: middle;
+}
+input[type="checkbox"] + label:after,
+input[type="checkbox"] + label:before {
+  display: block;
+  content: "";
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  transition: ease-in 0.15s;
+  margin-top: 5px;
+}
+input[type="checkbox"] + label:after {
+  transform: scale(0.7);
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0px 0px 6px 0px rgba(0, 0, 0, 0.2);
+}
+input[type="checkbox"] + label:before {
+  width: 35px;
+  height: 20px;
+  border-radius: 25px;
+  background: #014862;
+  box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.3) inset;
+}

@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .header_wrapper {
+    background-image: url("/images/header_hero_cover.jpg");
+  }
+  .header_hero_wrapper .header_hero_title > h2,
+  .marketplace_section_wrapper .marketplace_section_title h2 {
+    font-size: clamp(2rem, 5vw, 4rem);
+  }
+  .what_we_do_wrapper .what_we_do_content.md-layout {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+  .what_we_do_wrapper .what_we_do_content.custom-scroll-bar {
+    --sb-track-color: theme("colors.orange.200");
+    --sb-thumb-color: theme("colors.orange.400");
+    padding-bottom: theme("padding.4");
+  }
+  .marketplace_section_wrapper {
+    background-image: url("/images/marketplace_cover.png");
+  }
+  .corporate_section_wrapper .section_cover {
+    background-image: url("/images/corporate_cover.jpg");
+  }
+
+  /* rectents bloges section */
+  .blogs_cols_count {
+    width: 100%;
+  }
+  .blogs_cols_count_sm {
+    width: calc(100% / 2);
+  }
+  .blogs_cols_count_md {
+    width: calc(100% / 3);
+  }
+  .blogs_cols_count_lg {
+    width: calc(100% / 4);
+  }
+  .recent_blogs.dragging {
+    cursor: grab;
+    scroll-behavior: auto;
+  }
+
+  .recent_blogs_section .recent_blogs_wrapper > i {
+    display: none !important;
+  }
+}
+
+.trusted_by_scroller_wrapper {
+  mask: linear-gradient(90deg, transparent, white 20%, white 80%, transparent);
+}
+
+@media screen(md) {
+  .recent_blogs_section .recent_blogs_wrapper > i {
+    display: block !important;
+  }
+}

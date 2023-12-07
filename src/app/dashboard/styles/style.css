@@ -1,0 +1,95 @@
+:root {
+  --active-bg: theme(colors.teal.300);
+}
+/* 
+// dashboard > add / styels
+// nav links 
+*/
+nav .choices .choice.active-choice:before,
+nav .choices .choice.active-choice:after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+nav .choices .choice.active-choice:before {
+  width: 100%;
+  height: 1px;
+  bottom: -1px;
+  background-color: var(--active-bg);
+  filter: blur(1px);
+}
+nav .choices .choice.active-choice:after {
+  width: 50%;
+  height: 5px;
+  border-radius: 50%;
+  bottom: -5px;
+  background-color: var(--active-bg);
+  filter: blur(4px);
+}
+/* // premade gift inputs */
+
+.dashboard :where(input, textarea):is(:focus, :not(:placeholder-shown)) + label {
+  top: -24px;
+  color: black;
+  transform: scale(0.9);
+}
+
+/*// premad chose box variant checkbox */
+
+.box-variants_list .box-variant input[type="checkbox"]:checked ~ .custom_checkbox.checkbox-circle {
+  background: #4caf50;
+  border-color: #4caf50;
+}
+
+.box-variants_list .box-variant input[type="checkbox"]:checked ~ .custom_checkbox.checkbox-circle .checkmark {
+  opacity: 1;
+}
+
+.box-variants_list .box-variant input[type="checkbox"]:checked ~ .custom_checkbox.checkbox-circle .checkmark-circle {
+  stroke-dashoffset: 0;
+}
+
+.box-variants_list .box-variant input[type="checkbox"]:checked ~ .custom_checkbox.checkbox-circle .checkmark-kick {
+  stroke-dashoffset: 0;
+}
+
+/* // item chose theme select */
+.select {
+  --select-color: #f0f9f6;
+}
+
+.select::after {
+  content: "\25BC";
+  position: absolute;
+  background-color: var(--select-color);
+  cursor: pointer;
+  pointer-events: none;
+  transition: 0.25s all ease;
+  transform: translateY(-50%);
+  display: grid;
+  place-content: center;
+  font-size: 10px;
+  top: 50%;
+  right: 0;
+  width: 20px;
+  height: 100%;
+}
+.select:hover::after {
+  color: #23b499;
+}
+.select select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  -ms-appearance: none;
+  appearance: none;
+  outline: 0;
+  box-shadow: none;
+  border: 0 !important;
+  background-color: var(--select-color);
+  cursor: pointer;
+  flex: 1;
+}
+.select select::-ms-expand {
+  display: none;
+}
