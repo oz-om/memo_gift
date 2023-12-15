@@ -1,133 +1,115 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  // provider = "postgresql"
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
 model Item {
-  id         String         @id @default(uuid())
+  id         String              @id @default(uuid())
   name       String
-  desc       String
+  desc       String              @db.Text
   price      Float
   theme      String
-  images     String
+  images     String              @db.Text
+  createdAt  DateTime            @default(now())
+  updatedAt  DateTime            @updatedAt
+  customG    customGiftIncudes[]
+  premade    includes[]
   categories itemCategory[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // relations with
-  premade includes[]
-  customG customGiftIncudes[]
 
   @@map("items")
 }
 
 model itemCategory {
-  item_id String
-  cat_id  String
-  item    Item     @relation(fields: [item_id], references: [id])
-  cat     Category @relation(fields: [cat_id], references: [id])
+  item_id  String
+  cat_name String
+  cat      Category @relation(fields: [cat_name], references: [name], onDelete: Cascade)
+  item     Item     @relation(fields: [item_id], references: [id], onDelete: Cascade)
 
-  @@id([item_id, cat_id])
+  @@id([item_id, cat_name])
+  @@index([cat_name], map: "itemCategory_cat_name_fkey")
 }
 
 model Category {
-  id   String @id @default(uuid())
-  name String
-
+  name      String         @unique
   createdAt DateTime       @default(now())
   updatedAt DateTime       @updatedAt
-  // relations with
-  items     itemCategory[]
   premade   boxCategory[]
+  items     itemCategory[]
 
   @@map("categories")
 }
 
-// premade gifts table
 model PremadeGift {
   id         String        @id @default(uuid())
   name       String
-  desc       String
+  desc       String        @db.Text
   price      Float
-  images     String
-  variants   boxVarint[]
+  images     String        @db.Text
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
   categories boxCategory[]
+  variants   boxVarint[]
   includes   includes[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 
   @@map("premade_gifts")
 }
 
-// premade gifts incudes that make relation bewtween premade and items table
 model includes {
   premade_id String
   item_id    String
-  premade    PremadeGift @relation(fields: [premade_id], references: [id])
-  item       Item        @relation(fields: [item_id], references: [id])
+  item       Item        @relation(fields: [item_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  premade    PremadeGift @relation(fields: [premade_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@id([premade_id, item_id])
+  @@index([item_id], map: "includes_item_id_fkey")
 }
 
-// premade vairaits (themes) that make relation between premad and Varaints table
 model boxVarint {
   premade_id String
   variant_id String
-  premade    PremadeGift @relation(fields: [premade_id], references: [id])
-  variant    Variant     @relation(fields: [variant_id], references: [id])
+  premade    PremadeGift @relation(fields: [premade_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  variant    Variant     @relation(fields: [variant_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@id([premade_id, variant_id])
+  @@index([variant_id], map: "boxVarint_variant_id_fkey")
 }
 
-// variants table where all varaints that can premade have
 model Variant {
-  id    String @id @default(uuid())
-  name  String
-  value String
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // relation with
-  premade boxVarint[]
+  id        String      @id @default(uuid())
+  name      String
+  value     String
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  premade   boxVarint[]
 
   @@map("variants")
 }
 
-// premade categories that make relation between premade table and Categories table
 model boxCategory {
   premade_id String
-  cat_id     String
-  premade    PremadeGift @relation(fields: [premade_id], references: [id])
-  cat        Category    @relation(fields: [cat_id], references: [id])
+  cat_name   String
+  cat        Category    @relation(fields: [cat_name], references: [name], onDelete: Cascade, onUpdate: Cascade)
+  premade    PremadeGift @relation(fields: [premade_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  @@id([premade_id, cat_id])
+  @@id([premade_id, cat_name])
+  @@index([cat_name], map: "boxCategory_cat_name_fkey")
 }
 
-// custom gifts table that contains the customers customized gifts
 model CosutomGift {
-  id       String              @id @default(uuid())
-  name     String
-  price    Float
-  includes customGiftIncudes[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id        String              @id @default(uuid())
+  name      String
+  price     Float
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+  includes  customGiftIncudes[]
 
   @@map("custom_gifts")
 }
 
-// custom gits includes items that make relation with items table with customGift table
 model customGiftIncudes {
   customGift_id String
   item_id       String
@@ -135,11 +117,11 @@ model customGiftIncudes {
   item          Item        @relation(fields: [item_id], references: [id])
 
   @@id([customGift_id, item_id])
+  @@index([item_id], map: "customGiftIncudes_item_id_fkey")
 }
 
-// order tables that can have orders that customer make
 model Order {
-  id              String  @id @default(uuid())
+  id              String           @id @default(uuid())
   user_id         String?
   order_number    Int?
   address         String
@@ -150,99 +132,87 @@ model Order {
   from_to         String
   order_state     String
   post_car_id     String
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  cart            Cart[]
+  confirmedOrder  ConfirmedOrder[]
+  postCard        PostCard         @relation(fields: [post_car_id], references: [id])
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // realtion with
-  postCard       PostCard         @relation(fields: [post_car_id], references: [id])
-  cart           Cart[]
-  confirmedOrder ConfirmedOrder[]
-
+  @@index([post_car_id], map: "orders_post_car_id_fkey")
   @@map("orders")
 }
 
-// postCard table that contains post card for each order cretaed
 model PostCard {
-  id    String @id @default(uuid())
-  name  String
-  image String
-
+  id        String   @id @default(uuid())
+  name      String
+  image     String   @db.Text
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  // relation with
-  Order Order[]
+  Order     Order[]
 
   @@map("postcards")
 }
 
 model Cart {
-  id       String  @id @default(uuid())
-  user_id  String?
-  order_id String
-
+  id        String   @id @default(uuid())
+  user_id   String?
+  order_id  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  order     Order    @relation(fields: [order_id], references: [id])
 
-  // relation with
-  order Order @relation(fields: [order_id], references: [id])
-
+  @@index([order_id], map: "carts_order_id_fkey")
   @@map("carts")
 }
 
 model ConfirmedOrder {
-  id             Int    @id @default(autoincrement())
+  id             Int            @id @default(autoincrement())
   payment_method String
   order_id       String
-  order          Order  @relation(fields: [order_id], references: [id])
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  order          Order          @relation(fields: [order_id], references: [id])
+  shippedOrder   ShippedOrder[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  // relation with
-  shippedOrder ShippedOrder[]
-
+  @@index([order_id], map: "confirmed_orders_order_id_fkey")
   @@map("confirmed_orders")
 }
 
 model ShippedOrder {
   id                 Int            @id @default(autoincrement())
   confirmed_order_id Int
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
   confirmedOrder     ConfirmedOrder @relation(fields: [confirmed_order_id], references: [id])
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
+  @@index([confirmed_order_id], map: "shipped_orders_confirmed_order_id_fkey")
   @@map("shipped_orders")
 }
 
 model User {
-  id         String   @id @default(uuid())
-  full_name  String
-  first_name String
-  last_name  String
-  email      String
-  password   String
-  phone      String?
-  address_id String?
-  address    Address? @relation(fields: [address_id], references: [id])
+  id          String   @id @default(uuid())
+  full_name   String
+  first_name  String
+  last_name   String
+  email       String
+  password    String   @db.Text
+  phone       String?
+  address_id  String?
+  profile_pic String?  @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  address     Address? @relation(fields: [address_id], references: [id])
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
+  @@index([address_id], map: "users_address_id_fkey")
   @@map("users")
 }
 
 model Address {
-  id      String @id @default(uuid())
-  address String
-
+  id        String   @id @default(uuid())
+  address   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  // realtion with
-  user User[]
+  user      User[]
 
   @@map("addresses")
 }

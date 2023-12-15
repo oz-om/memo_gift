@@ -3,7 +3,7 @@ import React from "react";
 import Item from "./type/Item";
 import Postcard from "./type/Postcard";
 import Premade_gift from "./type/Premade_gift";
-import { createNewItem } from "../_actions/actions";
+import { createNewItem, createNewPremade } from "../_actions/actions";
 
 export default function AddPage({ searchParams: { type } }: { searchParams: { type: string } }) {
   if (type !== "premade-gift" && type !== "item" && type !== "postcard") {
@@ -12,7 +12,7 @@ export default function AddPage({ searchParams: { type } }: { searchParams: { ty
 
   return (
     <>
-      {(!type || type == "premade-gift") && <Premade_gift />}
+      {(!type || type == "premade-gift") && <Premade_gift action={createNewPremade} />}
       {type == "item" && <Item action={createNewItem} />}
       {type == "postcard" && <Postcard />}
     </>

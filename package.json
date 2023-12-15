@@ -14,14 +14,14 @@
     "canvas-confetti": "^1.9.2",
     "next": "14.0.3",
     "prisma": "^5.7.0",
-    "react": "^18",
-    "react-dom": "^18",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "signals-react-safe": "^1.1.2"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^18.2.42",
-    "@types/react-dom": "^18",
+    "@types/react-dom": "^18.2.17",
     "autoprefixer": "^10.0.1",
     "eslint": "^8",
     "eslint-config-next": "14.0.3",

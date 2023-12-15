@@ -1,38 +1,39 @@
-import { premade } from "../../type/Premade_gift";
+"use client";
+import { useRef } from "react";
+import { premade, setPremadeInput } from "../../type/Premade_gift";
 
 type checkboxProps = {
   id: string;
   variantTheme: string;
   variantName: string;
-  setVariants: ({ fieldType, value }: { fieldType: string; value: any }) => void;
+  reset: boolean;
 };
 
-export default function Custom_Checkbox({ id, variantTheme, variantName, setVariants }: checkboxProps) {
+export default function Custom_Checkbox({ id, variantTheme, variantName, reset }: checkboxProps) {
+  let checkbox = useRef<HTMLInputElement | null>(null);
   function handleChecked({ target: checkbox }: React.ChangeEvent<HTMLInputElement>) {
     let variants = premade.value.variants;
     if (checkbox.checked) {
-      setVariants({
-        fieldType: "variants",
-        value: [
-          ...variants,
-          {
-            id,
-            variantName,
-          },
-        ],
-      });
+      setPremadeInput("variants", [
+        ...variants,
+        {
+          id,
+          variantName,
+          variantTheme,
+        },
+      ]);
     } else {
       let update = variants.filter((variant) => variant.id !== checkbox.id);
-      setVariants({
-        fieldType: "variants",
-        value: update,
-      });
+      setPremadeInput("variants", update);
     }
+  }
+  if (reset) {
+    checkbox.current!.checked = false;
   }
 
   return (
     <div className='box-variant flex items-center gap-x-2 mb-2 shadow-md rounded p-2'>
-      <input onChange={handleChecked} id={id} type='checkbox' hidden />
+      <input ref={checkbox} onChange={handleChecked} id={id} type='checkbox' hidden />
       <div className='custom_checkbox checkbox-circle relative inline-block w-5 h-5 rounded-full border transition-all'>
         <svg viewBox='0 0 52 52' className='checkmark absolute top-0 left-0 fill-none stroke-white stroke-2 opacity-0 transition-all' strokeLinecap='round' strokeLinejoin='round'>
           <circle fill='none' r='25' cy='26' cx='26' className='checkmark-circle [transition:_stroke-dashoffset_0.3s]' strokeDasharray='166' strokeDashoffset='166'></circle>

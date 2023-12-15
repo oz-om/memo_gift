@@ -1,12 +1,18 @@
 "use client";
-import Input, { CategoriesInput, Textarea, UploadInput } from "../../components/Inputs";
+
 import Add_items_dialog from "../components/premade/Add_items_dialog";
-import Chosed_image from "../components/Chosed_image";
 import { OpenDialog } from "../components/client/Buttons";
 import Custom_Checkbox from "../components/premade/Custom_Checkbox";
-import Item from "../components/Item";
 import { signal } from "signals-react-safe";
 import type { premadeDataType } from "@/types/types";
+import Input, { Textarea } from "../../components/client/inputs";
+import { CategoriesInput } from "../../components/client/inputs/CategoriesInput";
+import { UploadInput } from "../../components/client/inputs/UploadInput";
+import SubmitButton from "../../components/client/SubmitButton";
+import { useEffect, useState } from "react";
+import Includes from "../components/premade/Includes";
+import Price from "../components/premade/Price";
+import ErrorMessage from "../../components/client/ErrorMessage";
 
 export const premade = signal<premadeDataType>({
   name: "",
@@ -18,46 +24,91 @@ export const premade = signal<premadeDataType>({
   price: 0,
 });
 
-export function setPremadeInput({ fieldType, value }: { fieldType: string; value: any }) {
+export function setPremadeInput(fieldType: string, value: any) {
   premade.value = {
     ...premade.value,
     [fieldType]: value,
   };
 }
 
-export default function Premade_gift() {
+export default function Premade_gift({ action }: { action: (data: premadeDataType) => Promise<any> }) {
   console.log("render premade wrapper");
-  function addPremade() {
+  let [reset, setReset] = useState(false);
+  let [confirmation, setConfirmation] = useState({
+    confirmed: true,
+    msg: "",
+  });
+
+  async function createPremade() {
     console.log(premade.value);
+    let { name, desc, images, includes, price, variants } = premade.value;
+    if (!name.trim().length || price < 1 || !desc.trim().length || !images.length || !includes.length || !variants.length) {
+      alert("you missing a required field");
+      return;
+    }
+    let req = await action(premade.value);
+    if (req.creation) {
+      // for confirm uploads
+      let req = await fetch("/api/upload", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(premade.value.images),
+      });
+      let res = await req.json();
+      if (res.confirmation) {
+        setReset(true);
+      } else {
+        console.error("error with confirm uploads");
+        setConfirmation({
+          confirmed: res.confirmation,
+          msg: res.error,
+        });
+      }
+    } else {
+      console.error("there are a problem with item creation");
+      setConfirmation({
+        confirmed: req.creation,
+        msg: req.error,
+      });
+    }
   }
+
+  useEffect(() => {
+    if (reset) {
+      setPremadeInput("variants", []);
+      setReset(false);
+    }
+  }, [reset]);
+
+  function closeErrorMessage() {
+    setConfirmation({
+      confirmed: true,
+      msg: "",
+    });
+  }
+
   return (
     <section className='premade_gift_wrapper'>
+      {confirmation.confirmed == false ? <ErrorMessage msg={confirmation.msg} close={closeErrorMessage} /> : ""}
       <div className='form mb-20 px-3'>
         <div className='about_premade md:flex md:gap-x-10'>
           <div className='inputs_wrapper basis-1/2 max-w-lg'>
-            <Input name='name' type={"text"} placeholder='name' setValue={setPremadeInput} />
-            <Textarea name='desc' placeholder={"description"} setValue={setPremadeInput} />
-            <CategoriesInput setValue={setPremadeInput} />
+            <Input name='name' type={"text"} placeholder='name' setValue={setPremadeInput} reset={reset} />
+            <Textarea name='desc' placeholder={"description"} setValue={setPremadeInput} reset={reset} />
+            <CategoriesInput setValue={setPremadeInput} reset={reset} />
             <div className='box_variant_wrapper'>
               <h4 className='capitalize text-sm'>box variants:</h4>
               <div className='box-variants_list max-w-sm'>
-                <Custom_Checkbox key={"theme_id_01"} setVariants={setPremadeInput} id={"theme_id_01"} variantName={"mattel black"} variantTheme='bg-slate-600' />
-                <Custom_Checkbox key={"theme_id_02"} setVariants={setPremadeInput} id={"theme_id_02"} variantName={"origin crime"} variantTheme='bg-yellow-100' />
+                <Custom_Checkbox id={"339256a2-dab1-4e4a-b7da-aae1aee1dc81"} key={"theme_id_01"} variantName={"mattel black"} variantTheme='bg-slate-600' reset={reset} />
+                <Custom_Checkbox id={"5f86abf7-4f49-47d0-a55b-906c44ef7911"} key={"theme_id_02"} variantName={"origin crime"} variantTheme='bg-yellow-100' reset={reset} />
               </div>
             </div>
           </div>
           <div className='premade_photos_wrapper basis-1/2 md:max-w-lg'>
             <h4 className='capitalize mb-2 text-sm'>chose images:</h4>
-            <UploadInput />
-            <div className='chosed_images_wrapper'>
-              <div className='images my-2 grid gap-5 grid-cols-[repeat(auto-fit,_theme(width.28))] justify-center'>
-                <Chosed_image image={"/images/premade_chosed_image_01.png"} />
-                <Chosed_image image={"/images/premade_chosed_image_02.png"} />
-                <Chosed_image image={"/images/premade_chosed_image_03.png"} />
-                <Chosed_image image={"/images/premade_chosed_image_04.png"} />
-              </div>
-              <p className='text-slate-400 text-center text-xs py-2 border rounded-md mb-2'>there is no images added yet</p>
-            </div>
+            <UploadInput setUploads={setPremadeInput} reset={reset} />
           </div>
         </div>
         <div className='includes_wrapper pt-4'>
@@ -65,29 +116,18 @@ export default function Premade_gift() {
             <p>includes:</p>
             <OpenDialog />
           </h4>
-          <div className='includes_content  px-4'>
-            <div className='includes grid gap-5 grid-cols-2 min-[350px]:grid-cols-3 min-[530px]:grid-cols-4 min-[950px]:grid-cols-5 lg:grid-cols-7'>
-              <Item name={"the first added item"} price={120} image={"/images/items_01.png"} />
-              <Item name={"the second item"} price={120} image={"/images/items_02.png"} />
-              <Item name={"the third added item"} price={120} image={"/images/items_03.png"} />
-            </div>
-            {/* <p className='text-slate-400 text-center text-xs py-2 border rounded-md mb-2'>there is no items added yet</p> */}
-          </div>
+          <Includes />
         </div>
         <div className='price_wrapper mt-20'>
           <p className='capitalize text-sm'>computed price: </p>
-          <div className='price flex items-center gap-x-2 ml-4 mt-2'>
-            <input className='font-semibold w-14 border outline-none' readOnly value={"120$"} />
-            <button className='text-xs text-teal-500'>edit</button>
-          </div>
+          <Price />
         </div>
         <div className='publish_wrapper'>
-          <button onClick={addPremade} className='px-4 py-1 bg-teal-500 text-white rounded-md w-28 block ml-auto mr-5 hover:bg-teal-700'>
-            publish
-          </button>
+          <SubmitButton publish={createPremade} />
         </div>
       </div>
-      <Add_items_dialog />
+
+      <Add_items_dialog reset={reset} />
     </section>
   );
 }

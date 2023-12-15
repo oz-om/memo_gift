@@ -18,7 +18,7 @@ export function Open_menu() {
 export function Close_menu() {
   useUrlChanged({
     eleClass: ".nave_menu",
-    openClass: "full",
+    openClass: "w-full",
     resetFn: toggleMenu,
   });
   return (

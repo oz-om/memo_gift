@@ -1,15 +1,38 @@
+import { includeItemType } from "@/types/types";
 import Image from "next/image";
 
-type itemProps = {
-  image: string;
-  name: string;
-  price: number;
+type itemProps = includeItemType & {
+  includes?: includeItemType[];
+  setPremade?: (fieldType: string, value: any) => void;
 };
-export default function Item({ image, name, price }: itemProps) {
+export default function Item({ id, images, name, price, includes, setPremade }: itemProps) {
+  function addToIncludes() {
+    if (includes && setPremade) {
+      let exists = false;
+      for (let i = 0; i < includes.length; i++) {
+        if (includes[i].id == id) {
+          exists = true;
+          break;
+        }
+      }
+      if (!exists) {
+        console.log("add item to includes");
+        setPremade("includes", [
+          ...includes,
+          {
+            id,
+            name,
+            images,
+            price,
+          },
+        ]);
+      }
+    }
+  }
   return (
-    <div className='item rounded-md overflow-hidden shadow'>
+    <div onClick={addToIncludes} className='item rounded-md overflow-hidden shadow cursor-pointer'>
       <figure>
-        <Image src={image} alt={name} width={720} height={720} />
+        <Image src={"/images/" + images} alt={name} width={720} height={720} />
       </figure>
       <div className='item_details px-2 pb-2'>
         <h4 className='line-clamp-3 text-sm'>{name}</h4>

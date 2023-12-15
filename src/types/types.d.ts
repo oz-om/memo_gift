@@ -1,23 +1,30 @@
-export type itemDataType = {
+type basedType = {
   name: string;
   desc: string;
-  categories: string[];
-  theme: string;
-  images: string[];
+  images: images[];
   price: number;
+  categories: string[];
+};
+type images = {
+  id: string;
+  name: string;
+};
+export type itemDataType = basedType & {
+  theme: string;
 };
 
+export type premadeDataType = basedType & {
+  variants: variant[];
+  includes: includeItemType[];
+};
 type variant = {
   id: string;
   variantName: string;
+  variantTheme: string;
 };
-
-export type premadeDataType = {
+type includeItemType = {
+  id: string;
   name: string;
-  desc: string;
-  categories: string[];
-  variants: variant[];
-  images: string[];
-  includes: string[];
+  images: string;
   price: number;
 };

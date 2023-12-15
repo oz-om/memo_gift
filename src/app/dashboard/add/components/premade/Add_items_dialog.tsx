@@ -1,11 +1,38 @@
+"use client";
 import Pagination from "@/app/components/Pagination";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Chosed_item from "./Chosed_Item";
 import { CloseDialog } from "../client/Buttons";
 import Item from "../Item";
+import { premade, setPremadeInput } from "../../type/Premade_gift";
+import { useSignalEffect } from "signals-react-safe";
+import { includeItemType } from "@/types/types";
 
-export default function Add_items_dialog() {
+export default function Add_items_dialog({ reset }: { reset: boolean }) {
   console.log("rerender dialog");
+  let [items, getItems] = useState<includeItemType[]>([]);
+  useEffect(() => {
+    fetch("/api/items")
+      .then((response) => response.json())
+      .then((res) => {
+        if (res.getItems) {
+          getItems(res.items);
+        }
+      });
+  }, []);
+
+  let [chosedItems, setChosedItems] = useState<includeItemType[]>([]);
+
+  useSignalEffect(() => {
+    if (premade.value.includes.length !== chosedItems.length) {
+      setChosedItems([...premade.value.includes]);
+    }
+  });
+  useEffect(() => {
+    if (reset) {
+      setPremadeInput("includes", []);
+    }
+  }, [reset]);
   return (
     <dialog className='items_dialog_wrapper fixed left-0 right-0 top-0 bottom-0 border w-[95%] h-[95%] z-10 max-w-4xl m-auto bg-slate-50 shadow-md rounded-md custom-scroll-bar'>
       <div className='close_dialog text-end'>
@@ -15,11 +42,11 @@ export default function Add_items_dialog() {
         <div className='chosed_items container'>
           <p className='capitalize'>chosed items:</p>
           <div className='items my-2 grid gap-5 grid-cols-[repeat(auto-fit,_theme(width.20))]'>
-            <Chosed_item image='/images/items_01.png' name='first items pens' price={12} />
-            <Chosed_item image='/images/items_02.png' name='second items non' price={22} />
-            <Chosed_item image='/images/items_03.png' name='third items' price={24} />
+            {chosedItems.map(({ id, name, images, price }) => {
+              return <Chosed_item key={id} id={id} images={images} name={name} price={price} includes={chosedItems} />;
+            })}
           </div>
-          <p className='text-slate-400 text-center text-xs py-2 border rounded-md mb-2'>there is no chosed items yet</p>
+          {chosedItems.length == 0 && <p className='text-slate-400 text-center text-xs py-2 border rounded-md mb-2'>there is no chosed items yet</p>}
           <button className='block w-20 text-teal-50 bg-teal-500 uppercase ml-auto mb-2 rounded hover:bg-teal-600'>done</button>
         </div>
       </div>
@@ -82,15 +109,26 @@ export default function Add_items_dialog() {
         </div>
         <div className='items_content_wrapper mt-5'>
           <div className='container'>
-            <div className='items grid gap-5 min-[300px]:grid-cols-2 sm:grid-cols-[repeat(auto-fit,_minmax(135px,_1fr))] lg:grid-cols-4 cursor-pointer'>
-              <Item image='/images/items_01.png' name='first items pens' price={12} />
-              <Item image='/images/items_02.png' name='second items non' price={22} />
-              <Item image='/images/items_03.png' name='third items' price={24} />
-              <Item image='/images/items_04.png' name='fourth items black night' price={14} />
-              <Item image='/images/items_05.png' name='night blue fiveth items' price={41} />
-              <Item image='/images/items_06.png' name='sixth items fight' price={13} />
-              <Item image='/images/items_07.png' name='seventh items book light' price={20} />
-              <Item image='/images/items_08.png' name='book light' price={15} />
+            <div className='items_wrapper relative min-h-[160px]'>
+              <div className='items grid gap-5 min-[300px]:grid-cols-2 sm:grid-cols-[repeat(auto-fit,_minmax(135px,_1fr))] lg:grid-cols-4'>
+                {items.map(({ id, name, images, price }) => {
+                  let firstImage = JSON.parse(images);
+                  return <Item key={id} id={id} images={firstImage[0]} name={name} price={price} setPremade={setPremadeInput} includes={chosedItems} />;
+                })}
+                <Item id='123' images='/images/items_01.png' name='first items pens' price={12} />
+                <Item id='123' images='/images/items_02.png' name='second items non' price={22} />
+                <Item id='123' images='/images/items_03.png' name='third items' price={24} />
+                <Item id='123' images='/images/items_04.png' name='fourth items black night' price={14} />
+                <Item id='123' images='/images/items_05.png' name='night blue fiveth items' price={41} />
+                <Item id='123' images='/images/items_06.png' name='sixth items fight' price={13} />
+                <Item id='123' images='/images/items_07.png' name='seventh items book light' price={20} />
+                <Item id='123' images='/images/items_08.png' name='book light' price={15} />
+              </div>
+              {items.length == 0 && (
+                <div className='spin_wrapper absolute left-0 top-0 w-full h-full grid place-content-center'>
+                  <i className='bx bx-loader bx-spin text-center'></i>
+                </div>
+              )}
             </div>
             <Pagination />
           </div>
