@@ -74,6 +74,7 @@ export async function POST(request: Request, response: Response) {
     // set new start upload time
     startUploadTime = new Date();
   } catch (error) {
+    console.log(error);
     // if there any problem with upload operation
     return new Response(
       JSON.stringify({
