@@ -32,7 +32,7 @@ export default function Item({ id, images, name, price, includes, setPremade }: 
   return (
     <div onClick={addToIncludes} className='item rounded-md overflow-hidden shadow cursor-pointer'>
       <figure>
-        <Image src={"/images/" + images} alt={name} width={720} height={720} />
+        <Image src={images} alt={name} width={720} height={720} />
       </figure>
       <div className='item_details px-2 pb-2'>
         <h4 className='line-clamp-3 text-sm'>{name}</h4>

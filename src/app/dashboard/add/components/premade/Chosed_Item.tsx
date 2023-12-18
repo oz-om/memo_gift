@@ -11,7 +11,7 @@ export default function Chosed_item({ id, images, name, price, includes }: inclu
   return (
     <div className='item rounded-md overflow-hidden shadow w-20 relative'>
       <figure>
-        <Image src={"/images/" + images} alt={name} width={720} height={720} />
+        <Image src={images} alt={name} width={720} height={720} />
       </figure>
       <div className='item_details px-2 pb-2'>
         <h4 className='line-clamp-3 text-xs'>{name}</h4>

@@ -11,7 +11,7 @@ function createCategories(categories: string[]) {
   });
 }
 function reSorted(images: { id: string; name: string }[]) {
-  let imagesNames = images.map((image) => image.name);
+  let imagesNames = images.map((image) => `https://omzid.serv00.net/images/${image.name}`);
   imagesNames.sort((a, b) => {
     let timestampA = parseInt(a.split("_")[1]);
     let timestampB = parseInt(b.split("_")[1]);
@@ -22,6 +22,7 @@ function reSorted(images: { id: string; name: string }[]) {
 export async function createNewItem(data: itemDataType) {
   // sort uploads as the user sorted insert
   let imagesNames = reSorted(data.images);
+
   try {
     let req = await prisma.$transaction([
       createCategories(data.categories),

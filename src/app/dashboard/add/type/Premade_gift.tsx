@@ -30,7 +30,7 @@ export function setPremadeInput(fieldType: string, value: any) {
     [fieldType]: value,
   };
 }
-
+let uploadUrl = process.env.NEXT_PUBLIC_UPLOAD_URL as string;
 export default function Premade_gift({ action }: { action: (data: premadeDataType) => Promise<any> }) {
   console.log("render premade wrapper");
   let [reset, setReset] = useState(false);
@@ -41,36 +41,40 @@ export default function Premade_gift({ action }: { action: (data: premadeDataTyp
 
   async function createPremade() {
     console.log(premade.value);
+
     let { name, desc, images, includes, price, variants } = premade.value;
     if (!name.trim().length || price < 1 || !desc.trim().length || !images.length || !includes.length || !variants.length) {
       alert("you missing a required field");
       return;
     }
-    let req = await action(premade.value);
-    if (req.creation) {
-      // for confirm uploads
-      let req = await fetch("/api/upload", {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(premade.value.images),
-      });
-      let res = await req.json();
-      if (res.confirmation) {
+    // for confirm uploads
+    let req = await fetch(uploadUrl, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(premade.value.images),
+    });
+    let res = await req.json();
+
+    if (res.confirmation) {
+      let req = await action(premade.value);
+      console.log(req);
+
+      if (req.creation) {
         setReset(true);
       } else {
-        console.error("error with confirm uploads");
+        console.error("there are a problem with item creation");
         setConfirmation({
-          confirmed: res.confirmation,
-          msg: res.error,
+          confirmed: req.creation,
+          msg: req.error,
         });
       }
     } else {
-      console.error("there are a problem with item creation");
+      console.error("error with confirm uploads");
       setConfirmation({
-        confirmed: req.creation,
-        msg: req.error,
+        confirmed: res.confirmation,
+        msg: res.error,
       });
     }
   }

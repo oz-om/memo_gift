@@ -11,7 +11,7 @@ type NavigateLinkProps = {
 function Navigate_link({ className, to, icon, name }: NavigateLinkProps) {
   return (
     <li>
-      <Link className={"px-2 py-2 text-sky-900 hover:bg-sky-900/70 hover:text-sky-100 flex items-center gap-x-2 " + className} href={to}>
+      <Link className={"px-2 py-2 text-sky-900 hover:bg-skys-900/70 hover:text-sky-100 flex items-center gap-x-2 " + className} href={to}>
         <i className={"bx text-2xl " + icon}></i>
         <span className='font-medium'>{name}</span>
       </Link>
@@ -32,9 +32,9 @@ export default function Navbar() {
               <Navigate_link name={"Home"} to='/' icon={"bx-home-circle"} />
               <Navigate_link name={"holiday 2023"} to='/' icon={"bxs-hot"} />
               <Navigate_link name={"build a memori_gift"} to='/build-a-memori_gift?step=one' icon={"bx-customize"} />
-              <Navigate_link name={"shop"} to='/' icon={"bxs-package"} />
-              <Navigate_link name={"about"} to='/' icon={"bx-info-circle"} />
+              <Navigate_link name={"shop"} to='/collections?type=premade' icon={"bxs-package"} />
               <Navigate_link name={"corporate gifting"} to='/' icon={"bx-equalizer"} />
+              <Navigate_link name={"about"} to='/' icon={"bx-info-circle"} />
               {!login ? (
                 <>
                   <Navigate_link name={"Login"} to='/auth?type=login' icon={"bx-user-circle"} className='mt-auto' />

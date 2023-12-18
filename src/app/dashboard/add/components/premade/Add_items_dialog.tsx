@@ -119,10 +119,6 @@ export default function Add_items_dialog({ reset }: { reset: boolean }) {
                 <Item id='123' images='/images/items_02.png' name='second items non' price={22} />
                 <Item id='123' images='/images/items_03.png' name='third items' price={24} />
                 <Item id='123' images='/images/items_04.png' name='fourth items black night' price={14} />
-                <Item id='123' images='/images/items_05.png' name='night blue fiveth items' price={41} />
-                <Item id='123' images='/images/items_06.png' name='sixth items fight' price={13} />
-                <Item id='123' images='/images/items_07.png' name='seventh items book light' price={20} />
-                <Item id='123' images='/images/items_08.png' name='book light' price={15} />
               </div>
               {items.length == 0 && (
                 <div className='spin_wrapper absolute left-0 top-0 w-full h-full grid place-content-center'>

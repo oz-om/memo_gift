@@ -24,7 +24,7 @@ export async function setItemInput(fieldType: string, value: any) {
     [fieldType]: value,
   };
 }
-
+let uploadUrl = process.env.NEXT_PUBLIC_UPLOAD_URL as string;
 export default function Item({ action }: { action: (data: itemDataType) => Promise<any> }) {
   let [confirmation, setConfirmation] = useState<{ confirmed: boolean; msg: string }>({ confirmed: true, msg: "" });
   let [reset, setReset] = useState<boolean>(false);
@@ -38,31 +38,33 @@ export default function Item({ action }: { action: (data: itemDataType) => Promi
       alert("you missing a required field");
       return;
     }
-    let req = await action(item.value);
-    console.log(req);
-    if (req.creation) {
-      let req = await fetch("/api/upload", {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(item.value.images),
-      });
-      let res = await req.json();
-      if (res.confirmation) {
+    // confirm uploads
+    let req = await fetch(uploadUrl, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(item.value.images),
+    });
+    let res = await req.json();
+    console.log(res);
+    if (res.confirmation) {
+      let req = await action(item.value);
+      console.log(req);
+      if (req.creation) {
         setReset(true);
       } else {
-        console.error("error with confirm uploads");
+        console.error("there are a problem with item creation");
         setConfirmation({
-          confirmed: res.confirmation,
-          msg: res.error,
+          confirmed: req.creation,
+          msg: req.error,
         });
       }
     } else {
-      console.error("there are a problem with item creation");
+      console.error("error with confirm uploads");
       setConfirmation({
-        confirmed: req.creation,
-        msg: req.error,
+        confirmed: res.confirmation,
+        msg: res.error,
       });
     }
   }

@@ -1,8 +1,26 @@
+import { prisma } from "@/lib/db/prisma";
+import { Item as ItemType, PremadeGift } from "@prisma/client";
 import Link from "next/link";
 import Pagination from "../components/Pagination";
 import Item from "./components/Item";
+type collectionsType = ItemType | PremadeGift;
+export default async function Collections({ searchParams: { type } }: { searchParams: { type: string } }) {
+  let collections: collectionsType[] = [];
 
-export default function Collections({ searchParams: { type } }: { searchParams: { type: string } }) {
+  if (type == "premade") {
+    collections = await prisma.premadeGift.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+  } else {
+    collections = await prisma.item.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+  }
+
   return (
     <>
       <section className='switch_collections_type mb-4'>
@@ -85,14 +103,18 @@ export default function Collections({ searchParams: { type } }: { searchParams: 
         <div className='collection_content_wrapper mt-5'>
           <div className='container'>
             <div className='items grid gap-5 min-[300px]:grid-cols-2 sm:grid-cols-[repeat(auto-fit,_minmax(135px,_1fr))] lg:grid-cols-4'>
-              <Item id={"123"} image='/images/items_01.png' name='first items pens' price={12} />
-              <Item id={"345"} image='/images/items_02.png' name='second items non' price={22} />
-              <Item id={"567"} image='/images/items_03.png' name='third items' price={24} />
-              <Item id={"789"} image='/images/items_04.png' name='fourth items black night' price={14} />
-              <Item id={"910"} image='/images/items_05.png' name='night blue fiveth items' price={41} />
-              <Item id={"101"} image='/images/items_06.png' name='sixth items fight' price={13} />
-              <Item id={"132"} image='/images/items_07.png' name='seventh items book light' price={20} />
-              <Item id={"114"} image='/images/items_08.png' name='book light' price={15} />
+              {collections.map(({ id, name, images, price }) => {
+                let firstImage = JSON.parse(images);
+                return <Item key={id} id={id} image={firstImage[0]} name={name} price={price} type={type} />;
+              })}
+              <Item type={type} id={"123"} image='/images/items_01.png' name='first items pens' price={12} />
+              <Item type={type} id={"345"} image='/images/items_02.png' name='second items non' price={22} />
+              <Item type={type} id={"567"} image='/images/items_03.png' name='third items' price={24} />
+              <Item type={type} id={"789"} image='/images/items_04.png' name='fourth items black night' price={14} />
+              <Item type={type} id={"910"} image='/images/items_05.png' name='night blue fiveth items' price={41} />
+              <Item type={type} id={"101"} image='/images/items_06.png' name='sixth items fight' price={13} />
+              <Item type={type} id={"132"} image='/images/items_07.png' name='seventh items book light' price={20} />
+              <Item type={type} id={"114"} image='/images/items_08.png' name='book light' price={15} />
             </div>
             <Pagination />
           </div>

@@ -2,7 +2,7 @@
 import Chosed_image from "@/app/dashboard/add/components/Chosed_image";
 import { useEffect, useState } from "react";
 import { signal } from "signals-react-safe";
-
+let uploadUrl = process.env.NEXT_PUBLIC_UPLOAD_URL as string;
 type uploadInputType = { setUploads: (fieldType: string, value: any) => void; reset: boolean };
 type imageItem = {
   id: string;
@@ -17,7 +17,7 @@ async function uploadImage(image: File, id: string, sessionId: string, callback:
   formDate.append("image", image);
   formDate.append("id", id);
   formDate.append("sessionId", sessionId);
-  fetch("/api/upload", {
+  fetch(uploadUrl, {
     method: "POST",
     body: formDate,
   })
@@ -54,7 +54,7 @@ export function UploadInput({ setUploads, reset }: uploadInputType) {
 
   // init new session
   useEffect(() => {
-    fetch("/api/upload")
+    fetch(uploadUrl)
       .then((response) => response.json())
       .then((res) => {
         if (res.init) {

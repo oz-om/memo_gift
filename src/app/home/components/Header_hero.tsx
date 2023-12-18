@@ -18,7 +18,7 @@ export default function Header_hero() {
             ready memori_gift
           </Link>
           <Link href='/collections?type=items' className='uppercase py-5 px-9 text-sm whitespace-nowrap w-56 font-semibold border-2 border-teal-100 rounded-md hover:bg-white/20'>
-            marketplace
+            single items
           </Link>
         </div>
       </div>
