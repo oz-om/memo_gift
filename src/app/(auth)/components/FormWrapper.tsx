@@ -19,6 +19,7 @@ export default function FormWrapper({ children, className, action, type }: formP
     try {
       await action(formData);
       router.push("/");
+      router.refresh();
     } catch (error) {
       setErrorMessage(getErrorMessage(error));
     }

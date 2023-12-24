@@ -1,12 +1,17 @@
 "use client";
 import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 export default function Auth_provider({ name, icon, bg }: { [key: string]: string }) {
+  let router = useRouter();
   async function authHandler() {
     let res = await signIn(name, {
       redirect: true,
       callbackUrl: "/sign-in",
     });
-    console.log(res);
+    if (res?.ok) {
+      router.push("/");
+      router.refresh();
+    }
   }
   return (
     <li onClick={authHandler} className='flex flex-col items-center cursor-pointer'>

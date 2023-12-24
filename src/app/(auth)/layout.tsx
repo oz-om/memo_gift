@@ -5,7 +5,6 @@ import "./styles/style.css";
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   let session = await getServerSession(authOptions);
-  console.log("server session => ", session);
   if (session) {
     redirect("/");
   }

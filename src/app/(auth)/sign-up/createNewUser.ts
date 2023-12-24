@@ -31,6 +31,7 @@ export default async function createNewUser(formData: FormData) {
         last_name: validation.data.lastname,
         email: validation.data.email,
         username: validation.data.username,
+        profile_pic: "https://omzid.serv00.net/images/default.png",
         password: hashedPass,
       },
     });

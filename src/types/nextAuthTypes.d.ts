@@ -1,5 +1,6 @@
+import { Session } from "inspector";
 import NextAuth from "next-auth";
-type authUser = {
+export type authUser = {
   email: string;
   username: string;
   role: string;
@@ -10,5 +11,12 @@ declare module "next-auth" {
   interface Profile {
     family_name: string;
     given_name: string;
+  }
+  // interface jwt {
+  //   user: authUser
+  // }
+  interface Session {
+    user: authUser;
+    // token:authUser
   }
 }
