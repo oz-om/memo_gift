@@ -1,4 +1,4 @@
-import delay from "@/app/utils/delay";
+import delay from "@/utils/delay";
 import { prisma } from "@/lib/db/prisma";
 
 export async function GET(req: Request) {

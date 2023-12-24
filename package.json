@@ -10,17 +10,21 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
-    "@oz-om/verify-inputs": "^1.0.2",
     "@prisma/client": "^5.7.0",
+    "bcrypt": "^5.1.1",
     "canvas-confetti": "^1.9.2",
     "next": "14.0.3",
+    "next-auth": "^4.24.5",
     "prisma": "^5.7.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "signals-react-safe": "^1.1.2"
+    "react-hot-toast": "^2.4.1",
+    "signals-react-safe": "^1.1.2",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@types/node": "^20",
+    "@types/bcrypt": "^5.0.2",
+    "@types/node": "^20.10.5",
     "@types/react": "^18.2.42",
     "@types/react-dom": "^18.2.17",
     "autoprefixer": "^10.0.1",
@@ -28,6 +32,6 @@
     "eslint-config-next": "14.0.3",
     "postcss": "^8",
     "tailwindcss": "^3.3.0",
-    "typescript": "^5"
+    "typescript": "^5.3.3"
   }
 }

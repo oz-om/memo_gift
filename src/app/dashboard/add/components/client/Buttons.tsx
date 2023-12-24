@@ -1,5 +1,5 @@
 "use client";
-import { toggleDialog } from "@/app/utils";
+import { toggleDialog } from "@/utils";
 import React from "react";
 
 export function OpenDialog() {

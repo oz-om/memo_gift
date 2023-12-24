@@ -1,18 +1,16 @@
 import { Patrick_Hand } from "next/font/google";
 import Image from "next/image";
-import Auth_provider from "./components/Auth_provider";
-import { Input, Submit } from "./components/Input";
+import Auth_provider from "../components/Auth_provider";
+import { Input, Submit } from "../components/Input";
 import Link from "next/link";
+import FormWrapper from "../components/FormWrapper";
+import signupAction from "./signupAction";
 
 const PatrickHand = Patrick_Hand({
   weight: ["400"],
   subsets: ["latin"],
 });
 
-async function formAction(formData: FormData) {
-  "use server";
-  console.log(formData);
-}
 export default function Sign_up() {
   return (
     <>
@@ -37,28 +35,28 @@ export default function Sign_up() {
             <div className='external_auth'>
               <p className='text-xs text-slate-400 text-center mb-4'>connect with:</p>
               <ul className='auth_provider flex justify-center items-center gap-x-4'>
-                <Auth_provider icon='bxl-google' bg={"bg-red-600"} />
-                <Auth_provider icon='bxl-facebook' bg={"bg-blue-600"} />
-                <Auth_provider icon='bxl-twitter' bg={"bg-blue-400"} />
+                <Auth_provider name='google' icon='bxl-google' bg={"bg-red-600"} />
+                <Auth_provider name='google' icon='bxl-facebook' bg={"bg-blue-600"} />
+                <Auth_provider name='google' icon='bxl-twitter' bg={"bg-blue-400"} />
               </ul>
             </div>
             <div className='or_line px-4 mt-4'>
               <p className="text-center text-slate-400 relative before:content-[''] before:absolute before:w-[45%] before:h-[1px] before:bg-slate-400 before:-translate-y-1/2 before:top-1/2 before:left-0 after:content-[''] after:absolute after:w-[45%] after:h-[1px] after:bg-slate-400 after:-translate-y-1/2 after:top-1/2 after:right-0">OR</p>
             </div>
-            <form action={formAction} className='px-10'>
+            <FormWrapper action={signupAction} type='sign-up'>
               <div className='username flex gap-x-4'>
-                <Input name={"firstname"} className='basis-1/2' type={"text"} placeholder={"first Name"} />
-                <Input name={"lastname"} className='basis-1/2' type={"text"} placeholder={"last Name"} />
+                <Input name={"firstname"} checkable={true} className='basis-1/2' type={"text"} placeholder={"first Name"} />
+                <Input name={"lastname"} checkable={true} className='basis-1/2' type={"text"} placeholder={"last Name"} />
               </div>
-              <Input name={"username"} type={"text"} placeholder={"username"} />
-              <Input name={"email"} type={"text"} placeholder={"email"} />
-              <Input name={"password"} type={"password"} placeholder={"password"} />
+              <Input name={"username"} checkable={true} type={"text"} placeholder={"username"} />
+              <Input name={"email"} checkable={true} type={"text"} placeholder={"email"} />
+              <Input name={"password"} checkable={true} type={"password"} placeholder={"password"} />
               <Submit name={"register"} />
-            </form>
+            </FormWrapper>
             <div className='sign-up_redirect my-5'>
               <p className='text-center'>
                 already have an account?{" "}
-                <Link href={"?type=login"} className='text-teal-500'>
+                <Link href={"/sign-in"} className='text-teal-500'>
                   login
                 </Link>
               </p>

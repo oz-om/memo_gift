@@ -37,8 +37,8 @@ export default function Navbar() {
               <Navigate_link name={"about"} to='/' icon={"bx-info-circle"} />
               {!login ? (
                 <>
-                  <Navigate_link name={"Login"} to='/auth?type=login' icon={"bx-user-circle"} className='mt-auto' />
-                  <Navigate_link name={"Sign-up"} to='/auth?type=sign-up' icon={"bx-plug"} />
+                  <Navigate_link name={"Login"} to='/sign-in' icon={"bx-user-circle"} className='mt-auto' />
+                  <Navigate_link name={"Sign-up"} to='/sign-up' icon={"bx-plug"} />
                 </>
               ) : (
                 <Link className='px-2 py-2 text-sky-900 hover:bg-sky-900/70 hover:text-sky-100' href={"/account"}>

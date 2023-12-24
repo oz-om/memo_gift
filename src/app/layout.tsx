@@ -5,6 +5,7 @@ import Header from "./components/Header";
 import Navbar from "./components/NavBar";
 import NavBar_lg_sc from "./components/NavBar_lg_sc";
 import Footer from "./components/Footer";
+import { Toaster } from "react-hot-toast";
 const rem = REM({
   weight: ["200", "300", "400", "500", "600", "700", "800", "900"],
   subsets: ["latin"],
@@ -13,14 +14,6 @@ const rem = REM({
 export const metadata: Metadata = {
   title: "Memory Gifts",
   description: "make memories beautiful with amazing gifts",
-  openGraph: {
-    images: {
-      url: "/images/openGraph.jpg",
-    },
-  },
-  icons: {
-    icon: "/gift_logo.jpg",
-  },
 };
 
 interface LordIconProps {
@@ -59,6 +52,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </Header>
         {children}
         <Footer />
+        <Toaster />
       </body>
     </html>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import { useUrlChanged } from "@/app/hooks/useUrlChanged";
+import { useUrlChanged } from "@/hooks/useUrlChanged";
 
 function toggleMenu() {
   document.querySelector(".nave_menu")?.classList.toggle("w-0");

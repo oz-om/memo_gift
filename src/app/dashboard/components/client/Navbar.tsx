@@ -1,5 +1,5 @@
 "use client";
-import { useUrlChanged } from "@/app/hooks/useUrlChanged";
+import { useUrlChanged } from "@/hooks/useUrlChanged";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 

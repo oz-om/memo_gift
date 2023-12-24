@@ -113,8 +113,8 @@ model CosutomGift {
 model customGiftIncudes {
   customGift_id String
   item_id       String
-  customG       CosutomGift @relation(fields: [customGift_id], references: [id])
-  item          Item        @relation(fields: [item_id], references: [id])
+  customG       CosutomGift @relation(fields: [customGift_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  item          Item        @relation(fields: [item_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@id([customGift_id, item_id])
   @@index([item_id], map: "customGiftIncudes_item_id_fkey")
@@ -191,10 +191,11 @@ model ShippedOrder {
 
 model User {
   id          String   @id @default(uuid())
-  full_name   String
+  username    String
   first_name  String
   last_name   String
-  email       String
+  email       String   @unique
+  role        String   @default("user")
   password    String   @db.Text
   phone       String?
   address_id  String?
