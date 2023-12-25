@@ -99,7 +99,7 @@ export const authOptions: NextAuthOptions = {
         user.role = existUser.role;
         return true;
       }
-      return true;
+      return "/";
     },
 
     jwt: ({ token, user }) => {
@@ -136,6 +136,6 @@ export const authOptions: NextAuthOptions = {
   pages: {
     signIn: "/sign-in",
     newUser: "/sign-up",
-    error: "/sign-up",
+    error: "/sign-in",
   },
 };

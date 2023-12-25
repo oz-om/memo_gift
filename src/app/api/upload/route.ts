@@ -29,7 +29,7 @@ let uploadSession: string | null = null;
 // upload request
 export async function POST(request: Request, response: Response) {
   let uploadReq = await request.formData();
-  let image = uploadReq.get("image") as Blob;
+  let image = uploadReq.get("image") as File;
   let imageId = uploadReq.get("id") as string;
   let clientUploadSession = uploadReq.get("sessionId") as string;
 
