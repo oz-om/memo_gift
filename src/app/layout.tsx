@@ -14,7 +14,7 @@ const rem = REM({
 export const metadata: Metadata = {
   title: {
     default: "Memory Gifts",
-    template: `%s | "Memory Gifts"`,
+    template: `%s | Memory Gifts`,
   },
   description: "make memories beautiful with amazing gifts",
   metadataBase: new URL(`${process.env.NEXT_PUBLIC_APP_URL}`),

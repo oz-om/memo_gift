@@ -14,8 +14,8 @@ export default function Auth_provider({ name, icon, bg }: { [key: string]: strin
     }
   }
   return (
-    <li onClick={authHandler} className='flex flex-col items-center cursor-pointer'>
-      <i className={icon + " bx bx-border-circle text-white hover:scale-105 transition-[transform] " + bg}></i>
+    <li onClick={authHandler} className='cursor-pointer'>
+      <i className={icon + " bx bx-border-circle w-8 h-8 relative text-white hover:scale-105 transition-[transform] before:absolute before:top-1/2 before:left-1/2 before:-translate-x-1/2 before:-translate-y-1/2 " + bg}></i>
     </li>
   );
 }

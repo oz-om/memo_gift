@@ -36,9 +36,17 @@ export default function Steps_progressbar({}) {
   }
 
   function styleCurrentStep() {
-    let currentStation = document.querySelectorAll(`li[data-redirect-to="${currentStep}"]`);
-    currentStation.forEach((station) => {
-      station.classList.add("active_step");
+    let beforeCurrentStep = {
+      one: ["one"],
+      two: ["one", "two"],
+      three: ["one", "two", "three"],
+      four: ["one", "two", "three", "four"],
+    };
+    beforeCurrentStep[currentStep].map((step) => {
+      let currentStation = document.querySelectorAll(`li[data-redirect-to="${step}"]`);
+      currentStation.forEach((station) => {
+        station.classList.add("active_step");
+      });
     });
   }
   useEffect(() => {

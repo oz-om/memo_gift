@@ -6,12 +6,17 @@ import Auth_provider from "../components/Auth_provider";
 import { Input } from "../components/Input";
 import FormWrapper from "../components/FormWrapper";
 import { loginAction } from "./loginAction";
+import { Metadata } from "next";
 
 const PatrickHand = Patrick_Hand({
   weight: ["400"],
   subsets: ["latin"],
 });
 
+export const metadata: Metadata = {
+  title: "sign-in",
+  description: "sign-in and start sharing love with your nearest peoples, te be together for ever",
+};
 export default function Login() {
   return (
     <>

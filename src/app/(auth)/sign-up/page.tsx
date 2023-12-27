@@ -5,11 +5,16 @@ import { Input, Submit } from "../components/Input";
 import Link from "next/link";
 import FormWrapper from "../components/FormWrapper";
 import signupAction from "./signupAction";
+import { Metadata } from "next";
 
 const PatrickHand = Patrick_Hand({
   weight: ["400"],
   subsets: ["latin"],
 });
+export const metadata: Metadata = {
+  title: "sign-in",
+  description: "sign-in and start sharing love with your nearest peoples, te be together for ever",
+};
 
 export default function Sign_up() {
   return (

@@ -15,6 +15,7 @@ function toggleBuiltBox(action: "o" | "x") {
   document.querySelector("aside.chosed_collection_section")?.classList.add(boxState[action][0]);
   document.querySelector("aside.chosed_collection_section")?.classList.remove(boxState[action][1]);
   document.body.classList.toggle("overflow-hidden");
+  document.body.classList.toggle("sm:overflow-hidden");
 }
 export function OpenBuiltBoxButton() {
   return (
@@ -34,16 +35,16 @@ export function CloseBuiltBoxButton() {
   );
 }
 
-export function OpenPreview() {
+export function OpenPreview({ id }: { id: string }) {
   return (
-    <div onClick={() => toggleDialog("dialog_quick_view")} className='quick_view px-2 text-xs grid place-content-center bg-teal-400 text-white rounded-sm cursor-pointer'>
+    <div onClick={() => toggleDialog(`dialog-${id}`)} className='quick_view px-2 text-xs grid place-content-center bg-teal-400 text-white rounded-sm cursor-pointer'>
       View
     </div>
   );
 }
-export function ClosePreview() {
+export function ClosePreview({ id }: { id: string }) {
   return (
-    <div onClick={() => toggleDialog("dialog_quick_view")} className='close_preview w-5 h-5 my-1 ml-auto rounded-md bg-red-200 grid place-content-center cursor-pointer border border-red-500'>
+    <div onClick={() => toggleDialog(`dialog-${id}`)} className='close_preview w-5 h-5 my-1 ml-auto rounded-md bg-red-200 grid place-content-center cursor-pointer border border-red-500'>
       <i className='bx bx-x text-red-500 text-2xl'></i>
     </div>
   );
