@@ -99,7 +99,7 @@ export const authOptions: NextAuthOptions = {
         user.role = existUser.role;
         return true;
       }
-      return "/";
+      return true;
     },
 
     jwt: ({ token, user }) => {
