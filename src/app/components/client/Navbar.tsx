@@ -29,7 +29,7 @@ export function Close_menu() {
     resetFn: toggleMenu,
   });
   return (
-    <div className='close_menu text-end' onClick={toggleMenu}>
+    <div className='close_menu text-end ml-auto' onClick={toggleMenu}>
       <i className='bx bx-x text-black text-3xl cursor-pointer'></i>
     </div>
   );
@@ -54,14 +54,49 @@ export function Close_cart() {
 
 export function AccountIcon({ user }: { user: authUser }) {
   let accountMenu = useRef<HTMLUListElement | null>(null);
-  let router = useRouter();
 
   function toggleAccountMenu() {
     if (accountMenu.current) {
       accountMenu.current.classList.toggle("hidden");
     }
   }
-  async function logoutHandler() {
+
+  return (
+    <>
+      <figure className=' w-7 h-7 rounded-full border border-teal-100 overflow-hidden'>
+        <Image onClick={toggleAccountMenu} src={`${user.profile_pic}`} className='w-full h-full object-cover' alt='user profile' width={100} height={100} />
+      </figure>
+      <ul ref={accountMenu} className='account_options absolute bg-white text-black z-10 min-w-36 px-2 py-1 rounded right-0 top-1/2 border shadow md:top-2/3 hidden'>
+        <li>{user.username}</li>
+        <li>
+          <Link href={"/profile"} className='flex gap-x-2 items-center p-1 mb-1 border rounded capitalize hover:bg-slate-200'>
+            <i className='bx bxs-user-circle'></i>
+            <span> profile</span>
+          </Link>
+        </li>
+        <li>
+          <Link href={"/orders"} className='flex gap-x-2 items-center p-1 mb-1 border rounded capitalize hover:bg-slate-200'>
+            <i className='bx bx-store'></i>
+            <span>orders</span>
+          </Link>
+        </li>
+        {user.role == "admin" ? (
+          <li>
+            <Link href={"/dashboard"} className='flex gap-x-2 items-center p-1 mb-1 border rounded capitalize hover:bg-slate-200'>
+              <i className='bx bx-store'></i>
+              <span>dashboard</span>
+            </Link>
+          </li>
+        ) : null}
+        <LogOut className='flex gap-x-2 items-center p-1 mb-1 border rounded capitalize text-red-400 hover:bg-slate-200' />
+      </ul>
+    </>
+  );
+}
+
+export function LogOut({ className, iconStyle }: { className?: string; iconStyle?: string }) {
+  const router = useRouter();
+  async function handelSignOut() {
     try {
       await signOut();
       router.push("/");
@@ -78,37 +113,9 @@ export function AccountIcon({ user }: { user: authUser }) {
     }
   }
   return (
-    <>
-      <figure className=' w-7 h-7 rounded-full border border-teal-100 overflow-hidden'>
-        <Image onClick={toggleAccountMenu} src={`${user.profile_pic}`} className='w-full h-full object-cover' alt='user profile' width={100} height={100} />
-      </figure>
-      <ul ref={accountMenu} className='account_options absolute bg-white text-black z-10 min-w-36 px-2 py-1 rounded right-0 top-[calc(100%_+_3px)] border shadow hidden'>
-        <li>{user.username}</li>
-        <li>
-          <Link href={"/profile"} className='flex gap-x-2 items-center p-1 mb-1 border rounded capitalize hover:bg-slate-200'>
-            <i className='bx bxs-user-circle'></i>
-            <span> profile</span>
-          </Link>
-        </li>
-        <li className='flex gap-x-2 items-center p-1 mb-1 border rounded capitalize hover:bg-slate-200'>
-          <Link href={"/orders"} className='flex gap-x-2 items-center p-1 mb-1 border rounded capitalize hover:bg-slate-200'>
-            <i className='bx bx-store'></i>
-            <span>orders</span>
-          </Link>
-        </li>
-        {user.role == "admin" ? (
-          <li className='flex gap-x-2 items-center p-1 mb-1 border rounded capitalize hover:bg-slate-200'>
-            <Link href={"/dashboard"} className='flex gap-x-2 items-center p-1 mb-1 border rounded capitalize hover:bg-slate-200'>
-              <i className='bx bx-store'></i>
-              <span>dashboard</span>
-            </Link>
-          </li>
-        ) : null}
-        <li onClick={logoutHandler} className='flex gap-x-2 items-center p-1 mb-1 border rounded capitalize text-red-400 hover:bg-slate-200'>
-          <i className='bx bx-log-out-circle'></i>
-          <span>log-out</span>
-        </li>
-      </ul>
-    </>
+    <li onClick={handelSignOut} className={className}>
+      <i className={"bx bx-log-out-circle " + iconStyle}></i>
+      <span>log-out</span>
+    </li>
   );
 }

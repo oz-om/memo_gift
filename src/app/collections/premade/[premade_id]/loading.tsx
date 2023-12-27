@@ -1,5 +1,5 @@
 import LoadingSpin from "@/app/components/LoadingSpin";
 
-export default function loading() {
+export default function Loading() {
   return <LoadingSpin />;
 }

@@ -10,7 +10,7 @@ type itemProps = {
 export default function Item({ id, image, name, price, type }: itemProps) {
   return (
     <div className='rounded-md overflow-hidden shadow'>
-      <Link href={"/collections/" + id + "?t=" + type}>
+      <Link href={"/collections/" + type + "/" + id}>
         <figure>
           <Image src={image} alt={name} width={720} height={720} />
         </figure>

@@ -1,9 +1,10 @@
 import { redirect } from "next/navigation";
-import React from "react";
+import React, { Suspense } from "react";
+import Premade_gift from "./type/Premade_gift";
 import Item from "./type/Item";
 import Postcard from "./type/Postcard";
-import Premade_gift from "./type/Premade_gift";
 import { createNewItem, createNewPremade } from "../_actions/actions";
+import Loading from "@/app/components/LoadingSpin";
 
 export default function AddPage({ searchParams: { type } }: { searchParams: { type: string } }) {
   if (type !== "premade-gift" && type !== "item" && type !== "postcard") {
@@ -12,9 +13,21 @@ export default function AddPage({ searchParams: { type } }: { searchParams: { ty
 
   return (
     <>
-      {(!type || type == "premade-gift") && <Premade_gift action={createNewPremade} />}
-      {type == "item" && <Item action={createNewItem} />}
-      {type == "postcard" && <Postcard />}
+      {(!type || type == "premade-gift") && (
+        <Suspense fallback={<Loading />}>
+          <Premade_gift action={createNewPremade} />
+        </Suspense>
+      )}
+      {type == "item" && (
+        // <Suspense fallback={"waiting create item ..."}>
+        <Item action={createNewItem} />
+        // </Suspense>
+      )}
+      {type == "postcard" && (
+        // <Suspense fallback={"waiting PostCard..."}>
+        <Postcard />
+        // </Suspense>
+      )}
     </>
   );
 }

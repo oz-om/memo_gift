@@ -53,7 +53,7 @@ export default function Step_three() {
           </div>
         </div>
 
-        <dialog className='fixed overflow-auto left-0 top-0 w-full h-full py-5 custom-scroll-bar'>
+        <dialog className='fixed overflow-auto left-0 top-0 w-full h-full py-5 custom-scroll-bar overscroll-contain'>
           <div className='cards_wrapper'>
             <div className='container'>
               <div className='cards grid grid-cols-2 sm:grid-cols-[repeat(auto-fit,_minmax(250px,_1fr))] gap-10'>

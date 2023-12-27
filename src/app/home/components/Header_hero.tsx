@@ -14,10 +14,10 @@ export default function Header_hero() {
           <Link href='/build-a-memori_gift?step=one' className='uppercase py-5 px-9 text-sm whitespace-nowrap w-56 font-semibold border-2 border-teal-100 rounded-md hover:bg-white/20'>
             Build a memori_gift
           </Link>
-          <Link href='/collections?type=premade' className='uppercase py-5 px-9 text-sm whitespace-nowrap w-56 font-semibold border-2 border-teal-100 rounded-md hover:bg-white/20'>
+          <Link href='/collections/premade' className='uppercase py-5 px-9 text-sm whitespace-nowrap w-56 font-semibold border-2 border-teal-100 rounded-md hover:bg-white/20'>
             ready memori_gift
           </Link>
-          <Link href='/collections?type=items' className='uppercase py-5 px-9 text-sm whitespace-nowrap w-56 font-semibold border-2 border-teal-100 rounded-md hover:bg-white/20'>
+          <Link href='/collections/items' className='uppercase py-5 px-9 text-sm whitespace-nowrap w-56 font-semibold border-2 border-teal-100 rounded-md hover:bg-white/20'>
             single items
           </Link>
         </div>

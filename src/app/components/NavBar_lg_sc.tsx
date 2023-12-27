@@ -33,11 +33,7 @@ export default async function NavBar_lg_sc() {
               <span className='text-[8px]'>Sign-up</span>
             </Link>
           </>
-        ) : (
-          <button className='ml-auto relative'>
-            <AccountIcon user={login.user} />
-          </button>
-        )}
+        ) : null}
       </ul>
     </nav>
   );

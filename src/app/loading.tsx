@@ -1,6 +1,5 @@
-"use client";
-import Spin from "./components/Spin";
+import LoadingSpin from "./components/LoadingSpin";
 
 export default function Loading() {
-  return <Spin />;
+  return <LoadingSpin />;
 }

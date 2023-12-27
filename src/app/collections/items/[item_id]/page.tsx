@@ -1,47 +1,26 @@
 import Carousel from "@/app/components/Carousel";
-import Item from "../components/Item";
-import Included_item from "../components/Included_item";
 import { prisma } from "@/lib/db/prisma";
 import { Item as ItemType, PremadeGift, Variant } from "@prisma/client";
 import { notFound } from "next/navigation";
-import { item } from "@/app/dashboard/add/type/Item";
 import { cache } from "react";
 import { Metadata } from "next";
+import Item from "../../components/Item";
 
-type productType = ItemType | ({ includes: { item: ItemType }[]; variants: { variant: Variant }[] } & PremadeGift) | null;
-const getProduct = cache(async (id: string, t: string) => {
+type productType = ItemType | null;
+const getProduct = cache(async (id: string) => {
   let product: productType = null;
-  if (t == "premade") {
-    product = await prisma.premadeGift.findUnique({
-      where: {
-        id,
-      },
-      include: {
-        includes: {
-          select: {
-            item: true,
-          },
-        },
-        variants: {
-          select: {
-            variant: true,
-          },
-        },
-      },
-    });
-  } else {
-    product = await prisma.item.findUnique({
-      where: {
-        id,
-      },
-    });
-  }
+  product = await prisma.item.findUnique({
+    where: {
+      id,
+    },
+  });
+
   if (!product) notFound();
   return product;
 });
 
-export async function generateMetadata({ params: { item_id }, searchParams: { t } }: { params: { item_id: string }; searchParams: { t: string } }): Promise<Metadata> {
-  const product = await getProduct(item_id, t);
+export async function generateMetadata({ params: { item_id } }: { params: { item_id: string } }): Promise<Metadata> {
+  const product = await getProduct(item_id);
   return {
     title: product.name + " - collections - memory_gifts",
     description: product.desc,
@@ -54,17 +33,15 @@ export async function generateMetadata({ params: { item_id }, searchParams: { t 
     },
   };
 }
-export default async function ItemPage({ params: { item_id }, searchParams: { t } }: { params: { item_id: string }; searchParams: { t: string } }) {
-  const product = await getProduct(item_id, t);
+export default async function ItemPage({ params: { item_id } }: { params: { item_id: string } }) {
+  const product = await getProduct(item_id);
   return (
     <>
       <section className='product_wrapper'>
         <div className='container'>
           <div className='path flex mb-4 text-sky-400 text-xs'>
             <h4>Path:</h4>
-            <span>
-              collections/{t}/{product.name}
-            </span>
+            <span>collections/items/{product.name}</span>
           </div>
           <div className='product_content_wrapper md:grid md:gap-x-4 md:grid-cols-[400px_1fr] max-w-5xl mx-auto'>
             <div className='carousel mb-4 area_one'>
@@ -82,44 +59,10 @@ export default async function ItemPage({ params: { item_id }, searchParams: { t 
                 <span className=''>Availability:</span>
                 <span className='text-green-400 uppercase'>in stock</span>
               </div>
-              {t == "premade" && "variants" in product && (
-                <div className='product_properties_wrapper'>
-                  <div className='colors mb-4'>
-                    <h4 className='font-bold text-lg mb-2'>variants:</h4>
-                    <div className='options'>
-                      <ul className='flex gap-x-2'>
-                        {product.variants.map(({ variant: { id, value } }) => {
-                          return <li key={id} id={id} className={"min-h-[20px] cursor-pointer px-3 py-1 rounded-md border " + value}></li>;
-                        })}
-                        {/* <li className='min-h-[20px] cursor-pointer px-3 py-1 rounded-md bg-amber-50 border'></li>
-                        <li className='min-h-[20px] cursor-pointer px-3 py-1 rounded-md bg-slate-600 border'></li> */}
-                      </ul>
-                    </div>
-                  </div>
-                </div>
-              )}
               <div className='submit_order text-end mb-4 mt-auto'>
                 <button className='text-2xl bg-lime-500 text-white rounded-lg px-4 py-2 hover:bg-lime-400 uppercase'>add to cart</button>
               </div>
             </div>
-            {t == "premade" && "includes" in product && (
-              <div className='product_includes_details col-span-2'>
-                <h4 className='section_title relative rounded-md text-2xl capitalize font-bolde  pl-8 py-2 mt-10 mb-5'>
-                  <span>include</span>
-                  <i className='bx bx-link-alt absolute -left-3 -top-3 text-[40px] text-slate-600/50'></i>
-                </h4>
-                <ul className='rounded-md overflow-hidden'>
-                  {product.includes.map(({ item: { id, name, images } }) => {
-                    let firstImage = JSON.parse(images);
-                    return <Included_item key={id} id={id} name={name} image={firstImage[0]} />;
-                  })}
-
-                  <Included_item id='2323' name={"samsung a14 128 silver"} image={"/images/items_02.png"} />
-                  <Included_item id='4523' name={"samsung a14 128 silver"} image={"/images/items_03.png"} />
-                  <Included_item id='7123' name={"samsung a14 128 silver"} image={"/images/items_04.png"} />
-                </ul>
-              </div>
-            )}
           </div>
           <div className='product_desc'>
             <h4 className='section_title relative rounded-md text-2xl capitalize font-bolde  pl-8 py-2 mt-10 mb-5'>

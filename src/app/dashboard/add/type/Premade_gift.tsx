@@ -31,6 +31,7 @@ export function setPremadeInput(fieldType: string, value: any) {
   };
 }
 let uploadUrl = process.env.NEXT_PUBLIC_UPLOAD_URL as string;
+
 export default function Premade_gift({ action }: { action: (data: premadeDataType) => Promise<any> }) {
   console.log("render premade wrapper");
   let [reset, setReset] = useState(false);
@@ -130,7 +131,6 @@ export default function Premade_gift({ action }: { action: (data: premadeDataTyp
           <SubmitButton publish={createPremade} />
         </div>
       </div>
-
       <Add_items_dialog reset={reset} />
     </section>
   );

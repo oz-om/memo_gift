@@ -2,6 +2,8 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { Step_one, Step_two, Step_three, Step_four } from "./steps";
 import Steps_progressbar from "./components/Steps_progressbar";
+import { Suspense } from "react";
+import LoadingSpin from "../components/LoadingSpin";
 
 let currentPage: null | string = null;
 export default function Build_memori_gift_page({ searchParams }: { searchParams: { step: string } }) {
@@ -19,8 +21,16 @@ export default function Build_memori_gift_page({ searchParams }: { searchParams:
     <>
       <Steps_progressbar />
       <section className='steps_content_section'>
-        {searchParams.step === "one" && <Step_one />}
-        {searchParams.step === "two" && <Step_two />}
+        {searchParams.step === "one" && (
+          <Suspense fallback={<LoadingSpin />}>
+            <Step_one />
+          </Suspense>
+        )}
+        {searchParams.step === "two" && (
+          // <Suspense fallback={<LoadingSpin />}>
+          <Step_two />
+          // </Suspense>
+        )}
         {searchParams.step === "three" && <Step_three />}
         {searchParams.step === "four" && <Step_four />}
       </section>

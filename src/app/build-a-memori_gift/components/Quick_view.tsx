@@ -3,7 +3,7 @@ import { ClosePreview } from "./client/Buttons";
 
 export default function Quick_view() {
   return (
-    <dialog className='dialog_quick_view fixed left-0 top-0 w-full h-full bg-slate-100/50 backdrop-blur-2xl overflow-x-hidden overflow-y-auto z-10 custom-scroll-bar'>
+    <dialog className='dialog_quick_view fixed left-0 top-0 w-full h-full bg-slate-100/50 backdrop-blur-2xl overflow-x-hidden overflow-y-auto z-10 custom-scroll-bar overscroll-contain'>
       <div className='container'>
         <ClosePreview />
         <div className='quick_view_wrapper md:grid md:grid-cols-2'>

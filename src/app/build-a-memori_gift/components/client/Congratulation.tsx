@@ -1,7 +1,7 @@
 "use client";
 import { useEffect } from "react";
 //@ts-ignore
-import confetti from "canvas-confetti";
+import { default as confetti } from "canvas-confetti";
 
 export default function Congratulation() {
   useEffect(() => {

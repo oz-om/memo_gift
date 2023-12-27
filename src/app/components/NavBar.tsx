@@ -1,6 +1,9 @@
+import { authOptions } from "@/utils/nextAuthOptions";
+import { getServerSession } from "next-auth";
+import Image from "next/image";
 import Link from "next/link";
 import Cart_wrapper from "./cart/Cart_wrapper";
-import { Close_menu, Open_cart, Open_menu } from "./client/Navbar";
+import { AccountIcon, Close_menu, LogOut, Open_cart, Open_menu } from "./client/Navbar";
 
 type NavigateLinkProps = {
   className?: string;
@@ -11,16 +14,17 @@ type NavigateLinkProps = {
 function Navigate_link({ className, to, icon, name }: NavigateLinkProps) {
   return (
     <li>
-      <Link className={"px-2 py-2 text-sky-900 hover:bg-skys-900/70 hover:text-sky-100 flex items-center gap-x-2 " + className} href={to}>
+      <Link className={"px-2 py-2 text-sky-900 hover:bg-skys-900/70 hover:text-sky-500 flex items-center gap-x-2 " + className} href={to}>
         <i className={"bx text-2xl " + icon}></i>
-        <span className='font-medium'>{name}</span>
+        <span className='font-medium capitalize'>{name}</span>
       </Link>
     </li>
   );
 }
 
-export default function Navbar() {
-  const login = false;
+export default async function Navbar() {
+  let login = await getServerSession(authOptions);
+
   return (
     <nav className='relative'>
       <div className='pt-4 pb-5 md:relative'>
@@ -28,11 +32,24 @@ export default function Navbar() {
           <div className='navigation md:hidden'>
             <Open_menu />
             <ul className='nave_menu flex flex-col bg-white fixed z-10 bg-sky-300/10 overflow-hidden w-0 max-w-md left-0 top-0 h-full  transition-[width]'>
-              <Close_menu />
+              <li className='flex justify-between'>
+                {!!login && (
+                  <Link href={"/profile"}>
+                    <div className='user flex items-center ml-2 mt-2 gap-x-2 mb-4'>
+                      <figure className='w-8 rounded-full overflow-hidden'>
+                        <Image src={`${login?.user.profile_pic}`} alt={"user profile"} width={100} height={100} />
+                      </figure>
+
+                      <p className='text-black'>{login?.user.username}</p>
+                    </div>
+                  </Link>
+                )}
+                <Close_menu />
+              </li>
               <Navigate_link name={"Home"} to='/' icon={"bx-home-circle"} />
               <Navigate_link name={"holiday 2023"} to='/' icon={"bxs-hot"} />
               <Navigate_link name={"build a memori_gift"} to='/build-a-memori_gift?step=one' icon={"bx-customize"} />
-              <Navigate_link name={"shop"} to='/collections?type=premade' icon={"bxs-package"} />
+              <Navigate_link name={"marketplace"} to='/collections?type=premade' icon={"bxs-package"} />
               <Navigate_link name={"corporate gifting"} to='/' icon={"bx-equalizer"} />
               <Navigate_link name={"about"} to='/' icon={"bx-info-circle"} />
               {!login ? (
@@ -40,11 +57,8 @@ export default function Navbar() {
                   <Navigate_link name={"Login"} to='/sign-in' icon={"bx-user-circle"} className='mt-auto' />
                   <Navigate_link name={"Sign-up"} to='/sign-up' icon={"bx-plug"} />
                 </>
-              ) : (
-                <Link className='px-2 py-2 text-sky-900 hover:bg-sky-900/70 hover:text-sky-100' href={"/account"}>
-                  Account
-                </Link>
-              )}
+              ) : null}
+              {!!login && <LogOut className='px-2 py-2 mt-auto text-red-900 hover:text-red-500 flex items-center gap-x-2 cursor-pointer' iconStyle='text-2xl' />}
             </ul>
           </div>
           <div className='logo'>
@@ -54,9 +68,16 @@ export default function Navbar() {
               </p>
             </Link>
           </div>
-          <div className='basket'>
-            <Open_cart />
-            <Cart_wrapper />
+          <div className='basket_wrapper flex gap-x-2'>
+            <div className='basket'>
+              <Open_cart />
+              <Cart_wrapper />
+            </div>
+            {!!login && (
+              <div className='user'>
+                <AccountIcon user={login.user} />
+              </div>
+            )}
           </div>
         </div>
         <div className='search md:absolute md:mx-auto md:top-5 md:left-1/2 md:-translate-x-1/2 md:w-2/3'>

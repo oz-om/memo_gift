@@ -14,6 +14,10 @@ const rem = REM({
 export const metadata: Metadata = {
   title: "Memory Gifts",
   description: "make memories beautiful with amazing gifts",
+  metadataBase: new URL("https://acme.com"),
+  openGraph: {
+    images: "/og-image.png",
+  },
 };
 
 interface LordIconProps {

@@ -8,8 +8,8 @@ export function toggleDialog(dialogClass: string) {
   } else {
     d.showModal();
   }
-  document.body.classList.toggle("overflow-hidden");
-  document.body.classList.toggle("sm:overflow-auto");
+  // document.body.classList.toggle("overflow-hidden");
+  // document.body.classList.toggle("sm:overflow-auto");
 }
 
 export const zodFields = {
