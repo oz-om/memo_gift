@@ -49,7 +49,7 @@ export default async function Navbar() {
               <Navigate_link name={"Home"} to='/' icon={"bx-home-circle"} />
               <Navigate_link name={"holiday 2023"} to='/' icon={"bxs-hot"} />
               <Navigate_link name={"build a memori_gift"} to='/build-a-memori_gift?step=one' icon={"bx-customize"} />
-              <Navigate_link name={"marketplace"} to='/collections?type=premade' icon={"bxs-package"} />
+              <Navigate_link name={"marketplace"} to='/collections/premade' icon={"bxs-package"} />
               <Navigate_link name={"corporate gifting"} to='/' icon={"bx-equalizer"} />
               <Navigate_link name={"about"} to='/' icon={"bx-info-circle"} />
               {!login ? (

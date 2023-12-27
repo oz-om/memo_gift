@@ -14,7 +14,7 @@ const rem = REM({
 export const metadata: Metadata = {
   title: "Memory Gifts",
   description: "make memories beautiful with amazing gifts",
-  metadataBase: new URL("https://acme.com"),
+  metadataBase: new URL("https://memo-gift.vercel.app"),
   openGraph: {
     images: "/og-image.png",
   },

@@ -13,7 +13,7 @@ export default async function NavBar_lg_sc() {
         <Link className='px-2 capitalize whitespace-nowrap hover:text-teal-300' href={"/build-a-memori_gift?step=one"}>
           build a MemoryGift
         </Link>
-        <Link className='px-2 capitalize whitespace-nowrap hover:text-teal-300' href={"/collections?type=premade"}>
+        <Link className='px-2 capitalize whitespace-nowrap hover:text-teal-300' href={"/collections/premade"}>
           marketplace
         </Link>
         <Link className='px-2 capitalize whitespace-nowrap hover:text-teal-300' href={"/"}>

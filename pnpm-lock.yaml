@@ -43,6 +43,9 @@ devDependencies:
   '@types/bcrypt':
     specifier: ^5.0.2
     version: 5.0.2
+  '@types/canvas-confetti':
+    specifier: ^1.6.4
+    version: 1.6.4
   '@types/node':
     specifier: ^20.10.5
     version: 20.10.5
@@ -392,6 +395,10 @@ packages:
     resolution: {integrity: sha512-6atioO8Y75fNcbmj0G7UjI9lXN2pQ/IGJ2FWT4a/btd0Lk9lQalHLKhkgKVZ3r+spnmWUKfbMi1GEe9wyHQfNQ==}
     dependencies:
       '@types/node': 20.10.5
+    dev: true
+
+  /@types/canvas-confetti@1.6.4:
+    resolution: {integrity: sha512-fNyZ/Fdw/Y92X0vv7B+BD6ysHL4xVU5dJcgzgxLdGbn8O3PezZNIJpml44lKM0nsGur+o/6+NZbZeNTt00U1uA==}
     dev: true
 
   /@types/json5@0.0.29:
