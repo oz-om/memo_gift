@@ -12,9 +12,12 @@ const rem = REM({
 });
 
 export const metadata: Metadata = {
-  title: "Memory Gifts",
+  title: {
+    default: "Memory Gifts",
+    template: `%s | "Memory Gifts"`,
+  },
   description: "make memories beautiful with amazing gifts",
-  metadataBase: new URL("https://memo-gift.vercel.app"),
+  metadataBase: new URL(`${process.env.NEXT_PUBLIC_APP_URL}`),
   openGraph: {
     images: "/og-image.png",
   },

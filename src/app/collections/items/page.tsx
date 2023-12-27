@@ -7,7 +7,7 @@ import Pagination from "@/app/components/Pagination";
 import "../styles/style.css";
 
 export const metadata: Metadata = {
-  title: "items - Memori-Gift",
+  title: "items",
   description: "make memories beautiful with amazing gifts",
 };
 

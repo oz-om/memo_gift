@@ -6,7 +6,7 @@ import Item from "../components/Item";
 import "../styles/style.css";
 
 export const metadata: Metadata = {
-  title: "premade - Memori-Gift",
+  title: "premade",
   description: "make memories beautiful with amazing gifts",
 };
 

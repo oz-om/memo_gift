@@ -6,7 +6,11 @@ import { authOptions } from "@/utils/nextAuthOptions";
 import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
-  title: "memory-gift | Dashboard",
+  title: "Dashboard",
+  robots: {
+    index: false,
+    nocache: true,
+  },
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {

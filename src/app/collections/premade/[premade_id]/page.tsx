@@ -34,8 +34,11 @@ const getProduct = cache(async (id: string) => {
 export async function generateMetadata({ params: { premade_id } }: { params: { premade_id: string } }): Promise<Metadata> {
   const product = await getProduct(premade_id);
   return {
-    title: product.name + " - collections - memory_gifts",
+    title: product.name,
     description: product.desc,
+    alternates: {
+      canonical: `/collections/premade/${premade_id}`,
+    },
     openGraph: {
       images: [
         {

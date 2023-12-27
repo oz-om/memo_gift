@@ -3,7 +3,11 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import Add_nav_type from "./components/Add_nav_type";
 export const metadata: Metadata = {
-  title: "dashboard | add new",
+  title: "dashboard - add new",
+  robots: {
+    index: false,
+    nocache: true,
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
