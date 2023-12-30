@@ -1,10 +1,27 @@
+import { prisma } from "@/lib/db/prisma";
 import Image from "next/image";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import React from "react";
-import Card_item, { ChoseCardButton } from "../components/client/Card_item";
+import Card_item, { ChoseCardButton, RemovePostCard } from "../components/client/Card_item";
+import FriendlyMessageForm from "../components/client/friendlyMessageForm";
 import Step_intro from "../components/Step_intro";
 
-export default function Step_three() {
+export default async function Step_three({ searchParams }: { searchParams: { id: string } }) {
+  let { id } = searchParams;
+  if (!id || id.trim().length == 0) {
+    redirect("/build-a-memori_gift?step=one");
+  }
+  let customGift = await prisma.customGift.findUnique({
+    where: {
+      id: id,
+    },
+    select: {
+      postCard: true,
+    },
+  });
+
+  let postCards = await prisma.postCard.findMany();
   return (
     <section className='step_three_section'>
       <div className='container'>
@@ -13,54 +30,29 @@ export default function Step_three() {
       <section className='step_three_content'>
         <div className='container friendly_massage_wrapper px-3 mt-3 md:flex md:justify-center md:gap-x-5'>
           <figure className='max-w-xs mx-auto md:mx-0'>
-            <Image src={"/images/card_item_01.png"} alt='' width={650} height={650} />
+            {customGift?.postCard == null ? (
+              <div className='w-60 h-full grid place-content-center border rounded'>
+                <p className='text-center'>no chosed card</p>
+              </div>
+            ) : (
+              <Image src={`${customGift?.postCard?.image}`} alt={`${customGift?.postCard?.name}`} width={400} height={350} />
+            )}
             <div className='change_post_card'>
               <ChoseCardButton />
             </div>
           </figure>
-          <div className='from_to_form max-w-lg flex flex-col mx-auto md:mx-0'>
-            <div className='inputs grid grid-cols-2 gap-10'>
-              <div className='to_input'>
-                <label htmlFor='to'>to</label>
-                <input type='text' id='to' placeholder='to' className='w-full px-3 py-1 outline-none rounded border border-teal-100 focus:border-teal-400 placeholder:font-light' />
-              </div>
-              <div className='form_input'>
-                <label htmlFor='from'>from</label>
-                <input type='text' id='from' placeholder='from' className='w-full px-3 py-1 outline-none rounded border border-teal-100 focus:border-teal-400 placeholder:font-light' />
-              </div>
-              <div className='massage col-span-2'>
-                <textarea name='massage' id='massage' placeholder='friendly message' className='w-full resize-none px-3 py-1 outline-none rounded border border-teal-100 focus:border-teal-400 placeholder:font-light'></textarea>
-              </div>
-            </div>
-            <div className='other_options'>
-              <div className='opt'>
-                <input type='checkbox' id='blank-card' />
-                <label htmlFor='blank-card'>Leave card intentionally blank and we&apos;ll tuck the card in the bow for you to do what you need</label>
-              </div>
-              <div className='opt'>
-                <input type='checkbox' id='no-card' />
-                <label htmlFor='no-card'>No card needed! Just a to/from is fine!</label>
-              </div>
-            </div>
-            <div className='complete_box flex justify-center items-center gap-x-5 mt-5 md:mt-auto'>
-              <Link href={"?step=four"} className='add_to_cart py-1 px-3 border border-teal-400 text-teal-400 rounded'>
-                add to cart
-              </Link>
-              <Link href={"/checkout"} className='checkout py-1 px-3 border bg-teal-400 text-white rounded'>
-                checkout
-              </Link>
-            </div>
-          </div>
+          <FriendlyMessageForm boxId={id} />
         </div>
 
-        <dialog className='fixed overflow-auto left-0 top-0 w-full h-full py-5 custom-scroll-bar overscroll-contain'>
+        <dialog className='PostCardsModal fixed overflow-auto left-0 top-0 w-full h-full py-5 custom-scroll-bar overscroll-contain'>
           <div className='cards_wrapper'>
             <div className='container'>
               <div className='cards grid grid-cols-2 sm:grid-cols-[repeat(auto-fit,_minmax(250px,_1fr))] gap-10'>
-                <div className='card grid place-content-center rounded border'>
-                  <h4>Without Card</h4>
-                </div>
-                <Card_item image={"/images/card_item_01.png"} name={"Postcard  | Congrats Sparkle"} />
+                <RemovePostCard boxId={id} />
+                {postCards.map((postcard) => {
+                  return <Card_item key={postcard.id} id={postcard.id} boxId={id} image={postcard.image} name={postcard.name} />;
+                })}
+                {/* <Card_item image={"/images/card_item_01.png"} name={"Postcard  | Congrats Sparkle"} />
                 <Card_item image={"/images/card_item_02.png"} name={"Postcard  | Bon Anniversaire"} />
                 <Card_item image={"/images/card_item_03.png"} name={"Postcard  | Merci Green"} />
                 <Card_item image={"/images/card_item_04.png"} name={"Postcard  | Happy Holidays Red"} />
@@ -71,7 +63,7 @@ export default function Step_three() {
                 <Card_item image={"/images/card_item_10.png"} name={"Postcard  | Be My Maid of Honor"} />
                 <Card_item image={"/images/card_item_11.png"} name={"Postcard  | Cheers Espresso Martini"} />
                 <Card_item image={"/images/card_item_12.png"} name={"Postcard  | Bon Anniversaire"} />
-                <Card_item image={"/images/card_item_13.png"} name={"Postcard  | Get Well Soon"} />
+                <Card_item image={"/images/card_item_13.png"} name={"Postcard  | Get Well Soon"} /> */}
               </div>
             </div>
           </div>

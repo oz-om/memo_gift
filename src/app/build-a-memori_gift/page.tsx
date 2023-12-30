@@ -6,10 +6,11 @@ import { Suspense } from "react";
 import LoadingSpin from "../components/LoadingSpin";
 
 let currentPage: null | string = null;
-export default function Build_memori_gift_page({ searchParams }: { searchParams: { step: string } }) {
+
+export default function Build_memori_gift_page({ searchParams }: { searchParams: { step: string; pack: string; id: string } }) {
   const headersSet = headers();
-  // @ts-ignore
-  if (headersSet.headers["referer"] != null) {
+
+  if (headersSet.get("referer") != null) {
     currentPage = `http://127.0.0.1:3000/build-a-memori_gift?step=${searchParams.step}`;
   } else {
     if (currentPage) {
@@ -23,15 +24,20 @@ export default function Build_memori_gift_page({ searchParams }: { searchParams:
       <section className='steps_content_section'>
         {searchParams.step === "one" && (
           <Suspense fallback={<LoadingSpin />}>
+            {/* @ts-ignore */}
             <Step_one />
           </Suspense>
         )}
         {searchParams.step === "two" && (
           // <Suspense fallback={<LoadingSpin />}>
-          <Step_two />
+          //@ts-ignore
+          <Step_two searchParams={searchParams} />
           // </Suspense>
         )}
-        {searchParams.step === "three" && <Step_three />}
+        {searchParams.step === "three" && (
+          // @ts-ignore
+          <Step_three searchParams={searchParams} />
+        )}
         {searchParams.step === "four" && <Step_four />}
       </section>
     </>

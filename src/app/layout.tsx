@@ -54,7 +54,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className={"custom-scroll-bar sm:overflow-auto " + rem.className}>
         <Header>
+          {/*@ts-ignore */}
           <Navbar />
+          {/*@ts-ignore */}
           <NavBar_lg_sc />
         </Header>
         {children}

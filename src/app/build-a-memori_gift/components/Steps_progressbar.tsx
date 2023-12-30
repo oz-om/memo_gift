@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect } from "react";
 
 type limitListType = {
@@ -14,6 +14,7 @@ type LimitListKeys = keyof limitListType;
 export default function Steps_progressbar({}) {
   const router = useRouter();
   const params = useSearchParams();
+  const path = usePathname();
   const currentStep = params.get("step") as LimitListKeys;
   function handleSearchParams(e: React.MouseEvent) {
     const limitList: limitListType = {
@@ -31,7 +32,11 @@ export default function Steps_progressbar({}) {
           stationEle.classList.remove("active_step");
         });
       });
-      router.push(`?step=${step_level}`);
+
+      let paramsString = params.toString();
+      // Replace the old step value with the new one
+      paramsString = paramsString.replace(/(?<=step=)[^&]+/, step_level);
+      router.push(`${path}?${paramsString}`);
     }
   }
 
