@@ -7,7 +7,7 @@ import LoadingSpin from "../components/LoadingSpin";
 
 let currentPage: null | string = null;
 
-export default function Build_memori_gift_page({ searchParams }: { searchParams: { step: string; pack: string; id: string } }) {
+export default function Build_memori_gift_page({ searchParams }: { searchParams: { step: string; pack: string; cgid: string; catitmid: string } }) {
   const headersSet = headers();
 
   if (headersSet.get("referer") != null) {

@@ -1,6 +1,6 @@
 "use client";
 
-import { toggleDialog } from "@/utils";
+import { toastStyles, toggleDialog } from "@/utils";
 import Image from "next/image";
 import { toast } from "react-hot-toast";
 import { setPostCard } from "../../actions";
@@ -8,33 +8,24 @@ import { setPostCard } from "../../actions";
 type cardItemProps = {
   [key: string]: string;
 };
-export default function Card_item({ id, image, name, boxId }: cardItemProps) {
+export default function Card_item({ id, image, name, cartItemId }: cardItemProps) {
   async function ChoseCard() {
     let loading = toast;
     loading.loading(`just a second...`, {
-      style: {
-        padding: "2px",
-        fontSize: "12px",
-      },
+      style: toastStyles,
     });
-    let res = await setPostCard(boxId, id);
+    let res = await setPostCard(cartItemId, id);
     loading.dismiss();
     toggleDialog("PostCardsModal");
     if (!res.success) {
       loading.error(`${res.error}`, {
-        style: {
-          padding: "2px",
-          fontSize: "12px",
-        },
+        style: toastStyles,
       });
       return;
     }
 
     toast.success(`done!`, {
-      style: {
-        padding: "2px",
-        fontSize: "12px",
-      },
+      style: toastStyles,
     });
   }
   return (
@@ -55,32 +46,23 @@ export function ChoseCardButton() {
   );
 }
 
-export function RemovePostCard({ boxId }: { boxId: string }) {
+export function RemovePostCard({ cartItemId }: { cartItemId: string }) {
   async function removePostCard() {
     let loading = toast;
     loading.loading(`just a second...`, {
-      style: {
-        padding: "2px",
-        fontSize: "12px",
-      },
+      style: toastStyles,
     });
-    let res = await setPostCard(boxId, null);
+    let res = await setPostCard(cartItemId, null);
     loading.dismiss();
     toggleDialog("PostCardsModal");
     if (!res.success) {
       loading.error(`${res.error}`, {
-        style: {
-          padding: "2px",
-          fontSize: "12px",
-        },
+        style: toastStyles,
       });
       return;
     }
     toast.success(`done!`, {
-      style: {
-        padding: "2px",
-        fontSize: "12px",
-      },
+      style: toastStyles,
     });
   }
   return (

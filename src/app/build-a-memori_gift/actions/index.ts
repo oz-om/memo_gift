@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/db/prisma";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
+import { boolean } from "zod";
 
 async function getCustomGift(boxId: string) {
   let builtBox = await prisma.customGift.findUnique({
@@ -15,7 +16,6 @@ async function getCustomGift(boxId: string) {
           item: true,
         },
       },
-      postCard: true,
     },
   });
   return builtBox;
@@ -31,17 +31,17 @@ async function customGiftUpdatePrice(boxId: string, price: number) {
   });
 }
 
-export async function createBuiltBox(variantId: string): Promise<{
+export async function createCustomGift(variantId: string): Promise<{
   create: boolean;
-  boxId: string | null;
+  customGiftId: string | null;
   error?: string;
 }> {
-  let existingBoxId = cookies().get("builtBoxId")?.value;
-  if (existingBoxId) {
+  let existingCustomGiftId = cookies().get("customGiftId")?.value;
+  if (existingCustomGiftId) {
     try {
       await prisma.customGift.update({
         where: {
-          id: existingBoxId,
+          id: existingCustomGiftId,
         },
         data: {
           variant_id: variantId,
@@ -49,18 +49,18 @@ export async function createBuiltBox(variantId: string): Promise<{
       });
       return {
         create: true,
-        boxId: existingBoxId,
+        customGiftId: existingCustomGiftId,
       };
     } catch (error) {
       return {
         create: false,
-        boxId: null,
+        customGiftId: null,
         error: "something went wrong with updating a variant for current custom gift, please try again",
       };
     }
   }
   try {
-    let builtBox = await prisma.customGift.create({
+    let customGift = await prisma.customGift.create({
       data: {
         variant_id: variantId,
       },
@@ -68,40 +68,40 @@ export async function createBuiltBox(variantId: string): Promise<{
         id: true,
       },
     });
-    cookies().set("builtBoxId", builtBox.id);
+    cookies().set("customGiftId", customGift.id);
     return {
       create: true,
-      boxId: builtBox.id,
+      customGiftId: customGift.id,
     };
   } catch (error) {
     return {
       create: false,
-      boxId: null,
+      customGiftId: null,
       error: "something went wrong during creating new box",
     };
   }
 }
 
 // add new item to custom gift includes
-export async function addItemToBox(itemId: string): Promise<{
+export async function addItemToCustomGift(itemId: string): Promise<{
   add: boolean;
   error?: string;
 }> {
-  let boxId = cookies().get("builtBoxId")?.value;
-  // if boxId removed from client
-  if (!boxId) {
+  let customGiftId = cookies().get("customGiftId")?.value;
+  // if customGiftId removed from client
+  if (!customGiftId) {
     return {
       add: false,
       error: "can't find the chosen box, please try again",
     };
   }
 
-  let customGift = await getCustomGift(boxId);
+  let customGift = await getCustomGift(customGiftId);
   // if custom gift removed from db for any reason
   if (!customGift) {
     return {
       add: false,
-      error: "there is no box found to add this item to it",
+      error: "there is no custom gift found to add this item to it",
     };
   }
   // get the added item price for add it to custom Gift price
@@ -134,7 +134,7 @@ export async function addItemToBox(itemId: string): Promise<{
       // calc new price
       let currentPrice = customGift.price;
       let totalPrice = currentPrice + addedItem.price;
-      await customGiftUpdatePrice(boxId, totalPrice);
+      await customGiftUpdatePrice(customGiftId, totalPrice);
 
       revalidatePath("");
       return {
@@ -166,7 +166,7 @@ export async function addItemToBox(itemId: string): Promise<{
     // calc new price
     let currentPrice = customGift.price;
     let totalPrice = currentPrice + addedItem.price;
-    await customGiftUpdatePrice(boxId, totalPrice);
+    await customGiftUpdatePrice(customGiftId, totalPrice);
 
     revalidatePath("");
     return {
@@ -295,42 +295,39 @@ export async function removeItem(
   }
 }
 
-type dataT = {
-  from: string;
-  to: string;
-  note: string;
-  withNote: boolean;
-  emptyCard: boolean;
-};
-// set Friendly not / message
-export async function setFriendlyMessage(boxId: string, data: dataT) {
+export async function setCustomGiftIntoCartItem(): Promise<{
+  success: boolean;
+  cartItemId: string | null;
+  error?: string;
+}> {
+  let cartItemId = cookies().get("cartItemId")?.value;
   try {
-    await prisma.customGift.update({
-      where: {
-        id: boxId,
-      },
-      data: {
-        from: data.from,
-        to: data.to,
-        note: data.note,
-        with_note: data.withNote,
-        empty_card: data.emptyCard,
-      },
-    });
-    revalidatePath("");
+    if (!cartItemId) {
+      let newCartItemId = await prisma.cartItem.create({
+        data: {},
+      });
+      cookies().set("cartItemId", newCartItemId.id);
+      return {
+        success: true,
+        cartItemId: newCartItemId.id,
+      };
+    }
     return {
       success: true,
+      cartItemId,
     };
   } catch (error) {
     return {
       success: false,
-      error: "something went wrong during setting the given notes",
+      cartItemId: null,
+      error: "something went wrong during get next step",
     };
   }
 }
 
+// setup post card
 export async function setPostCard(
-  boxId: string,
+  cartItemId: string,
   postCardId: string | null,
 ): Promise<{
   success: boolean;
@@ -338,9 +335,9 @@ export async function setPostCard(
 }> {
   try {
     if (!postCardId) {
-      await prisma.customGift.update({
+      await prisma.cartItem.update({
         where: {
-          id: boxId,
+          id: cartItemId,
         },
         data: {
           post_card: null,
@@ -349,9 +346,9 @@ export async function setPostCard(
       revalidatePath("");
       return { success: true };
     }
-    await prisma.customGift.update({
+    await prisma.cartItem.update({
       where: {
-        id: boxId,
+        id: cartItemId,
       },
       data: {
         post_card: postCardId,
@@ -360,9 +357,83 @@ export async function setPostCard(
     revalidatePath("");
     return { success: true };
   } catch (error) {
+    console.log(error);
+
     return {
       success: false,
       error: "something went wrong during setting the Postcard",
+    };
+  }
+}
+
+// set Friendly not / message
+export async function setFriendlyMessageAndAddCartItemToCart(
+  customGiftId: string,
+  cartItemId: string,
+  emptyCard: boolean,
+  withNote: boolean,
+  data: FormData,
+): Promise<{
+  success: boolean;
+  error?: string;
+}> {
+  let friendlyNoteData = {
+    from: data.get("from") as string,
+    to: data.get("to") as string,
+    note: data.get("note") as string,
+    with_note: true,
+    empty_card: false,
+  };
+  if (emptyCard) {
+    friendlyNoteData = {
+      from: "",
+      to: "",
+      note: "",
+      with_note: false,
+      empty_card: true,
+    };
+  }
+  if (!withNote) {
+    friendlyNoteData = {
+      ...friendlyNoteData,
+      note: "",
+      with_note: false,
+      empty_card: false,
+    };
+  }
+
+  try {
+    let cartItem = await prisma.cartItem.update({
+      where: {
+        id: cartItemId,
+      },
+      data: {
+        ...friendlyNoteData,
+        custom_gift_id: customGiftId,
+      },
+    });
+
+    let anonymousUser = cookies().get("anonymousUser")?.value;
+    let newAnonymousUser;
+    if (!anonymousUser) {
+      newAnonymousUser = crypto.randomUUID();
+      cookies().set("anonymousUser", newAnonymousUser);
+    }
+    await prisma.cart.create({
+      data: {
+        cart_item: cartItem.id,
+        anonymous_user: anonymousUser ?? newAnonymousUser,
+      },
+    });
+    cookies().delete("customGiftId");
+    cookies().delete("cartItemId");
+    return {
+      success: true,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: "something went wrong during submitting your request",
     };
   }
 }

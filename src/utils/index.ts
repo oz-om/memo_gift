@@ -42,3 +42,8 @@ export const zodFields = {
       return hasSpecialChar && hasUpperCase;
     }, "Password must contain at least one special character and one uppercase letter"),
 };
+
+export const toastStyles = {
+  padding: "2px",
+  fontSize: "12px",
+};

@@ -19,6 +19,7 @@ model Item {
   customG    customGiftIncudes[]
   premade    includes[]
   categories itemCategory[]
+  cartItem   cartItem[]
 
   @@map("items")
 }
@@ -55,6 +56,7 @@ model PremadeGift {
   categories boxCategory[]
   variants   boxVarint[]
   includes   includes[]
+  cartItem   cartItem[]
 
   @@map("premade_gifts")
 }
@@ -105,21 +107,16 @@ model boxCategory {
 }
 
 model customGift {
-  id         String              @id @default(uuid())
+  id         String   @id @default(uuid())
   name       String?
-  price      Float               @default(0)
+  price      Float    @default(0)
   variant_id String
-  post_card  String?
-  from       String?
-  to         String?
-  note       String?
-  with_note  Boolean             @default(true)
-  empty_card Boolean             @default(false)
-  createdAt  DateTime            @default(now())
-  updatedAt  DateTime            @updatedAt
-  includes   customGiftIncudes[]
-  postCard   PostCard?           @relation(fields: [post_card], references: [id])
-  variant    Variant             @relation(fields: [variant_id], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  variant  Variant             @relation(fields: [variant_id], references: [id])
+  includes customGiftIncudes[]
+  cartItem cartItem[]
 
   @@map("cosutom_gifts")
 }
@@ -137,47 +134,66 @@ model customGiftIncudes {
 }
 
 model PostCard {
-  id          String       @id @default(uuid())
-  name        String
-  image       String       @db.Text
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  Order       Order[]
-  CosutomGift customGift[]
+  id        String   @id @default(uuid())
+  name      String
+  image     String   @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  cartItem cartItem[]
 
   @@map("postcards")
 }
 
-model Cart {
-  id        String   @id @default(uuid())
-  user_id   String?
-  order_id  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  order     Order    @relation(fields: [order_id], references: [id])
+model cartItem {
+  id             String       @id @default(uuid())
+  premad_id      String?
+  custom_gift_id String?
+  item_id        String?
+  from           String?
+  to             String?
+  note           String?
+  with_note      Boolean      @default(true)
+  empty_card     Boolean      @default(false)
+  post_card      String?
+  quantity       Int          @default(1)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  premade        PremadeGift? @relation(fields: [premad_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  customGift     customGift?  @relation(fields: [custom_gift_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  item           Item?        @relation(fields: [item_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  postcard       PostCard?    @relation(fields: [post_card], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  cart           Cart[]
+  Order          Order[]
 
-  @@index([order_id], map: "carts_order_id_fkey")
+  @@map("cart_items")
+}
+
+model Cart {
+  id             String   @id @default(uuid())
+  user_id        String?
+  anonymous_user String?
+  cart_item      String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  cartItem       cartItem @relation(fields: [cart_item], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user           User?    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
   @@map("carts")
 }
 
 model Order {
-  id              String           @id @default(uuid())
-  user_id         String?
-  order_number    Int?
-  address         String
-  email           String
-  order_type      String
-  premade_gift_id String?
-  custom_gift_id  String?
-  item_id         String?
-  from_to         String
-  order_state     String
-  post_card_id    String?
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-  cart            Cart[]
-  confirmedOrder  ConfirmedOrder[]
-  postCard        PostCard?        @relation(fields: [post_card_id], references: [id])
+  id             String           @id @default(uuid())
+  user_id        String?
+  order_number   Int?
+  address        String
+  email          String
+  order_status   String
+  product_id     String
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  product        cartItem         @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  confirmedOrder ConfirmedOrder[]
 
   @@map("orders")
 }
@@ -220,6 +236,7 @@ model User {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   address     Address? @relation(fields: [address_id], references: [id])
+  cart        Cart[]
 
   @@index([id], map: "users_id_fkey")
   @@map("users")

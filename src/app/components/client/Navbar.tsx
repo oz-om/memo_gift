@@ -13,10 +13,6 @@ function toggleMenu() {
   document.querySelector(".nave_menu")?.classList.toggle("w-0");
   document.querySelector(".nave_menu")?.classList.toggle("w-full");
 }
-function toggleCart() {
-  document.querySelector(".basket .cart_content")?.classList.toggle("-right-[100vw]");
-  document.querySelector(".basket .cart_content")?.classList.toggle("right-0");
-}
 
 export function Open_menu() {
   return <i onClick={toggleMenu} className='bx bx-menu-alt-left text-teal-400 text-3xl font-extrabold cursor-pointer'></i>;
@@ -35,6 +31,10 @@ export function Close_menu() {
   );
 }
 
+function toggleCart() {
+  document.querySelector(".basket .cart_content")?.classList.toggle("-right-[100vw]");
+  document.querySelector(".basket .cart_content")?.classList.toggle("right-0");
+}
 export function Open_cart() {
   return <i onClick={toggleCart} className='bx bxs-cart-alt text-teal-400 text-3xl font-extrabold cursor-pointer'></i>;
 }

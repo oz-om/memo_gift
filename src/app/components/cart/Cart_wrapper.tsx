@@ -1,8 +1,42 @@
 import Cart_item from "./Cart_item";
 import Link from "next/link";
 import { Close_cart } from "../client/Navbar";
+import { cookies } from "next/headers";
+import { prisma } from "@/lib/db/prisma";
 
-export default function Cart_wrapper() {
+export default async function Cart_wrapper() {
+  let anonymousUser = cookies().get("anonymousUser")?.value;
+  let cart = await prisma.cart.findMany({
+    where: {
+      anonymous_user: anonymousUser,
+    },
+    include: {
+      cartItem: {
+        include: {
+          customGift: {
+            include: {
+              includes: {
+                include: {
+                  item: true,
+                },
+              },
+            },
+          },
+          premade: {
+            include: {
+              includes: {
+                include: {
+                  item: true,
+                },
+              },
+            },
+          },
+          item: true,
+        },
+      },
+    },
+  });
+
   return (
     <div className='cart_content fixed top-0 bottom-0 z-10 bg-slate-50 text-black max-w-sm w-full -right-[100vw] transition-[right]'>
       <div className='cart_head flex items-center border-b '>
@@ -15,8 +49,17 @@ export default function Cart_wrapper() {
         </h4>
       </div>
       <div className='cart_items  overflow-y-auto h-[calc(100%_-_100px)] custom-scroll-bar'>
-        <Cart_item name={"happy birthday"} quantity={1} totalPrice={120} includes={["/images/items_01.png", "/images/items_02.png", "/images/items_03.png", "/images/items_05.png", "/images/items_06.png"]} />
-        <Cart_item name={"Hallowing Night"} quantity={1} totalPrice={200} includes={["/images/items_03.png", "/images/items_04.png"]} />
+        {anonymousUser &&
+          cart.map(({ cartItem }) => {
+            return <Cart_item key={cartItem.id} cartItem={cartItem} />;
+          })}
+        {!anonymousUser && (
+          <div className='h-[calc(100%_-_100px)] grid place-content-center'>
+            <p className='text-center'>empty</p>
+          </div>
+        )}
+        {/* <Cart_item name={"happy birthday"} quantity={1} totalPrice={120} includes={["/images/items_01.png", "/images/items_02.png", "/images/items_03.png", "/images/items_05.png", "/images/items_06.png"]} />
+        <Cart_item name={"Hallowing Night"} quantity={1} totalPrice={200} includes={["/images/items_03.png", "/images/items_04.png"]} /> */}
       </div>
       <div className='total_price_checkout absolute bottom-0 bg-sky-100 w-full flex justify-between p-2'>
         <div className='price'>

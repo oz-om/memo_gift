@@ -8,10 +8,11 @@ import Filter from "@/app/components/Filter";
 import { prisma } from "@/lib/db/prisma";
 import Image from "next/image";
 import { redirect } from "next/navigation";
+import GoToStepThree from "../components/client/GoToStepThree";
 
-export default async function Step_two({ searchParams }: { searchParams: { pack: string; id: string } }) {
-  let { pack, id } = searchParams;
-  if (!pack || pack.trim().length == 0 || !id || id.trim().length == 0) {
+export default async function Step_two({ searchParams }: { searchParams: { pack: string; cgid: string } }) {
+  let { pack, cgid } = searchParams;
+  if (!pack || pack.trim().length == 0 || !cgid || cgid.trim().length == 0) {
     redirect("/build-a-memori_gift?step=one");
   }
 
@@ -21,9 +22,9 @@ export default async function Step_two({ searchParams }: { searchParams: { pack:
     },
   });
 
-  let builtBox = await prisma.customGift.findUnique({
+  let customGift = await prisma.customGift.findUnique({
     where: {
-      id: id as string,
+      id: cgid as string,
     },
     include: {
       includes: {
@@ -35,7 +36,7 @@ export default async function Step_two({ searchParams }: { searchParams: { pack:
     },
   });
 
-  if (!builtBox) {
+  if (!customGift) {
     redirect("/build-a-memori_gift?step=one");
   }
 
@@ -60,9 +61,7 @@ export default async function Step_two({ searchParams }: { searchParams: { pack:
                   <Pagination />
                 </div>
                 <div className='next_step'>
-                  <Link href={"?step=three"} className='bg-teal-400 text-white text-center px-4 py-2 rounded-md mx-auto min-w-max w-2/5 block sm:hidden'>
-                    Next Step
-                  </Link>
+                  <GoToStepThree pack={pack} customGiftId={cgid} className='bg-teal-400 text-white text-center px-4 py-2 rounded-md mx-auto min-w-max w-2/5 block sm:hidden' />
                 </div>
               </div>
             </div>
@@ -87,17 +86,17 @@ export default async function Step_two({ searchParams }: { searchParams: { pack:
             <div className='chosed_items custom-scroll-bar pb-20 sm:pb-0 sm:overflow-auto sm:mb-0'>
               <div className='chosed_variant flex gap-x-2 py-2 px-4 odd:bg-white odd:my-4'>
                 <figure className='chosed_item_img border rounded-md flex-[1] '>
-                  <Image src={`${builtBox?.variant.preview}`} alt={`${builtBox?.variant.name}`} width={100} height={100} />
+                  <Image src={`${customGift?.variant.preview}`} alt={`${customGift?.variant.name}`} width={100} height={100} />
                 </figure>
-                <h4 className='chosed_item_name tracking-widest line-clamp-3 flex-[2]  capitalize text-2xl sm:text-base'>{`${builtBox?.variant.name}`}</h4>
+                <h4 className='chosed_item_name tracking-widest line-clamp-3 flex-[2]  capitalize text-2xl sm:text-base'>{`${customGift?.variant.name}`}</h4>
               </div>
-              {builtBox?.includes.map(({ item, quantity, customGift_id }) => {
+              {customGift?.includes.map(({ item, quantity, customGift_id }) => {
                 let firstImage = JSON.parse(item.images)[0];
                 let TotalPrice = item.price * quantity;
                 return <Chosed_Item key={item.id} id={item.id} boxId={customGift_id} image={`${firstImage}`} name={item.name} quantity={quantity} totalPrice={TotalPrice} />;
               })}
             </div>
-            {builtBox?.includes.length == 0 ? (
+            {customGift?.includes.length == 0 ? (
               <div className='empty h-60 grid place-content-center'>
                 <p className='text-sm text-slate-400'>there is no chosed items yet</p>
               </div>
@@ -105,12 +104,10 @@ export default async function Step_two({ searchParams }: { searchParams: { pack:
             <div className='check_out_box fixed bottom-0  bg-teal-50 w-full flex justify-between p-2 mt-auto sm:relative'>
               <div className='price'>
                 <span className='text-sm '>Total Price:</span>
-                <span className='text-sm ml-2'>${builtBox?.price}</span>
+                <span className='text-sm ml-2'>${customGift?.price}</span>
               </div>
               <div className='next_step'>
-                <Link href={"?step=three&pack=" + pack + "&id=" + id} className='bg-teal-400 text-white text-center px-4 py-2 rounded-md mx-auto min-w-max w-2/5 block'>
-                  Next Step
-                </Link>
+                <GoToStepThree pack={pack} customGiftId={cgid} className='bg-teal-400 text-white text-center px-4 py-2 rounded-md mx-auto min-w-max w-2/5 block' />
               </div>
             </div>
           </div>

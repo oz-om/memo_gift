@@ -1,27 +1,28 @@
 import { prisma } from "@/lib/db/prisma";
 import Image from "next/image";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import React from "react";
 import Card_item, { ChoseCardButton, RemovePostCard } from "../components/client/Card_item";
-import FriendlyMessageForm from "../components/client/friendlyMessageForm";
+import FriendlyMessageForm from "../components/client/FriendlyMessageForm";
+FriendlyMessageForm;
 import Step_intro from "../components/Step_intro";
 
-export default async function Step_three({ searchParams }: { searchParams: { id: string } }) {
-  let { id } = searchParams;
-  if (!id || id.trim().length == 0) {
+export default async function Step_three({ searchParams }: { searchParams: { cgid: string; catitmid: string } }) {
+  let { cgid, catitmid } = searchParams;
+
+  if (!cgid || cgid.trim().length == 0 || !catitmid || catitmid.trim().length == 0) {
     redirect("/build-a-memori_gift?step=one");
   }
-  let customGift = await prisma.customGift.findUnique({
-    where: {
-      id: id,
-    },
-    select: {
-      postCard: true,
-    },
-  });
 
   let postCards = await prisma.postCard.findMany();
+  let cartItem = await prisma.cartItem.findUnique({
+    where: {
+      id: catitmid,
+    },
+    include: {
+      postcard: true,
+    },
+  });
   return (
     <section className='step_three_section'>
       <div className='container'>
@@ -30,27 +31,27 @@ export default async function Step_three({ searchParams }: { searchParams: { id:
       <section className='step_three_content'>
         <div className='container friendly_massage_wrapper px-3 mt-3 md:flex md:justify-center md:gap-x-5'>
           <figure className='max-w-xs mx-auto md:mx-0'>
-            {customGift?.postCard == null ? (
+            {cartItem?.postcard == null ? (
               <div className='w-60 h-full grid place-content-center border rounded'>
                 <p className='text-center'>no chosed card</p>
               </div>
             ) : (
-              <Image src={`${customGift?.postCard?.image}`} alt={`${customGift?.postCard?.name}`} width={400} height={350} />
+              <Image src={`${cartItem?.postcard?.image}`} alt={`${cartItem?.postcard?.name}`} width={400} height={350} />
             )}
             <div className='change_post_card'>
               <ChoseCardButton />
             </div>
           </figure>
-          <FriendlyMessageForm boxId={id} />
+          <FriendlyMessageForm cartItemId={catitmid} customGiftId={cgid} />
         </div>
 
         <dialog className='PostCardsModal fixed overflow-auto left-0 top-0 w-full h-full py-5 custom-scroll-bar overscroll-contain'>
           <div className='cards_wrapper'>
             <div className='container'>
               <div className='cards grid grid-cols-2 sm:grid-cols-[repeat(auto-fit,_minmax(250px,_1fr))] gap-10'>
-                <RemovePostCard boxId={id} />
+                <RemovePostCard cartItemId={catitmid} />
                 {postCards.map((postcard) => {
-                  return <Card_item key={postcard.id} id={postcard.id} boxId={id} image={postcard.image} name={postcard.name} />;
+                  return <Card_item key={postcard.id} id={postcard.id} cartItemId={catitmid} image={postcard.image} name={postcard.name} />;
                 })}
                 {/* <Card_item image={"/images/card_item_01.png"} name={"Postcard  | Congrats Sparkle"} />
                 <Card_item image={"/images/card_item_02.png"} name={"Postcard  | Bon Anniversaire"} />

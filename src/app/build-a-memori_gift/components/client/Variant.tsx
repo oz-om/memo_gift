@@ -1,38 +1,33 @@
 "use client";
+import { toastStyles } from "@/utils";
 import { Variant } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { toast } from "react-hot-toast";
-import { createBuiltBox } from "../../actions";
+import { createCustomGift } from "../../actions";
 
 export default function Variants({ variant }: { variant: Variant }) {
   let router = useRouter();
   async function initializeNewBox(e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) {
     e.preventDefault();
-    let loa = toast;
-    loa.loading("just a second...", {
+    let alert = toast;
+    alert.loading("just a second...", {
       style: {
         backgroundColor: "#ddf3f3",
-        padding: "2px",
-        fontSize: "12px",
+        ...toastStyles,
       },
     });
-    let res = await createBuiltBox(variant.id);
+    let res = await createCustomGift(variant.id);
+    alert.dismiss();
     if (!res.create) {
-      toast.error(`${res.error}`, {
-        style: {
-          padding: "2px",
-          fontSize: "12px",
-        },
+      alert.error(`${res.error}`, {
+        style: toastStyles,
       });
       return;
     }
-    console.log(res);
-
-    loa.dismiss();
-    router.push("?step=two&pack=" + variant.name + "&id=" + res.boxId);
+    router.push("?step=two&pack=" + variant.name + "&cgid=" + res.customGiftId);
   }
   return (
     <Link onClick={initializeNewBox} key={variant.name} href={"?step=two&pack=" + variant.name}>
