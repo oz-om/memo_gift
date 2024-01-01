@@ -12,7 +12,7 @@ export default function Product_item({ item }: { item: Item }) {
     <div className='item shadow-sm relative group/prodItem'>
       <figure className='relative overflow-hidden'>
         <Image src={firstImage} alt='FELLOW CARTER MOVE MUG 12OZ | CORDUROY RED' width={616} height={616} />
-        <div className='on_hover_options absolute -bottom-5 w-full bg-teal-500/10 flex justify-evenly h-5  group-hover/prodItem:bottom-0 transition-[bottom]'>
+        <div className='on_hover_options absolute -bottom-6 w-full bg-teal-500/10 flex justify-evenly py-1  group-hover/prodItem:bottom-0 transition-[bottom]'>
           <OpenPreview id={id} />
           <AddToCustomGift itemId={id} />
         </div>

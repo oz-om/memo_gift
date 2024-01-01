@@ -1,5 +1,6 @@
 import { Prisma } from "@prisma/client";
 import Image from "next/image";
+import { DecrementCartItemQuantity, DeleteCartItem, EditCartItem, IncrementCartItemQuantity } from "../client/cartItemOperations";
 
 type cartItem = Prisma.cartItemGetPayload<{
   select: {
@@ -44,7 +45,7 @@ export default function Cart_item({ cartItem }: { cartItem: cartItem }) {
       <div className='box_name flex justify-between px-4'>
         <h4 className='line-clamp-2'>{customGift ? "custom gift" : premade ? premade.name : item?.name}</h4>
         <div className='price'>
-          <span className='font-sans'>{customGift ? customGift.price : premade ? premade.price : item?.price}$</span>
+          <span className='font-sans'>{customGift ? customGift.price * quantity : premade ? premade.price * quantity : (item?.price as number) * quantity}$</span>
         </div>
       </div>
       <div className='includes_items whitespace-nowrap overflow-x-auto my-2 custom-scroll-bar'>
@@ -65,17 +66,13 @@ export default function Cart_item({ cartItem }: { cartItem: cartItem }) {
       </div>
       <div className='box_actions flex justify-between px-4'>
         <div className='box_quantity flex items-center gap-x-3'>
-          <i className='bx bx-plus border grid place-content-center h-5 rounded-md font-bold cursor-pointer  hover:border-slate-700'></i>
+          {quantity > 1 && <DecrementCartItemQuantity cartItemId={cartItem.id} />}
           <span className='chosed_item_quantity text-center text-xl'>{quantity}</span>
-          <i className='bx bx-minus border grid place-content-center h-5 rounded-md font-bold cursor-pointer hover:border-slate-700'></i>
+          <IncrementCartItemQuantity cartItemId={cartItem.id} />
         </div>
         <div className='edit_box flex gap-x-2 text-sm'>
-          <div className='edit px-4 grid place-content-center rounded-md border border-teal-400 text-teal-400 cursor-pointer hover:bg-teal-50'>
-            <>edit</>
-          </div>
-          <div className='delete px-4 grid place-content-center rounded-md text-red-400 cursor-pointer hover:bg-red-50'>
-            <>delete</>
-          </div>
+          <EditCartItem />
+          <DeleteCartItem cartItemId={customGift ? customGift.id : cartItem.id} cartItemType={customGift ? "customGift" : "other"} />
         </div>
       </div>
     </div>

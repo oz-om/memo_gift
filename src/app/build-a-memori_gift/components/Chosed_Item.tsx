@@ -22,10 +22,9 @@ export default function Chosed_Item({ id, image, name, quantity, totalPrice, box
       </div>
       <div className='chosed_item_details flex justify-evenly sm:justify-between'>
         <div className='chosed_item_quantity flex items-center gap-x-3'>
-          {/* @ts-ignore */}
           {quantity >= 2 && <Decrement itemId={id} boxId={boxId} />}
           <span className='chosed_item_quantity text-center text-xl'>{quantity}</span>
-          {/* @ts-ignore */}
+
           <Increment itemId={id} boxId={boxId} />
         </div>
         <div className='chosed_item_total_price'>
