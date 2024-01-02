@@ -1,12 +1,12 @@
 "use client";
 import React, { useTransition } from "react";
 import { toast } from "react-hot-toast";
-import { controlQuantity } from "../../actions";
+import { chosedItemControlQuantity } from "../../actions";
 
-export function Increment({ itemId, boxId }: { itemId: string; boxId: string }) {
+export function Increment({ itemId, customGiftId }: { itemId: string; customGiftId: string }) {
   const [pending, startTransition] = useTransition();
   async function incrementQuantity() {
-    let res = await controlQuantity(boxId, itemId, "increment");
+    let res = await chosedItemControlQuantity(customGiftId, itemId, "increment");
     if (!res.success) {
       toast.error(`${res.error}`, {
         style: {
@@ -19,10 +19,10 @@ export function Increment({ itemId, boxId }: { itemId: string; boxId: string }) 
   return <div>{pending ? <i className='bx bx-loader bx-spin'></i> : <i onClick={() => startTransition(incrementQuantity)} className='bx bx-plus border grid place-content-center h-5 rounded-md font-bold cursor-pointer hover:border-slate-700'></i>}</div>;
 }
 
-export function Decrement({ itemId, boxId }: { itemId: string; boxId: string }) {
+export function Decrement({ itemId, customGiftId }: { itemId: string; customGiftId: string }) {
   const [pending, startTransition] = useTransition();
   async function decrementQuantity() {
-    let res = await controlQuantity(boxId, itemId, "decrement");
+    let res = await chosedItemControlQuantity(customGiftId, itemId, "decrement");
     if (!res.success) {
       toast.error(`${res.error}`, {
         style: {

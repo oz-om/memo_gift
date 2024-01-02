@@ -1,7 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/db/prisma";
-import delay from "@/utils/delay";
+
 import { revalidatePath } from "next/cache";
 
 export async function deleteAction(cartItemId: string, cartItemType: string) {

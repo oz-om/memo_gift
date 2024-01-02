@@ -1,3 +1,4 @@
+import "../../styles/style.css";
 import Carousel from "@/app/components/Carousel";
 import { prisma } from "@/lib/db/prisma";
 import { Item as ItemType, PremadeGift, Variant } from "@prisma/client";
@@ -6,6 +7,8 @@ import { cache } from "react";
 import { Metadata } from "next";
 import Included_item from "../../components/Included_item";
 import Item from "../../components/Item";
+import Image from "next/image";
+import { ChoseCardButton } from "@/app/build-a-memori_gift/components/client/Card_item";
 
 type productType = ({ includes: { item: ItemType }[]; variants: { variant: Variant }[] } & PremadeGift) | null;
 const getProduct = cache(async (id: string) => {
@@ -90,9 +93,8 @@ export default async function PremadeProduct({ params: { premade_id } }: { param
                   </div>
                 </div>
               </div>
-
-              <div className='submit_order text-end mb-4 mt-auto'>
-                <button className='text-2xl bg-lime-500 text-white rounded-lg px-4 py-2 hover:bg-lime-400 uppercase'>add to cart</button>
+              <div className='submit_order mb-4 mt-auto'>
+                <button className='w-52 mx-auto sm:mr-0 block text-2xl bg-teal-500 text-white rounded-lg px-4 py-2 hover:bg-teal-400 uppercase'>add to cart</button>
               </div>
             </div>
 

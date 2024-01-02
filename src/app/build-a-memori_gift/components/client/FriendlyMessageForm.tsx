@@ -1,15 +1,17 @@
 "use client";
 import { toastStyles } from "@/utils";
-import { redirect, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useState } from "react";
 import { toast } from "react-hot-toast";
-import { setFriendlyMessageAndAddCartItemToCart } from "../../actions";
+import { setFriendlyMessageToCartItem } from "../../actions";
 
-export default function FriendlyMessageForm({ cartItemId, customGiftId }: { cartItemId: string; customGiftId: string }) {
+export default function FriendlyMessageForm({ cartItemId }: { cartItemId: string }) {
   const [withNote, setWithNote] = useState(true);
   const [emptyCard, setEmptyCard] = useState(false);
-  const [submit, setSubmit] = useState("add to cart");
   const router = useRouter();
+  let alert = toast;
+  const params = useSearchParams();
+  const path = usePathname();
 
   function emptyCardHandler(e: React.ChangeEvent<HTMLInputElement>) {
     if (!withNote) {
@@ -27,16 +29,14 @@ export default function FriendlyMessageForm({ cartItemId, customGiftId }: { cart
     setWithNote(!checkbox.checked);
   }
 
-  function setSubmitType(e: React.MouseEvent<HTMLInputElement, MouseEvent>) {
-    setSubmit(e.currentTarget.value);
-  }
-
-  async function setFriendlyNote(formData: FormData) {
-    let alert = toast;
+  function startSubmitting(e: React.MouseEvent<HTMLInputElement, MouseEvent>) {
     alert.loading("just a second...", {
       style: toastStyles,
     });
-    let res = await setFriendlyMessageAndAddCartItemToCart(customGiftId, cartItemId, emptyCard, withNote, formData);
+  }
+
+  async function setFriendlyNote(formData: FormData) {
+    let res = await setFriendlyMessageToCartItem(cartItemId, emptyCard, withNote, formData);
     alert.dismiss();
     if (!res.success) {
       alert.error(`${res.error}`, {
@@ -44,11 +44,10 @@ export default function FriendlyMessageForm({ cartItemId, customGiftId }: { cart
       });
     }
 
-    if (submit == "add to cart") {
-      router.push("?step=four");
-    } else {
-      redirect("/checkout");
-    }
+    let paramsString = params.toString();
+    // Replace the current step value with the next one
+    paramsString = paramsString.replace(/(?<=step=)[^&]+/, "three");
+    router.push(`${path}?${paramsString}`);
   }
 
   return (
@@ -84,8 +83,7 @@ export default function FriendlyMessageForm({ cartItemId, customGiftId }: { cart
         )}
       </div>
       <div className='complete_box flex justify-center items-center gap-x-5 mt-5 md:mt-auto'>
-        <input type={"submit"} onClick={setSubmitType} className='add_to_cart py-1 px-3 border border-teal-400 text-teal-400 rounded' value={"add to cart"} />
-        <input type={"submit"} onClick={setSubmitType} className='checkout py-1 px-3 border bg-teal-400 text-white rounded' value={"checkout"} />
+        <input type={"submit"} onClick={startSubmitting} className='bg-teal-400 text-white text-center px-4 py-2 rounded-md mx-auto min-w-max w-2/5 block cursor-pointer' value={"Next Step"} />
       </div>
     </form>
   );

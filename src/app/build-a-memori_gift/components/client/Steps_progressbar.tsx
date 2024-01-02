@@ -34,7 +34,7 @@ export default function Steps_progressbar({}) {
       });
 
       let paramsString = params.toString();
-      // Replace the old step value with the new one
+      // Replace the prev step value with the chosed one
       paramsString = paramsString.replace(/(?<=step=)[^&]+/, step_level);
       router.push(`${path}?${paramsString}`);
     }
@@ -81,13 +81,13 @@ export default function Steps_progressbar({}) {
             </ul>
             <ul className='steps_name flex justify-evenly '>
               <li data-redirect-to='one' onClick={handleSearchParams} className='step_name basis-1/3 text-center text-slate-400  cursor-pointer active_step'>
-                Packaging
+                chose Gift Items
               </li>
               <li data-redirect-to='two' onClick={handleSearchParams} className='step_name basis-1/3 text-center text-slate-400  cursor-pointer '>
-                Chose Pack Items
+                chose Card
               </li>
               <li data-redirect-to='three' onClick={handleSearchParams} className='step_name basis-1/3 text-center text-slate-400  cursor-pointer'>
-                Chose Card
+                packaging
               </li>
               <li data-redirect-to='four' onClick={handleSearchParams} className='step_name basis-1/3 text-center text-slate-400  cursor-pointer'>
                 Done

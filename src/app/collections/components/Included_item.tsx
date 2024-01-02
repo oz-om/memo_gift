@@ -8,7 +8,7 @@ export default function Included_item({ id, name, image }: { [key: string]: stri
         <Image src={image} alt={name} width={200} height={200} />
       </figure>
       <span className=''>{name}</span>
-      <Link href={"/collections/" + id + "?t=items"}>view</Link>
+      <Link href={"/collections/items/" + id}>view</Link>
     </li>
   );
 }

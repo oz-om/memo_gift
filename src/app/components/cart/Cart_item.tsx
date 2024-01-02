@@ -14,6 +14,9 @@ type cartItem = Prisma.cartItemGetPayload<{
       };
       include: {
         includes: {
+          select: {
+            quantity: true;
+          };
           include: {
             item: true;
           };
@@ -33,12 +36,13 @@ type cartItem = Prisma.cartItemGetPayload<{
       };
     };
     item: true;
+    variant: true;
   };
 }>;
 export default function Cart_item({ cartItem }: { cartItem: cartItem }) {
-  let { customGift, premade, item, quantity } = cartItem;
+  let { customGift, premade, item, quantity, variant } = cartItem;
   let withIncludes = !!customGift || !!premade;
-  let includes = customGift ? customGift.includes : premade?.includes;
+  let includes = customGift ? customGift.includes : premade ? premade?.includes : null;
 
   return (
     <div className='cart_item bg-white odd:my-4 p-4 mx-1 rounded-md'>
@@ -49,12 +53,23 @@ export default function Cart_item({ cartItem }: { cartItem: cartItem }) {
         </div>
       </div>
       <div className='includes_items whitespace-nowrap overflow-x-auto my-2 custom-scroll-bar'>
+        {withIncludes && (
+          <figure className='w-20 h-20 inline-block mr-1 align-middle rounded-lg overflow-hidden'>
+            <Image src={`${variant?.preview}`} alt={`${variant?.name}`} width={100} height={100} className='h-full object-none' />
+          </figure>
+        )}
         {withIncludes ? (
-          includes?.map(({ item }) => {
+          includes?.map(({ item }, i) => {
             let firstImage = JSON.parse(item.images)[0];
+            let isCustomGift = customGift;
+            let itemQuantity = 0;
+            if (isCustomGift) {
+              itemQuantity = customGift?.includes[i].quantity as number;
+            }
             return (
-              <figure key={item.id} className='w-20 h-20 inline-block mr-1 align-middle rounded-lg overflow-hidden'>
+              <figure key={item.id} className='w-20 h-20 inline-block mr-1 align-middle rounded-lg overflow-hidden relative'>
                 <Image src={firstImage} alt={item.name} width={100} height={100} />
+                <span className='include_item_quantity absolute top-0 right-0 text-[10px] w-4 h-4 pt-[1px] grid place-content-center font-semibold border border-teal-50 bg-teal-500 text-teal-50 rounded-full '>{itemQuantity}</span>
               </figure>
             );
           })

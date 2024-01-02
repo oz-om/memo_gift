@@ -5,13 +5,13 @@ import { Decrement, Increment } from "./client/quantityControl";
 
 type chosedItemProps = {
   id: string;
-  boxId: string;
+  customGiftId: string;
   image: string;
   name: string;
   quantity: number;
   totalPrice: number;
 };
-export default function Chosed_Item({ id, image, name, quantity, totalPrice, boxId }: chosedItemProps) {
+export default function Chosed_Item({ id, image, name, quantity, totalPrice, customGiftId }: chosedItemProps) {
   return (
     <div className='chosed_item gap-x-3 py-2 px-4 odd:bg-white odd:my-4'>
       <div className='chosed_item_info flex gap-x-2'>
@@ -22,16 +22,15 @@ export default function Chosed_Item({ id, image, name, quantity, totalPrice, box
       </div>
       <div className='chosed_item_details flex justify-evenly sm:justify-between'>
         <div className='chosed_item_quantity flex items-center gap-x-3'>
-          {quantity >= 2 && <Decrement itemId={id} boxId={boxId} />}
+          {quantity >= 2 && <Decrement itemId={id} customGiftId={customGiftId} />}
           <span className='chosed_item_quantity text-center text-xl'>{quantity}</span>
-
-          <Increment itemId={id} boxId={boxId} />
+          <Increment itemId={id} customGiftId={customGiftId} />
         </div>
         <div className='chosed_item_total_price'>
           <span className='chosed_item_total_price text-xl font-bold text-teal-400 text-center'>{totalPrice}$</span>
         </div>
         <div className='chosed_item_rm justify-center gap-y-2'>
-          <DeleteChosedItem itemId={id} boxId={boxId} />
+          <DeleteChosedItem itemId={id} customGiftId={customGiftId} />
         </div>
       </div>
     </div>

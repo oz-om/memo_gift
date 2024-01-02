@@ -3,12 +3,11 @@
 import { prisma } from "@/lib/db/prisma";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
-import { boolean } from "zod";
 
-async function getCustomGift(boxId: string) {
+async function getCustomGift(customGiftId: string) {
   let builtBox = await prisma.customGift.findUnique({
     where: {
-      id: boxId,
+      id: customGiftId,
     },
     include: {
       includes: {
@@ -20,10 +19,10 @@ async function getCustomGift(boxId: string) {
   });
   return builtBox;
 }
-async function customGiftUpdatePrice(boxId: string, price: number) {
+async function customGiftUpdatePrice(customGiftId: string, price: number) {
   await prisma.customGift.update({
     where: {
-      id: boxId,
+      id: customGiftId,
     },
     data: {
       price: price,
@@ -31,53 +30,53 @@ async function customGiftUpdatePrice(boxId: string, price: number) {
   });
 }
 
-export async function createCustomGift(variantId: string): Promise<{
+// create new custom gift
+async function createNewCustomGift() {
+  let customGift = await prisma.customGift.create({
+    data: {},
+  });
+  cookies().set("customGiftId", customGift.id);
+  return customGift.id;
+}
+export async function createCustomGift(): Promise<{
   create: boolean;
   customGiftId: string | null;
   error?: string;
 }> {
   let existingCustomGiftId = cookies().get("customGiftId")?.value;
-  if (existingCustomGiftId) {
-    try {
-      await prisma.customGift.update({
-        where: {
-          id: existingCustomGiftId,
-        },
-        data: {
-          variant_id: variantId,
-        },
-      });
+  try {
+    if (!existingCustomGiftId) {
+      let newCustomGiftId = await createNewCustomGift();
       return {
         create: true,
-        customGiftId: existingCustomGiftId,
-      };
-    } catch (error) {
-      return {
-        create: false,
-        customGiftId: null,
-        error: "something went wrong with updating a variant for current custom gift, please try again",
+        customGiftId: newCustomGiftId,
       };
     }
-  }
-  try {
-    let customGift = await prisma.customGift.create({
-      data: {
-        variant_id: variantId,
-      },
-      select: {
-        id: true,
-      },
+    // make sure that the customGift is in db
+    let customGift = await prisma.customGift.findUnique({
+      where: { id: existingCustomGiftId },
+      select: { id: true },
     });
-    cookies().set("customGiftId", customGift.id);
+
+    if (!customGift) {
+      // if the custom gif deleted from db we create the new one
+      cookies().delete("customGiftId");
+      let newCustomGiftId = await createNewCustomGift();
+      return {
+        create: true,
+        customGiftId: newCustomGiftId,
+      };
+    }
+
     return {
       create: true,
-      customGiftId: customGift.id,
+      customGiftId: existingCustomGiftId,
     };
   } catch (error) {
     return {
       create: false,
       customGiftId: null,
-      error: "something went wrong during creating new box",
+      error: "something went wrong during start creating new custom gift, please try again",
     };
   }
 }
@@ -92,63 +91,59 @@ export async function addItemToCustomGift(itemId: string): Promise<{
   if (!customGiftId) {
     return {
       add: false,
-      error: "can't find the chosen box, please try again",
-    };
-  }
-
-  let customGift = await getCustomGift(customGiftId);
-  // if custom gift removed from db for any reason
-  if (!customGift) {
-    return {
-      add: false,
       error: "there is no custom gift found to add this item to it",
     };
   }
-  // get the added item price for add it to custom Gift price
-  let addedItem = await prisma.item.findUnique({
-    where: {
-      id: itemId,
-    },
-    select: {
-      price: true,
-    },
-  });
-  // if we can't find the added item for any reason
-  if (!addedItem) {
-    return {
-      add: false,
-      error: "there is a problem with adding this item, please try again",
-    };
-  }
 
-  let items = customGift.includes.map((include) => include.item_id);
-  if (!items.includes(itemId)) {
+  try {
+    let customGift = await getCustomGift(customGiftId);
+    // if custom gift removed from db for any reason
+    if (!customGift) {
+      return {
+        add: false,
+        error: "there is no custom gift found to add this item to it",
+      };
+    }
+
+    // get the added item price for add it to custom Gift price
+    let addedItem = await prisma.item.findUnique({
+      where: {
+        id: itemId,
+      },
+      select: {
+        price: true,
+        id: true,
+      },
+    });
+
+    // if we can't find the added item for any reason
+    if (!addedItem) {
+      return {
+        add: false,
+        error: "there is a problem with adding this item, please try again",
+      };
+    }
+
     // if item doesn't exist yet in custom gift includes so we need to add it as new item
-    try {
+    let items = customGift.includes.map((include) => include.item_id);
+    if (!items.includes(addedItem.id)) {
       await prisma.customGiftIncudes.create({
         data: {
           customGift_id: customGift.id,
-          item_id: itemId,
+          item_id: addedItem.id,
         },
       });
       // calc new price
       let currentPrice = customGift.price;
       let totalPrice = currentPrice + addedItem.price;
-      await customGiftUpdatePrice(customGiftId, totalPrice);
+      await customGiftUpdatePrice(customGift.id, totalPrice);
 
       revalidatePath("");
       return {
         add: true,
       };
-    } catch (error) {
-      return {
-        add: false,
-        error: "something went wrong during adding this item",
-      };
     }
-  }
 
-  try {
     // if item already exists in custom gift includes se we just update quantity
     await prisma.customGiftIncudes.update({
       where: {
@@ -166,7 +161,7 @@ export async function addItemToCustomGift(itemId: string): Promise<{
     // calc new price
     let currentPrice = customGift.price;
     let totalPrice = currentPrice + addedItem.price;
-    await customGiftUpdatePrice(customGiftId, totalPrice);
+    await customGiftUpdatePrice(customGift.id, totalPrice);
 
     revalidatePath("");
     return {
@@ -175,43 +170,46 @@ export async function addItemToCustomGift(itemId: string): Promise<{
   } catch (error) {
     return {
       add: false,
-      error: "something went wrong during increment quantity of this item",
+      error: "something went wrong during add this item ",
     };
   }
 }
 
-// control the quantity during increment|decrement
-export async function controlQuantity(
-  boxId: string,
+// control the quantity of chosed item ( increment|decrement )
+export async function chosedItemControlQuantity(
+  customGiftId: string,
   itemId: string,
   action: "increment" | "decrement",
 ): Promise<{
   success: boolean;
   error?: string;
 }> {
-  // check quantity before action
-  let item = await prisma.customGiftIncudes.findUnique({
-    where: {
-      customGift_id_item_id: {
-        customGift_id: boxId,
-        item_id: itemId,
-      },
-    },
-    select: {
-      quantity: true,
-    },
-  });
-  if (item && item?.quantity < 1) {
-    return {
-      success: true,
-    };
-  }
-  // apply changes
   try {
+    // check the  quantity before action
+    let item = await prisma.customGiftIncudes.findUnique({
+      where: {
+        customGift_id_item_id: {
+          customGift_id: customGiftId,
+          item_id: itemId,
+        },
+      },
+      select: {
+        quantity: true,
+      },
+    });
+
+    // if the quantity is go to less than one return with nothing
+    if (item && item.quantity < 1) {
+      return {
+        success: true,
+      };
+    }
+
+    // increment|decrement the quantity
     await prisma.customGiftIncudes.update({
       where: {
         customGift_id_item_id: {
-          customGift_id: boxId,
+          customGift_id: customGiftId,
           item_id: itemId,
         },
       },
@@ -221,20 +219,20 @@ export async function controlQuantity(
         },
       },
     });
-    // get all includes to calc total price
-    let customGift = await getCustomGift(boxId);
-    if (!customGift) {
-      return {
-        success: false,
-        error: "something went wrong during " + action + " this item quantity",
-      };
+
+    // if can't find custom gift in db for any reason
+    let customGift = await getCustomGift(customGiftId);
+    if (customGift) {
+      // get all includes to calc total price
+      let includes = customGift.includes;
+      // calc total price
+      let totalPrice = includes.reduce((total, include) => (total += include.item.price * include.quantity), 0);
+
+      // update total price
+      await customGiftUpdatePrice(customGiftId, totalPrice);
+      revalidatePath("");
     }
-    let includes = customGift.includes;
-    // calc total price
-    let totalPrice = includes.reduce((total, include) => (total += include.item.price * include.quantity), 0);
-    // update total price
-    await customGiftUpdatePrice(boxId, totalPrice);
-    revalidatePath("");
+
     return {
       success: true,
     };
@@ -249,17 +247,17 @@ export async function controlQuantity(
 // remove chosed item form custom gifts includes
 export async function removeItem(
   itemId: string,
-  boxId: string,
+  customGiftId: string,
 ): Promise<{
   deleted: boolean;
   error?: string;
 }> {
   try {
-    let customGift = await getCustomGift(boxId);
+    let customGift = await getCustomGift(customGiftId);
     if (!customGift) {
       return {
         deleted: false,
-        error: "Something went wrong during delete operation ",
+        error: "Something went wrong during delete operation",
       };
     }
     // get all includes to increase the deleted item price
@@ -272,13 +270,13 @@ export async function removeItem(
     totalPrice -= removedItemPrice;
 
     // update price in customGift
-    await customGiftUpdatePrice(boxId, totalPrice);
+    await customGiftUpdatePrice(customGiftId, totalPrice);
 
     // deleting the item
     await prisma.customGiftIncudes.delete({
       where: {
         customGift_id_item_id: {
-          customGift_id: boxId,
+          customGift_id: customGiftId,
           item_id: itemId,
         },
       },
@@ -295,7 +293,17 @@ export async function removeItem(
   }
 }
 
-export async function setCustomGiftIntoCartItem(): Promise<{
+// set custom gift to cartItem
+async function setCustomGiftAsCartItem(customGiftId: string) {
+  let newCartItemId = await prisma.cartItem.create({
+    data: {
+      custom_gift_id: customGiftId,
+    },
+  });
+  cookies().set("cartItemId", newCartItemId.id);
+  return newCartItemId.id;
+}
+export async function setCustomGiftIntoCartItem(customGiftId: string): Promise<{
   success: boolean;
   cartItemId: string | null;
   error?: string;
@@ -303,15 +311,40 @@ export async function setCustomGiftIntoCartItem(): Promise<{
   let cartItemId = cookies().get("cartItemId")?.value;
   try {
     if (!cartItemId) {
-      let newCartItemId = await prisma.cartItem.create({
-        data: {},
-      });
-      cookies().set("cartItemId", newCartItemId.id);
+      let newCartItemId = await setCustomGiftAsCartItem(customGiftId);
       return {
         success: true,
-        cartItemId: newCartItemId.id,
+        cartItemId: newCartItemId,
       };
     }
+    // make sure that is cartItem is existing in db
+    let cartItem = await prisma.cartItem.findUnique({
+      where: {
+        id: cartItemId,
+      },
+      select: {
+        id: true,
+      },
+    });
+    if (!cartItem) {
+      // if the given cart item id is not in db we delete it and create new one
+      cookies().delete("cartItemId");
+      let newCartItemId = await setCustomGiftAsCartItem(customGiftId);
+      return {
+        success: true,
+        cartItemId: newCartItemId,
+      };
+    }
+
+    await prisma.cartItem.update({
+      where: {
+        id: cartItem.id,
+      },
+      data: {
+        custom_gift_id: customGiftId,
+      },
+    });
+
     return {
       success: true,
       cartItemId,
@@ -325,7 +358,7 @@ export async function setCustomGiftIntoCartItem(): Promise<{
   }
 }
 
-// setup post card
+// setup post card to cartItem
 export async function setPostCard(
   cartItemId: string,
   postCardId: string | null,
@@ -357,8 +390,6 @@ export async function setPostCard(
     revalidatePath("");
     return { success: true };
   } catch (error) {
-    console.log(error);
-
     return {
       success: false,
       error: "something went wrong during setting the Postcard",
@@ -366,9 +397,8 @@ export async function setPostCard(
   }
 }
 
-// set Friendly not / message
-export async function setFriendlyMessageAndAddCartItemToCart(
-  customGiftId: string,
+// set Friendly not / message to cartItem
+export async function setFriendlyMessageToCartItem(
   cartItemId: string,
   emptyCard: boolean,
   withNote: boolean,
@@ -377,6 +407,7 @@ export async function setFriendlyMessageAndAddCartItemToCart(
   success: boolean;
   error?: string;
 }> {
+  //
   let friendlyNoteData = {
     from: data.get("from") as string,
     to: data.get("to") as string,
@@ -403,30 +434,14 @@ export async function setFriendlyMessageAndAddCartItemToCart(
   }
 
   try {
-    let cartItem = await prisma.cartItem.update({
+    await prisma.cartItem.update({
       where: {
         id: cartItemId,
       },
       data: {
         ...friendlyNoteData,
-        custom_gift_id: customGiftId,
       },
     });
-
-    let anonymousUser = cookies().get("anonymousUser")?.value;
-    let newAnonymousUser;
-    if (!anonymousUser) {
-      newAnonymousUser = crypto.randomUUID();
-      cookies().set("anonymousUser", newAnonymousUser);
-    }
-    await prisma.cart.create({
-      data: {
-        cart_item: cartItem.id,
-        anonymous_user: anonymousUser ?? newAnonymousUser,
-      },
-    });
-    cookies().delete("customGiftId");
-    cookies().delete("cartItemId");
     return {
       success: true,
     };
@@ -434,6 +449,59 @@ export async function setFriendlyMessageAndAddCartItemToCart(
     return {
       success: false,
       error: "something went wrong during submitting your request",
+    };
+  }
+}
+
+// add variant to cartItem that include the custom gift|premade|item and add cartItem to cart
+async function addVariantToCartItem(variantId: string, cartItemId: string) {
+  await prisma.cartItem.update({
+    where: {
+      id: cartItemId,
+    },
+    data: {
+      chosed_variant: variantId,
+    },
+  });
+}
+export async function setVariantAndAddCartItemToCart(cartItemId: string, variantId: string) {
+  try {
+    await addVariantToCartItem(variantId, cartItemId);
+    // add cart item to cart
+    let anonymousUser = cookies().get("anonymousUserId")?.value;
+    if (!anonymousUser) {
+      let newAnonymousUser = crypto.randomUUID();
+      await prisma.cart.create({
+        data: {
+          anonymous_user: newAnonymousUser,
+          cart_item: cartItemId,
+        },
+      });
+      cookies().delete("customGiftId");
+      cookies().delete("cartItemId");
+      cookies().set("anonymousUserId", newAnonymousUser);
+      return {
+        success: true,
+        anonymousUser: newAnonymousUser,
+      };
+    }
+
+    await prisma.cart.create({
+      data: {
+        anonymous_user: anonymousUser,
+        cart_item: cartItemId,
+      },
+    });
+    cookies().delete("customGiftId");
+    cookies().delete("cartItemId");
+    return {
+      success: true,
+      anonymousUser: anonymousUser,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      anonymousUser: null,
     };
   }
 }

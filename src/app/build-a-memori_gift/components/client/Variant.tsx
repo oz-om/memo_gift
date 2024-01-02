@@ -6,12 +6,11 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { toast } from "react-hot-toast";
-import { createCustomGift } from "../../actions";
+import { setVariantAndAddCartItemToCart } from "../../actions";
 
-export default function Variants({ variant }: { variant: Variant }) {
+export default function Variants({ variant, cartItemId }: { variant: Variant; cartItemId: string }) {
   let router = useRouter();
-  async function initializeNewBox(e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) {
-    e.preventDefault();
+  async function completeTheCustomGift() {
     let alert = toast;
     alert.loading("just a second...", {
       style: {
@@ -19,22 +18,22 @@ export default function Variants({ variant }: { variant: Variant }) {
         ...toastStyles,
       },
     });
-    let res = await createCustomGift(variant.id);
+    let res = await setVariantAndAddCartItemToCart(cartItemId, variant.id);
     alert.dismiss();
-    if (!res.create) {
-      alert.error(`${res.error}`, {
+    if (!res.success) {
+      alert.error(`something went wrong during completing create operation`, {
         style: toastStyles,
       });
       return;
     }
-    router.push("?step=two&pack=" + variant.name + "&cgid=" + res.customGiftId);
+    router.push("?step=four");
   }
   return (
-    <Link onClick={initializeNewBox} key={variant.name} href={"?step=two&pack=" + variant.name}>
+    <button onClick={completeTheCustomGift}>
       <figure className='cursor-pointer'>
-        <Image src={`${variant.preview}`} alt={"Original Creme"} width={713} height={556} />
+        <Image src={`${variant.preview}`} alt={variant.name} width={350} height={280} />
         <figcaption className='text-center'>{variant.name}</figcaption>
       </figure>
-    </Link>
+    </button>
   );
 }

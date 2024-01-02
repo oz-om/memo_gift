@@ -3,10 +3,10 @@ import React, { useTransition } from "react";
 import { toast } from "react-hot-toast";
 import { removeItem } from "../../actions";
 
-export default function DeleteChosedItem({ itemId, boxId }: { itemId: string; boxId: string }) {
+export default function DeleteChosedItem({ itemId, customGiftId }: { itemId: string; customGiftId: string }) {
   const [pending, startTransition] = useTransition();
   async function removeChosedItem() {
-    let res = await removeItem(itemId, boxId);
+    let res = await removeItem(itemId, customGiftId);
     if (!res.deleted) {
       toast.error(`${res.error}`, {
         style: {

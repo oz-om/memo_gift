@@ -12,6 +12,9 @@ type T_cart = Prisma.CartGetPayload<{
         customGift: {
           include: {
             includes: {
+              select: {
+                quantity: true;
+              };
               include: {
                 item: true;
               };
@@ -28,13 +31,14 @@ type T_cart = Prisma.CartGetPayload<{
           };
         };
         item: true;
+        variant: true;
       };
     };
   };
 }>[];
 
 export default async function Cart_wrapper() {
-  let anonymousUser = cookies().get("anonymousUser")?.value;
+  let anonymousUser = cookies().get("anonymousUserId")?.value;
   let cart: T_cart = [];
   let totalPrice = 0;
   if (anonymousUser) {
@@ -64,6 +68,7 @@ export default async function Cart_wrapper() {
               },
             },
             item: true,
+            variant: true,
           },
         },
       },

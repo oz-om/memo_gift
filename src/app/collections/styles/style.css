@@ -53,7 +53,6 @@
   display: none;
 }
 
-// ----------------------------------------------------------------
 .add_pro_to .decoration_add_to {
   display: block;
   background-color: #306479;
@@ -84,4 +83,47 @@
 .add_pro_to .decoration_add_to::before {
   left: -23px;
   border-right: 20px solid #306479;
+}
+
+input[type="checkbox"] {
+  display: none;
+}
+input[type="checkbox"]:checked + label:after {
+  left: 16px;
+}
+input[type="checkbox"]:checked + label:before {
+  background: #0fa800;
+}
+input[type="checkbox"] + label {
+  cursor: pointer;
+  user-select: none;
+  display: inline-block;
+  position: relative;
+  padding-left: 40px;
+  vertical-align: middle;
+}
+input[type="checkbox"] + label:after,
+input[type="checkbox"] + label:before {
+  display: block;
+  content: "";
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  transition: ease-in 0.15s;
+  margin-top: 5px;
+}
+input[type="checkbox"] + label:after {
+  transform: scale(0.7);
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0px 0px 6px 0px rgba(0, 0, 0, 0.2);
+}
+input[type="checkbox"] + label:before {
+  width: 35px;
+  height: 20px;
+  border-radius: 25px;
+  background: #014862;
+  box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.3) inset;
 }

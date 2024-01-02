@@ -83,14 +83,14 @@ model boxVarint {
 }
 
 model Variant {
-  id         String       @id @default(uuid())
-  name       String       @unique
-  value      String
-  preview    String?
-  createdAt  DateTime     @default(now())
-  updatedAt  DateTime     @updatedAt
-  premade    boxVarint[]
-  customGift customGift[]
+  id        String      @id @default(uuid())
+  name      String      @unique
+  value     String
+  preview   String?
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  premade   boxVarint[]
+  cartItem  cartItem[]
 
   @@map("variants")
 }
@@ -107,16 +107,13 @@ model boxCategory {
 }
 
 model customGift {
-  id         String   @id @default(uuid())
-  name       String?
-  price      Float    @default(0)
-  variant_id String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  variant  Variant             @relation(fields: [variant_id], references: [id])
-  includes customGiftIncudes[]
-  cartItem cartItem[]
+  id        String              @id @default(uuid())
+  name      String?
+  price     Float               @default(0)
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+  includes  customGiftIncudes[]
+  cartItem  cartItem[]
 
   @@map("cosutom_gifts")
 }
@@ -157,12 +154,14 @@ model cartItem {
   empty_card     Boolean      @default(false)
   post_card      String?
   quantity       Int          @default(1)
+  chosed_variant String?
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
   premade        PremadeGift? @relation(fields: [premad_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   customGift     customGift?  @relation(fields: [custom_gift_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   item           Item?        @relation(fields: [item_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   postcard       PostCard?    @relation(fields: [post_card], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  variant        Variant?     @relation(fields: [chosed_variant], references: [id], onDelete: Cascade, onUpdate: Cascade)
   cart           Cart[]
   Order          Order[]
 

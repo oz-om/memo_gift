@@ -5,7 +5,7 @@ import React from "react";
 import { toast } from "react-hot-toast";
 import { setCustomGiftIntoCartItem } from "../../actions";
 
-export default function GoToStepThree({ className, pack, customGiftId }: { className: string; pack: string; customGiftId: string }) {
+export default function GoToStepTwo({ className, customGiftId }: { className: string; customGiftId: string }) {
   const router = useRouter();
 
   let alert = toast;
@@ -13,7 +13,7 @@ export default function GoToStepThree({ className, pack, customGiftId }: { class
     alert.loading("just as second...", {
       style: toastStyles,
     });
-    let res = await setCustomGiftIntoCartItem();
+    let res = await setCustomGiftIntoCartItem(customGiftId);
     alert.dismiss();
     if (!res.success) {
       alert.error(`${res.error}`, {
@@ -22,7 +22,7 @@ export default function GoToStepThree({ className, pack, customGiftId }: { class
       return;
     }
 
-    router.push("?step=three&pack=" + pack + "&cgid=" + customGiftId + "&catitmid=" + res.cartItemId);
+    router.push("?step=two&cgid=" + customGiftId + "&catitmid=" + res.cartItemId);
   }
   return (
     <button onClick={nextStepHandler} className={className}>
