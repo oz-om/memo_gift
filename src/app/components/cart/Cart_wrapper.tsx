@@ -93,7 +93,7 @@ export default async function Cart_wrapper() {
           </span>
         </h4>
       </div>
-      <div className='cart_items  overflow-y-auto h-[calc(100%_-_100px)] custom-scroll-bar'>
+      <div className='cart_items  overflow-y-auto h-[calc(100%_-_100px)] custom-scroll-bar overscroll-contain'>
         {cart.map(({ cartItem }) => {
           return <Cart_item key={cartItem.id} cartItem={cartItem} />;
         })}

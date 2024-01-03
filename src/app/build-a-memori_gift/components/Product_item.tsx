@@ -14,7 +14,7 @@ export default function Product_item({ item }: { item: Item }) {
         <Image src={firstImage} alt='FELLOW CARTER MOVE MUG 12OZ | CORDUROY RED' width={616} height={616} />
         <div className='on_hover_options absolute -bottom-6 w-full bg-teal-500/10 flex justify-evenly py-1  group-hover/prodItem:bottom-0 transition-[bottom]'>
           <OpenPreview id={id} />
-          <AddToCustomGift itemId={id} />
+          <AddToCustomGift itemId={id} className='add text-teal-500 border border-teal-400 px-2 text-xs gird place-content-center rounded-sm cursor-pointer' />
         </div>
       </figure>
       <div className='item_details'>

@@ -144,7 +144,7 @@ model PostCard {
 
 model cartItem {
   id             String       @id @default(uuid())
-  premad_id      String?
+  premade_id     String?
   custom_gift_id String?
   item_id        String?
   from           String?
@@ -157,7 +157,7 @@ model cartItem {
   chosed_variant String?
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
-  premade        PremadeGift? @relation(fields: [premad_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  premade        PremadeGift? @relation(fields: [premade_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   customGift     customGift?  @relation(fields: [custom_gift_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   item           Item?        @relation(fields: [item_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   postcard       PostCard?    @relation(fields: [post_card], references: [id], onDelete: Cascade, onUpdate: Cascade)

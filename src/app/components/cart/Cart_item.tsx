@@ -42,6 +42,7 @@ type cartItem = Prisma.cartItemGetPayload<{
 export default function Cart_item({ cartItem }: { cartItem: cartItem }) {
   let { customGift, premade, item, quantity, variant } = cartItem;
   let withIncludes = !!customGift || !!premade;
+
   let includes = customGift ? customGift.includes : premade ? premade?.includes : null;
 
   return (
@@ -69,13 +70,13 @@ export default function Cart_item({ cartItem }: { cartItem: cartItem }) {
             return (
               <figure key={item.id} className='w-20 h-20 inline-block mr-1 align-middle rounded-lg overflow-hidden relative'>
                 <Image src={firstImage} alt={item.name} width={100} height={100} />
-                <span className='include_item_quantity absolute top-0 right-0 text-[10px] w-4 h-4 pt-[1px] grid place-content-center font-semibold border border-teal-50 bg-teal-500 text-teal-50 rounded-full '>{itemQuantity}</span>
+                {itemQuantity >= 1 && <span className='include_item_quantity absolute top-0 right-0 text-[10px] w-4 h-4 pt-[1px] grid place-content-center font-semibold border border-teal-50 bg-teal-500 text-teal-50 rounded-full '>{itemQuantity}</span>}
               </figure>
             );
           })
         ) : (
           <figure className='w-20 h-20 inline-block mr-1 align-middle rounded-lg overflow-hidden'>
-            <Image src={JSON.stringify(item?.images)[0]} alt={`${item?.name}`} width={100} height={100} />
+            <Image src={`${JSON.parse(item!.images)[0]}`} alt={`${item?.name}`} width={100} height={100} />
           </figure>
         )}
       </div>

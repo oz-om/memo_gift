@@ -1,5 +1,6 @@
 import Carousel from "@/app/components/Carousel";
 import { Item } from "@prisma/client";
+import AddToCustomGift from "./client/AddToCustomGift";
 import { ClosePreview } from "./client/Buttons";
 
 export default function Quick_view({ item }: { item: Item }) {
@@ -27,12 +28,8 @@ export default function Quick_view({ item }: { item: Item }) {
             </div>
           </div>
           <div className='add_to md:col-span-2 max-w-xs w-full mx-auto text-center my-4'>
-            <div className='add text-white border bg-teal-400 px-2 text-lg gird place-content-center rounded-md py-2 cursor-pointer'>add</div>
-            <div className='add_controls hidden justify-center w-9/12 mx-auto'>
-              <span className='increment basis-1/4 grid place-content-center text-xl bg-slate-200 border border-slate-400 rounded-l-md cursor-pointer'>+</span>
-              <span className='count basis-3/5 bg-white'>1</span>
-              <span className='decrement basis-1/4 grid place-content-center text-xl bg-slate-200 border border-slate-400 rounded-r-md cursor-pointer'>-</span>
-            </div>
+            <AddToCustomGift itemId={item.id} className='add text-white border bg-teal-400 px-2 text-lg gird place-content-center rounded-md py-2 cursor-pointer' />
+            {/* <div className='add text-white border bg-teal-400 px-2 text-lg gird place-content-center rounded-md py-2 cursor-pointer'>add</div> */}
           </div>
         </div>
       </div>

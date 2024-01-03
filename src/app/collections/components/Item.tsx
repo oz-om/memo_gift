@@ -1,16 +1,25 @@
 import Image from "next/image";
 import Link from "next/link";
-type itemProps = {
+type T_itemProps = {
   id: string;
   image: string;
   name: string;
   price: number;
-  type: string;
-};
-export default function Item({ id, image, name, price, type }: itemProps) {
+} & (
+  | {
+      type: "premade";
+      variantId: string;
+    }
+  | {
+      type: "items";
+    }
+);
+
+export default function Item(props: T_itemProps) {
+  let { id, image, name, price, type } = props;
   return (
     <div className='rounded-md overflow-hidden shadow'>
-      <Link href={"/collections/" + type + "/" + id}>
+      <Link href={"/collections/" + type + "/" + id + (props.type == "premade" ? "?v=" + props.variantId : "")}>
         <figure>
           <Image src={image} alt={name} width={720} height={720} />
         </figure>

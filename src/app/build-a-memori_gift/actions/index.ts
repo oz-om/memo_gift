@@ -359,26 +359,54 @@ export async function setCustomGiftIntoCartItem(customGiftId: string): Promise<{
 }
 
 // setup post card to cartItem
-export async function setPostCard(
-  cartItemId: string,
-  postCardId: string | null,
-): Promise<{
+type TcartItemData = {
+  from?: string | null;
+  to?: string | null;
+  note?: string | null;
+  with_note?: boolean;
+  empty_card?: boolean;
+  post_card?: string | null;
+};
+async function createNewCartItem(data: TcartItemData) {
+  cookies().delete("cartItemId");
+  let cartItem = await prisma.cartItem.create({
+    data: {
+      ...data,
+    },
+  });
+  cookies().set("cartItemId", cartItem.id);
+  return cartItem.id;
+}
+export async function setPostCardIntoCartItem(postCardId: string | null): Promise<{
   success: boolean;
   error?: string;
 }> {
+  let cartItemId = cookies().get("cartItemId")?.value;
   try {
-    if (!postCardId) {
-      await prisma.cartItem.update({
-        where: {
-          id: cartItemId,
-        },
-        data: {
-          post_card: null,
-        },
+    // if client does not have a cart item
+    if (!cartItemId) {
+      await createNewCartItem({
+        post_card: postCardId,
       });
       revalidatePath("");
       return { success: true };
     }
+
+    // if can't fund cartItem for any reason
+    let cartItem = await prisma.cartItem.findUnique({
+      where: {
+        id: cartItemId,
+      },
+    });
+    if (!cartItem) {
+      await createNewCartItem({
+        post_card: postCardId,
+      });
+      revalidatePath("");
+      return { success: true };
+    }
+
+    // if cartItem is already existing we update the post card
     await prisma.cartItem.update({
       where: {
         id: cartItemId,
@@ -387,6 +415,7 @@ export async function setPostCard(
         post_card: postCardId,
       },
     });
+
     revalidatePath("");
     return { success: true };
   } catch (error) {
@@ -398,16 +427,25 @@ export async function setPostCard(
 }
 
 // set Friendly not / message to cartItem
-export async function setFriendlyMessageToCartItem(
-  cartItemId: string,
-  emptyCard: boolean,
-  withNote: boolean,
-  data: FormData,
-): Promise<{
-  success: boolean;
-  error?: string;
-}> {
-  //
+type T_setFriendlyMessageToCartItemParams = {
+  emptyCard: boolean;
+  withNote: boolean;
+  data: FormData;
+  called: "premade" | "item" | "customGift";
+  productId: string | null;
+  variantId: string | null;
+};
+type T_setFriendlyMessageToCartItemResponse =
+  | {
+      success: true;
+    }
+  | {
+      success: false;
+      error: string;
+    };
+export async function setFriendlyMessageToCartItem(params: T_setFriendlyMessageToCartItemParams): Promise<T_setFriendlyMessageToCartItemResponse> {
+  let { emptyCard, withNote, data, called, productId, variantId } = params;
+
   let friendlyNoteData = {
     from: data.get("from") as string,
     to: data.get("to") as string,
@@ -432,8 +470,34 @@ export async function setFriendlyMessageToCartItem(
       empty_card: false,
     };
   }
-
+  let cartItemId = cookies().get("cartItemId")?.value;
   try {
+    // if client doesn't have any cartItem yet
+    if (!cartItemId) {
+      cartItemId = await createNewCartItem({
+        ...friendlyNoteData,
+      });
+    } else {
+      // if  can't find cartItem for any reason
+      let cartItem = await prisma.cartItem.findUnique({
+        where: {
+          id: cartItemId,
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      if (!cartItem) {
+        cartItemId = await createNewCartItem({
+          ...friendlyNoteData,
+        });
+      } else {
+        cartItemId = cartItem.id;
+      }
+    }
+
+    // update post cart for the new cartItem or the existing one
     await prisma.cartItem.update({
       where: {
         id: cartItemId,
@@ -442,6 +506,12 @@ export async function setFriendlyMessageToCartItem(
         ...friendlyNoteData,
       },
     });
+
+    // if called is a premade or item product we need to set the productId into cartItem and set cartItem to cart
+    if (called !== "customGift" && productId) {
+      await setProductIdIntoCartItemAndSetCartItemToCart(called, productId, cartItemId as string, variantId);
+    }
+    revalidatePath("");
     return {
       success: true,
     };
@@ -451,6 +521,28 @@ export async function setFriendlyMessageToCartItem(
       error: "something went wrong during submitting your request",
     };
   }
+}
+async function setProductIdIntoCartItemAndSetCartItemToCart(called: "premade" | "item", productId: string, cartItemId: string, variantId: string | null) {
+  let anonymousUser = cookies().get("anonymousUserId")?.value;
+  let anonymousUserId = anonymousUser ?? crypto.randomUUID();
+  await prisma.cartItem.update({
+    where: {
+      id: cartItemId,
+    },
+    data: {
+      custom_gift_id: null,
+      [called + "_id"]: productId,
+      chosed_variant: variantId,
+    },
+  }),
+    await prisma.cart.create({
+      data: {
+        anonymous_user: anonymousUserId,
+        cart_item: cartItemId,
+      },
+    });
+  cookies().delete("cartItemId");
+  cookies().set("anonymousUserId", anonymousUserId);
 }
 
 // add variant to cartItem that include the custom gift|premade|item and add cartItem to cart

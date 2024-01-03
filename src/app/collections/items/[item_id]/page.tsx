@@ -5,6 +5,8 @@ import { notFound } from "next/navigation";
 import { cache } from "react";
 import { Metadata } from "next";
 import Item from "../../components/Item";
+import OpenCardsDialog from "../../components/client/OpenCardsDialog";
+import ChoseCardDialog from "../../components/ChoseCardDialog";
 
 type productType = ItemType | null;
 const getProduct = cache(async (id: string) => {
@@ -62,8 +64,10 @@ export default async function ItemPage({ params: { item_id } }: { params: { item
                 <span className=''>Availability:</span>
                 <span className='text-green-400 uppercase'>in stock</span>
               </div>
-              <div className='submit_order text-end mb-4 mt-auto'>
-                <button className='text-2xl bg-lime-500 text-white rounded-lg px-4 py-2 hover:bg-lime-400 uppercase'>add to cart</button>
+              <div className='submit_order mb-4 mt-auto'>
+                <OpenCardsDialog />
+                {/* @ts-ignore */}
+                <ChoseCardDialog productId={product.id} called='item' />
               </div>
             </div>
           </div>
@@ -83,10 +87,10 @@ export default async function ItemPage({ params: { item_id } }: { params: { item
             <i className='bx bx-link-alt absolute -left-3 -top-3 text-[40px] text-slate-600/50'></i>
           </h4>
           <div className='top_rate grid gap-5 min-[300px]:grid-cols-2 sm:grid-cols-[repeat(auto-fit,_minmax(135px,_1fr))] lg:grid-cols-4'>
-            <Item type={""} id={"12345"} name='Baseus Simu Anc True Wireless Earphones s1 Pro Blue6' price={300} image='/images/items_01.png' />
-            <Item type={""} id={"12345"} name='IPAD PRO 11 (2021) BLUETOOTH KEYBOARD CASE' price={300} image='/images/items_02.png' />
-            <Item type={""} id={"12345"} name='JR-W050 20W Magnetic Wireless Power Bank with Ring Holder 10000mAh' price={300} image='/images/items_03.png' />
-            <Item type={""} id={"12345"} name='Baseus Simu Anc True Wireless Earphones s1 Pro Blue' price={300} image='/images/items_04.png' />
+            <Item type={"items"} id={"12345"} name='Baseus Simu Anc True Wireless Earphones s1 Pro Blue6' price={300} image='/images/items_01.png' />
+            <Item type={"items"} id={"12345"} name='IPAD PRO 11 (2021) BLUETOOTH KEYBOARD CASE' price={300} image='/images/items_02.png' />
+            <Item type={"items"} id={"12345"} name='JR-W050 20W Magnetic Wireless Power Bank with Ring Holder 10000mAh' price={300} image='/images/items_03.png' />
+            <Item type={"items"} id={"12345"} name='Baseus Simu Anc True Wireless Earphones s1 Pro Blue' price={300} image='/images/items_04.png' />
           </div>
         </div>
       </section>

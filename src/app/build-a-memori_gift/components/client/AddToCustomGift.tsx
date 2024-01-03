@@ -5,7 +5,7 @@ import React, { useTransition } from "react";
 import { toast } from "react-hot-toast";
 import { addItemToCustomGift } from "../../actions";
 
-export default function AddToCustomGift({ itemId }: { itemId: string }) {
+export default function AddToCustomGift({ className, itemId }: { className?: string; itemId: string }) {
   const [pending, startTransition] = useTransition();
   async function addToCustomGift() {
     let res = await addItemToCustomGift(itemId);
@@ -17,7 +17,7 @@ export default function AddToCustomGift({ itemId }: { itemId: string }) {
     }
   }
   return (
-    <div onClick={() => startTransition(addToCustomGift)} className='add text-teal-500 border border-teal-400 px-2 text-xs gird place-content-center rounded-sm cursor-pointer'>
+    <div onClick={() => startTransition(addToCustomGift)} className={className}>
       {pending ? <i className='bx bx-loader bx-spin'></i> : "add"}
     </div>
   );

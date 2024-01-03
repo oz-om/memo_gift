@@ -2,9 +2,9 @@ import { prisma } from "@/lib/db/prisma";
 import Image from "next/image";
 import { redirect } from "next/navigation";
 import React from "react";
-import Card_item, { ChoseCardButton, RemovePostCard } from "../components/client/Card_item";
-import FriendlyMessageForm from "../components/client/FriendlyMessageForm";
-FriendlyMessageForm;
+import Card_item, { ChoseCardButton, RemovePostCard } from "@/app/components/client/card_item";
+import FriendlyMessageForm from "../../components/client/FriendlyMessageForm";
+
 import Step_intro from "../components/Step_intro";
 
 export default async function Step_two({ searchParams }: { searchParams: { cgid: string; catitmid: string } }) {
@@ -47,16 +47,16 @@ export default async function Step_two({ searchParams }: { searchParams: { cgid:
               <ChoseCardButton />
             </div>
           </figure>
-          <FriendlyMessageForm cartItemId={catitmid} />
+          <FriendlyMessageForm called='customGift' productId={null} />
         </div>
 
         <dialog className='PostCardsModal fixed overflow-auto left-0 top-0 w-full h-full py-5 custom-scroll-bar overscroll-contain'>
           <div className='cards_wrapper'>
             <div className='container'>
-              <div className='cards grid grid-cols-2 sm:grid-cols-[repeat(auto-fit,_minmax(250px,_1fr))] gap-10'>
-                <RemovePostCard cartItemId={catitmid} />
+              <div className='cards_list grid grid-cols-2 sm:grid-cols-[repeat(auto-fit,_minmax(250px,_1fr))] gap-10'>
+                <RemovePostCard called='customGift' />
                 {postCards.map((postcard) => {
-                  return <Card_item key={postcard.id} id={postcard.id} cartItemId={catitmid} image={postcard.image} name={postcard.name} />;
+                  return <Card_item key={postcard.id} id={postcard.id} called='customGift' image={postcard.image} name={postcard.name} />;
                 })}
               </div>
             </div>
