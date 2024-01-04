@@ -17,8 +17,8 @@ export default function AddToCustomGift({ className, itemId }: { className?: str
     }
   }
   return (
-    <div onClick={() => startTransition(addToCustomGift)} className={className}>
+    <button onClick={() => startTransition(addToCustomGift)} disabled={pending} className={className + " disabled:text-teal-800/25 disabled:border-teal-800/25"}>
       {pending ? <i className='bx bx-loader bx-spin'></i> : "add"}
-    </div>
+    </button>
   );
 }

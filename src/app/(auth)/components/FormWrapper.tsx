@@ -1,8 +1,7 @@
 "use client";
 
 import getErrorMessage from "@/utils/getErrorMessage";
-import { revalidatePath } from "next/cache";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
 type formProps = {
@@ -21,6 +20,8 @@ export default function FormWrapper({ children, className, action, type }: formP
       router.push("/");
       router.refresh();
     } catch (error) {
+      console.log("form warpper => ", error);
+
       setErrorMessage(getErrorMessage(error));
     }
   }

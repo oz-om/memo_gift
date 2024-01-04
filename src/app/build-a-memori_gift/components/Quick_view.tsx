@@ -5,7 +5,7 @@ import { ClosePreview } from "./client/Buttons";
 
 export default function Quick_view({ item }: { item: Item }) {
   return (
-    <dialog className={`dialog-${item.id}` + " dialog_quick_view fixed left-0 top-0 w-full h-full bg-slate-100/50 backdrop-blur-2xl overflow-x-hidden overflow-y-auto z-10 custom-scroll-bar overscroll-contain"}>
+    <dialog className={`dialog-${item.id}` + " dialog_quick_view fixed left-0 top-0 w-full h-full bg-slate-100/50 backdrop-blur-2xl overflow-x-hidden overflow-y-auto z-10 rounded shadow custom-scroll-bar overscroll-contain"}>
       <div className='container'>
         <ClosePreview id={item.id} />
         <div className='quick_view_wrapper md:grid md:grid-cols-2'>
@@ -28,8 +28,7 @@ export default function Quick_view({ item }: { item: Item }) {
             </div>
           </div>
           <div className='add_to md:col-span-2 max-w-xs w-full mx-auto text-center my-4'>
-            <AddToCustomGift itemId={item.id} className='add text-white border bg-teal-400 px-2 text-lg gird place-content-center rounded-md py-2 cursor-pointer' />
-            {/* <div className='add text-white border bg-teal-400 px-2 text-lg gird place-content-center rounded-md py-2 cursor-pointer'>add</div> */}
+            <AddToCustomGift itemId={item.id} className='add text-white border bg-teal-400 px-2 text-lg w-36 mt-5 gird place-content-center rounded-md py-2 cursor-pointer disabled:bg-teal-800/25' />
           </div>
         </div>
       </div>

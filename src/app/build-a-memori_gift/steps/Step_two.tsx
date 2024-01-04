@@ -1,11 +1,13 @@
 import { prisma } from "@/lib/db/prisma";
 import Image from "next/image";
 import { redirect } from "next/navigation";
-import React from "react";
-import Card_item, { ChoseCardButton, RemovePostCard } from "@/app/components/client/card_item";
+import React, { Suspense } from "react";
+import { ChoseCardButton } from "@/app/components/client/card_item";
 import FriendlyMessageForm from "../../components/client/FriendlyMessageForm";
 
 import Step_intro from "../components/Step_intro";
+import PostCardsList from "../components/PostCardsList";
+import LoadingSpin from "@/app/components/LoadingSpin";
 
 export default async function Step_two({ searchParams }: { searchParams: { cgid: string; catitmid: string } }) {
   let { cgid, catitmid } = searchParams;
@@ -13,8 +15,6 @@ export default async function Step_two({ searchParams }: { searchParams: { cgid:
   if (!catitmid || catitmid.trim().length == 0) {
     redirect("/build-a-memori_gift?step=one&cgid=" + cgid);
   }
-
-  let postCards = await prisma.postCard.findMany();
   let cartItem = await prisma.cartItem.findUnique({
     where: {
       id: catitmid,
@@ -37,7 +37,7 @@ export default async function Step_two({ searchParams }: { searchParams: { cgid:
         <div className='container friendly_massage_wrapper px-3 mt-3 md:flex md:justify-center md:gap-x-5'>
           <figure className='max-w-xs mx-auto md:mx-0'>
             {cartItem?.postcard == null ? (
-              <div className='w-60 h-full grid place-content-center border rounded'>
+              <div className='w-60 h-full min-h-60 mx-auto grid place-content-center border rounded'>
                 <p className='text-center'>no chosed card</p>
               </div>
             ) : (
@@ -51,14 +51,16 @@ export default async function Step_two({ searchParams }: { searchParams: { cgid:
         </div>
 
         <dialog className='PostCardsModal fixed overflow-auto left-0 top-0 w-full h-full py-5 custom-scroll-bar overscroll-contain'>
-          <div className='cards_wrapper'>
+          <div className='collections-cards-dialog-error-message hidden fixed px-5 py-2 bg-red-50 text-red-400 text-sm font-semibold top-0 left-0 right-0 w-80 mx-auto z-20 rounded text-center border-red-200 shadow mt-2 '></div>
+          <div className='cards_wrapper relative'>
+            <div className='waiting-set-card-promise hidden fixed top-5 left-1/2 -translate-x-1/2 z-10'>
+              <i className='bx bx-loader bx-spin text-teal-400'></i>
+            </div>
             <div className='container'>
-              <div className='cards_list grid grid-cols-2 sm:grid-cols-[repeat(auto-fit,_minmax(250px,_1fr))] gap-10'>
-                <RemovePostCard called='customGift' />
-                {postCards.map((postcard) => {
-                  return <Card_item key={postcard.id} id={postcard.id} called='customGift' image={postcard.image} name={postcard.name} />;
-                })}
-              </div>
+              <Suspense fallback={<LoadingSpin />}>
+                {/* @ts-ignore async component */}
+                <PostCardsList />
+              </Suspense>
             </div>
           </div>
         </dialog>

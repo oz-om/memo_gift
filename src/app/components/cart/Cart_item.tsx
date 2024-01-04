@@ -87,7 +87,7 @@ export default function Cart_item({ cartItem }: { cartItem: cartItem }) {
           <IncrementCartItemQuantity cartItemId={cartItem.id} />
         </div>
         <div className='edit_box flex gap-x-2 text-sm'>
-          <EditCartItem />
+          {withIncludes && <EditCartItem productId={`${customGift ? customGift.id : premade?.id}`} targetProductType={customGift ? "customGift" : "premade"} />}
           <DeleteCartItem cartItemId={customGift ? customGift.id : cartItem.id} cartItemType={customGift ? "customGift" : "other"} />
         </div>
       </div>

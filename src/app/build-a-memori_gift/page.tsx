@@ -10,14 +10,12 @@ export default function Build_memori_gift_page({ searchParams }: { searchParams:
       <section className='steps_content_section'>
         <Suspense fallback={<LoadingSpin />}>
           {searchParams.step === "one" && (
-            /* @ts-ignore */
+            /* @ts-ignore async component */
             <Step_one searchParams={searchParams} />
           )}
           {searchParams.step === "two" && (
-            // <Suspense fallback={<LoadingSpin />}>
             //@ts-ignore
             <Step_two searchParams={searchParams} />
-            // </Suspense>
           )}
           {searchParams.step === "three" && (
             // @ts-ignore

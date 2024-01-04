@@ -1,8 +1,34 @@
 "use server";
 
 import { prisma } from "@/lib/db/prisma";
+import { Prisma } from "@prisma/client";
 
 import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
+
+export async function controlCartItemQuantity(cartItemId: string, action: "increment" | "decrement") {
+  try {
+    await prisma.cartItem.update({
+      where: {
+        id: cartItemId,
+      },
+      data: {
+        quantity: {
+          [action]: 1,
+        },
+      },
+    });
+    revalidatePath("");
+    return {
+      success: true,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: "something went wrong during " + action + " item quantity",
+    };
+  }
+}
 
 export async function deleteAction(cartItemId: string, cartItemType: string) {
   try {
@@ -32,28 +58,96 @@ export async function deleteAction(cartItemId: string, cartItemType: string) {
     };
   }
 }
-export async function editAction() {}
 
-export async function controlCartItemQuantity(cartItemId: string, action: "increment" | "decrement") {
+// extract the cartItem to a new cartItem to set it as premade/customGift editable
+type PremadeGift = Prisma.PremadeGiftGetPayload<{
+  include: {
+    includes: {
+      include: {
+        item: true;
+      };
+    };
+  };
+}>;
+type CustomGift = Prisma.customGiftGetPayload<{
+  include: {
+    includes: {
+      include: {
+        item: true;
+      };
+    };
+  };
+}>;
+type T_targetProductType = PremadeGift | CustomGift | null;
+
+export async function editAction(productId: string, targetProductType: "premade" | "customGift"): Promise<{ success: true; cgid: string } | { success: false; error: string }> {
+  let targetProduct: T_targetProductType = null;
   try {
-    await prisma.cartItem.update({
-      where: {
-        id: cartItemId,
-      },
-      data: {
-        quantity: {
-          [action]: 1,
+    // get the target product
+    if (targetProductType == "premade") {
+      targetProduct = await prisma.premadeGift.findUnique({
+        where: {
+          id: productId,
         },
+        include: {
+          includes: {
+            include: {
+              item: true,
+            },
+          },
+        },
+      });
+    } else {
+      targetProduct = await prisma.customGift.findUnique({
+        where: {
+          id: productId,
+        },
+        include: {
+          includes: {
+            include: {
+              item: true,
+            },
+          },
+        },
+      });
+    }
+    // if can't fine the target product for any reason
+    if (!targetProduct) {
+      return {
+        success: false,
+        error: "can't edit the target item",
+      };
+    }
+
+    // create new custom gift
+    let newCustomGift = await prisma.customGift.create({
+      data: {
+        price: targetProduct.price,
+        name: "custom gift",
       },
     });
-    revalidatePath("");
+    //  extract target product includes to the new created custom gift
+    targetProduct.includes.forEach(async (include) => {
+      let data = {
+        customGift_id: newCustomGift.id,
+        item_id: include.item.id,
+        quantity: 1,
+      };
+      if (targetProductType == "customGift" && "customGift_id" in include) {
+        data.quantity = include.quantity;
+      }
+      await prisma.customGiftIncudes.create({ data });
+    });
+
+    cookies().set("customGiftId", newCustomGift.id);
     return {
       success: true,
+      cgid: newCustomGift.id,
     };
   } catch (error) {
     return {
       success: false,
-      error: "something went wrong during " + action + " item quantity",
+      error: "Oops! Something went wrong, please try again",
     };
   }
 }

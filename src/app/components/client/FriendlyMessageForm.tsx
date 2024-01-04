@@ -3,15 +3,22 @@ import CloseCardsDialog from "@/app/collections/components/client/CloseCardsDial
 import { toastStyles, toggleDialog } from "@/utils";
 import delay from "@/utils/delay";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import React, { useState, useTransition } from "react";
+import React, { useRef, useState, useTransition } from "react";
 import { toast } from "react-hot-toast";
-import { boolean } from "zod";
 import { setFriendlyMessageToCartItem } from "../../build-a-memori_gift/actions";
 
 type T_friendlyMessageFormProps = {
   called: "premade" | "item" | "customGift";
   productId: string | null;
 };
+
+export async function showErrorMessage(error: string) {
+  let errorMessageBlock = document.querySelector(".collections-cards-dialog-error-message");
+  errorMessageBlock?.classList.remove("hidden");
+  errorMessageBlock!.textContent = error;
+  await delay(1000);
+  errorMessageBlock?.classList.add("hidden");
+}
 
 export default function FriendlyMessageForm(props: T_friendlyMessageFormProps) {
   const { called, productId } = props;
@@ -22,6 +29,7 @@ export default function FriendlyMessageForm(props: T_friendlyMessageFormProps) {
   const params = useSearchParams();
   const path = usePathname();
   const [pending, startTransition] = useTransition();
+  const formRef = useRef<HTMLFormElement>(null);
 
   function emptyCardHandler(e: React.ChangeEvent<HTMLInputElement>) {
     if (!withNote) {
@@ -51,11 +59,7 @@ export default function FriendlyMessageForm(props: T_friendlyMessageFormProps) {
     if (called == "premade") {
       // if there is no variant selected
       if (!params.get("v")) {
-        let errorMessageBlock = document.querySelector(".collections-cards-dialog-error-message");
-        errorMessageBlock?.classList.remove("hidden");
-        errorMessageBlock!.textContent = "please select a variant to continue";
-        await delay(1000);
-        errorMessageBlock?.classList.add("hidden");
+        showErrorMessage("please select a variant to continue");
         return;
       }
     }
@@ -73,6 +77,7 @@ export default function FriendlyMessageForm(props: T_friendlyMessageFormProps) {
       alert.error(`${res.error}`, {
         style: toastStyles,
       });
+      called !== "customGift" && showErrorMessage(res.error);
     }
 
     if (called == "customGift") {
@@ -83,10 +88,11 @@ export default function FriendlyMessageForm(props: T_friendlyMessageFormProps) {
     } else {
       toggleDialog("collections-cards-dialog");
     }
+    formRef.current?.reset();
   }
 
   return (
-    <form onSubmit={(e) => startTransition(() => setFriendlyNote(e))} className='from_to_form max-w-lg flex flex-col mx-auto md:mx-0'>
+    <form ref={formRef} onSubmit={(e) => startTransition(() => setFriendlyNote(e))} className='from_to_form max-w-lg flex flex-col mx-auto md:mx-0'>
       <div className='other_options mb-6'>
         <div className='opt'>
           <input onChange={emptyCardHandler} checked={emptyCard} name='emptyCard' type='checkbox' id='blank-card' />
@@ -122,16 +128,12 @@ export default function FriendlyMessageForm(props: T_friendlyMessageFormProps) {
           <input type={"submit"} onClick={startSubmitting} className='bg-teal-400 text-white text-center px-4 py-2 rounded-md mx-auto min-w-max w-2/5 block cursor-pointer' value={"Next Step"} />
         </div>
       ) : (
-        <div className='complete_box flex justify-center max-w-60 mx-auto items-center gap-x-5 mb-3 mt-5'>
+        <div className='complete_box flex justify-center max-w-60 mx-auto items-center gap-x-5 mb-3 mt-5 md:mt-auto'>
           <CloseCardsDialog />
-          <button type='submit' className='bg-teal-400 text-white text-center px-4 py-2 rounded-md mx-auto min-w-max w-2/5 block cursor-pointer'>
-            <span>add to cart</span>
-            {pending && (
-              <span>
-                <i className='bx bx-loader bx-spin'></i>
-              </span>
-            )}
+          <button type='submit' disabled={pending} className='bg-teal-400 text-white text-center px-4 py-2 rounded-md mx-auto min-w-max w-2/5 flex items-center disabled:bg-teal-800/25 cursor-pointer'>
+            add to cart
           </button>
+          {pending && <i className='bx bx-loader bx-spin'></i>}
         </div>
       )}
     </form>

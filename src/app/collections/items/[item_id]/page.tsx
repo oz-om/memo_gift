@@ -2,7 +2,7 @@ import Carousel from "@/app/components/Carousel";
 import { prisma } from "@/lib/db/prisma";
 import { Item as ItemType, PremadeGift, Variant } from "@prisma/client";
 import { notFound } from "next/navigation";
-import { cache } from "react";
+import { cache, Suspense } from "react";
 import { Metadata } from "next";
 import Item from "../../components/Item";
 import OpenCardsDialog from "../../components/client/OpenCardsDialog";
@@ -66,8 +66,10 @@ export default async function ItemPage({ params: { item_id } }: { params: { item
               </div>
               <div className='submit_order mb-4 mt-auto'>
                 <OpenCardsDialog />
-                {/* @ts-ignore */}
-                <ChoseCardDialog productId={product.id} called='item' />
+                <Suspense>
+                  {/* @ts-ignore async components */}
+                  <ChoseCardDialog productId={product.id} called='item' />
+                </Suspense>
               </div>
             </div>
           </div>

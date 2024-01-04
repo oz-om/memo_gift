@@ -4,6 +4,7 @@ import { setPostCardIntoCartItem } from "@/app/build-a-memori_gift/actions";
 import { toastStyles, toggleDialog } from "@/utils";
 import Image from "next/image";
 import { toast } from "react-hot-toast";
+import { showErrorMessage } from "./FriendlyMessageForm";
 
 type cardItemProps = {
   [key: string]: string;
@@ -18,10 +19,9 @@ function setACtiveCardStyle(card: EventTarget & HTMLDivElement) {
 export default function Card_item({ id, image, name, called }: cardItemProps) {
   async function ChoseCard(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
     setACtiveCardStyle(e.currentTarget);
-    if (called == "premade" || called == "item") {
-      // cause the toast can't display over dialog se we set custom loader
-      document.querySelector(".waiting-set-card-promise")?.classList.toggle("hidden");
-    }
+    // cause the toast can't display over dialog se we set custom loader
+    document.querySelector(".waiting-set-card-promise")?.classList.toggle("hidden");
+
     let loading = toast;
     loading.loading(`just a second...`, {
       style: toastStyles,
@@ -32,8 +32,8 @@ export default function Card_item({ id, image, name, called }: cardItemProps) {
       toggleDialog("PostCardsModal");
     } else {
       toggleCardsList("hidden", "block");
-      document.querySelector(".waiting-set-card-promise")?.classList.toggle("hidden");
     }
+    document.querySelector(".waiting-set-card-promise")?.classList.toggle("hidden");
 
     if (!res.success) {
       loading.error(`${res.error}`, {
@@ -76,13 +76,12 @@ export function Collections_ChoseCardButton() {
     </button>
   );
 }
-export function RemovePostCard({ called }: { called: string }) {
+export function RemovePostCard({ called }: { called: "customGift" | "premade" | "item" }) {
   async function removePostCard(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
     setACtiveCardStyle(e.currentTarget);
     // cause the toast can't display over dialog se we set custom loader
-    if (called == "premade" || called == "item") {
-      document.querySelector(".waiting-set-card-promise")?.classList.toggle("hidden");
-    }
+    document.querySelector(".waiting-set-card-promise")?.classList.toggle("hidden");
+
     let loading = toast;
     loading.loading(`just a second...`, {
       style: toastStyles,
@@ -94,12 +93,13 @@ export function RemovePostCard({ called }: { called: string }) {
       toggleDialog("PostCardsModal");
     } else {
       toggleCardsList("hidden", "block");
-      document.querySelector(".waiting-set-card-promise")?.classList.toggle("hidden");
     }
+    document.querySelector(".waiting-set-card-promise")?.classList.toggle("hidden");
     if (!res.success) {
       loading.error(`${res.error}`, {
         style: toastStyles,
       });
+      called !== "customGift" && showErrorMessage(`${res.error}`);
       return;
     }
     toast.success(`done!`, {

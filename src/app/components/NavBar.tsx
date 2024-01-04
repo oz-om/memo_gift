@@ -71,7 +71,6 @@ export default async function Navbar() {
           <div className='basket_wrapper flex gap-x-2'>
             <div className='basket'>
               <Open_cart />
-              {/* @ts-ignore */}
               <Cart_wrapper />
             </div>
             {!!login && (

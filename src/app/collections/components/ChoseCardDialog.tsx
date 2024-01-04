@@ -46,7 +46,7 @@ export default async function ChoseCardDialog({ productId, called }: { productId
             <FriendlyMessageForm called={called} productId={productId} />
           </div>
         </div>
-        <div className='cards hidden absolute  w-full h-full bg-gray-50  top-0 left-0 border px-5 py-3 lg:-mt-3 rounded overflow-auto custom-scroll-bar overscroll-contain lg:block lg:basis-1/2 lg:relative'>
+        <aside className='cards hidden absolute  w-full h-full bg-gray-50  top-0 left-0 border px-5 py-3 lg:-mt-3 rounded overflow-auto custom-scroll-bar overscroll-contain lg:block lg:basis-1/2 lg:relative'>
           <div className='cards_list relative grid grid-cols-2 sm:grid-cols-[repeat(auto-fit,_minmax(120px,_1fr))] gap-10 '>
             <div className='waiting-set-card-promise hidden absolute top-0 left-1/2 -translate-x-1/2 z-10'>
               <i className='bx bx-loader bx-spin text-teal-400'></i>
@@ -55,13 +55,8 @@ export default async function ChoseCardDialog({ productId, called }: { productId
             {postCards.map(({ id, image, name }) => {
               return <Card_item key={id} id={id} image={image} name={name} called='premade' />;
             })}
-            {/* <Card_item id={"postcard.id"} image={"/images/card_item_02.png"} name={"postcard name"} />
-              <Card_item id={"postcard.id"} image={"/images/card_item_03.png"} name={"postcard name"} />
-              <Card_item id={"postcard.id"} image={"/images/card_item_04.png"} name={"postcard name"} />
-              <Card_item id={"postcard.id"} image={"/images/card_item_05.png"} name={"postcard name"} />
-              <Card_item id={"postcard.id"} image={"/images/card_item_06.png"} name={"postcard name"} /> */}
           </div>
-        </div>
+        </aside>
       </div>
     </dialog>
   );

@@ -17,7 +17,7 @@ export default function DeleteChosedItem({ itemId, customGiftId }: { itemId: str
     }
   }
   return (
-    <button onClick={() => startTransition(removeChosedItem)} className='delete_chosed_item text-sm bg-red-100 text-red-600 tracking-wider rounded-md py-1 px-2 border border-transparent hover:border-red-600'>
+    <button onClick={() => startTransition(removeChosedItem)} disabled={pending} className='delete_chosed_item text-sm bg-red-100 text-red-600 tracking-wider rounded-md py-1 px-2 border border-transparent hover:border-red-600 overflow-hidden disabled:bg-red-600/25 disabled:text-red-100 disabled:border-transparent'>
       {pending ? <i className='bx bx-loader bx-spin w-12'></i> : <span>delete</span>}
     </button>
   );

@@ -16,7 +16,7 @@ export function Increment({ itemId, customGiftId }: { itemId: string; customGift
       });
     }
   }
-  return <div>{pending ? <i className='bx bx-loader bx-spin'></i> : <i onClick={() => startTransition(incrementQuantity)} className='bx bx-plus border grid place-content-center h-5 rounded-md font-bold cursor-pointer hover:border-slate-700'></i>}</div>;
+  return <div>{pending ? <i className='bx bx-loader bx-spin text-teal-800/25'></i> : <i onClick={() => startTransition(incrementQuantity)} className='bx bx-plus border grid place-content-center h-5 rounded-md font-bold cursor-pointer hover:border-slate-700'></i>}</div>;
 }
 
 export function Decrement({ itemId, customGiftId }: { itemId: string; customGiftId: string }) {
@@ -32,5 +32,5 @@ export function Decrement({ itemId, customGiftId }: { itemId: string; customGift
       });
     }
   }
-  return <div>{pending ? <i className='bx bx-loader bx-spin'></i> : <i onClick={() => startTransition(decrementQuantity)} className='bx bx-minus border grid place-content-center h-5 rounded-md font-bold cursor-pointer  hover:border-slate-700'></i>}</div>;
+  return <div>{pending ? <i className='bx bx-loader bx-spin text-teal-800/25'></i> : <i onClick={() => startTransition(decrementQuantity)} className='bx bx-minus border grid place-content-center h-5 rounded-md font-bold cursor-pointer  hover:border-slate-700'></i>}</div>;
 }
