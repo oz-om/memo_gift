@@ -303,11 +303,41 @@ async function setCustomGiftAsCartItem(customGiftId: string) {
   cookies().set("cartItemId", newCartItemId.id);
   return newCartItemId.id;
 }
-export async function setCustomGiftIntoCartItem(customGiftId: string): Promise<{
-  success: boolean;
-  cartItemId: string | null;
-  error?: string;
-}> {
+export async function setCustomGiftIntoCartItem(customGiftId: string): Promise<
+  | {
+      success: true;
+      cartItemId: string;
+    }
+  | {
+      success: false;
+      error: string;
+    }
+> {
+  if (!customGiftId) {
+    return {
+      success: false,
+      error: "cannot continue to next step",
+    };
+  }
+  let customGiftIncludes = await prisma.customGift.findUnique({
+    where: {
+      id: customGiftId,
+    },
+    select: {
+      includes: {
+        include: {
+          item: true,
+        },
+      },
+    },
+  });
+  if (customGiftIncludes?.includes.length === 0) {
+    return {
+      success: false,
+      error: "please chose one item at least",
+    };
+  }
+
   let cartItemId = cookies().get("cartItemId")?.value;
   try {
     if (!cartItemId) {
@@ -352,7 +382,6 @@ export async function setCustomGiftIntoCartItem(customGiftId: string): Promise<{
   } catch (error) {
     return {
       success: false,
-      cartItemId: null,
       error: "something went wrong during get next step",
     };
   }

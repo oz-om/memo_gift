@@ -2,6 +2,7 @@ import { authOptions } from "@/utils/nextAuthOptions";
 import { getServerSession } from "next-auth";
 import Image from "next/image";
 import Link from "next/link";
+import BuiltNewCustomGift from "../home/components/client/BuiltNewCustomGift";
 import Cart_wrapper from "./cart/Cart_wrapper";
 import { AccountIcon, Close_menu, LogOut, Open_cart, Open_menu } from "./client/Navbar";
 
@@ -48,7 +49,10 @@ export default async function Navbar() {
               </li>
               <Navigate_link name={"Home"} to='/' icon={"bx-home-circle"} />
               <Navigate_link name={"holiday 2023"} to='/' icon={"bxs-hot"} />
-              <Navigate_link name={"build a memori_gift"} to='/build-a-memori_gift?step=one' icon={"bx-customize"} />
+              <li className='px-2 py-2 text-sky-900 hover:bg-skys-900/70 hover:text-sky-500 flex items-center gap-x-2'>
+                <i className={"bx text-2xl bx-customize"}></i>
+                <BuiltNewCustomGift className='font-medium capitalize' />
+              </li>
               <Navigate_link name={"marketplace"} to='/collections/premade' icon={"bxs-package"} />
               <Navigate_link name={"corporate gifting"} to='/' icon={"bx-equalizer"} />
               <Navigate_link name={"about"} to='/' icon={"bx-info-circle"} />

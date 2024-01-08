@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 
-export default function BuiltNewCustomGift() {
+export default function BuiltNewCustomGift({ className }: { className?: string }) {
   const router = useRouter();
   async function initializeNewCustomGift(e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) {
     e.preventDefault();
@@ -27,7 +27,7 @@ export default function BuiltNewCustomGift() {
     router.push("/build-a-memori_gift?step=one&cgid=" + res.customGiftId);
   }
   return (
-    <Link onClick={initializeNewCustomGift} href='/build-a-memori_gift?step=one' className='uppercase py-5 px-9 text-sm whitespace-nowrap w-56 font-semibold border-2 border-teal-100 rounded-md hover:bg-white/20'>
+    <Link onClick={initializeNewCustomGift} href='/build-a-memori_gift?step=one' className={className}>
       Build a memori_gift
     </Link>
   );

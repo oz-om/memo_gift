@@ -1,6 +1,8 @@
 "use client";
 import type { itemDataType } from "@/types/types";
+import { toastStyles } from "@/utils";
 import React, { useEffect, useState } from "react";
+import { toast } from "react-hot-toast";
 import { effect, signal } from "signals-react-safe";
 import ErrorMessage from "../../components/client/ErrorMessage";
 import Input, { Textarea } from "../../components/client/inputs";
@@ -32,13 +34,14 @@ export default function Item({ action }: { action: (data: itemDataType) => Promi
 
   async function publish() {
     console.log(item.value);
-
+    let alert = toast;
     let { name, price, desc, images } = item.value;
     if (!name.trim().length || price < 1 || !desc.trim().length || !images.length) {
-      alert("you missing a required field");
+      alert.error("you missing a required field", { style: toastStyles });
       return;
     }
     // confirm uploads
+    alert.loading("just a second...", { style: toastStyles });
     let req = await fetch(uploadUrl, {
       method: "PATCH",
       headers: {
@@ -51,9 +54,12 @@ export default function Item({ action }: { action: (data: itemDataType) => Promi
     if (res.confirmation) {
       let req = await action(item.value);
       console.log(req);
+      alert.remove();
       if (req.creation) {
+        alert.success("done", { style: toastStyles });
         setReset(true);
       } else {
+        alert.error("there are a problem with item creation", { style: toastStyles });
         console.error("there are a problem with item creation");
         setConfirmation({
           confirmed: req.creation,
@@ -61,6 +67,7 @@ export default function Item({ action }: { action: (data: itemDataType) => Promi
         });
       }
     } else {
+      alert.error("error with confirm uploads", { style: toastStyles });
       console.error("error with confirm uploads");
       setConfirmation({
         confirmed: res.confirmation,

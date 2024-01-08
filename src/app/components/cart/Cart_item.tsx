@@ -1,6 +1,7 @@
 import { Prisma } from "@prisma/client";
 import Image from "next/image";
 import { DecrementCartItemQuantity, DeleteCartItem, EditCartItem, IncrementCartItemQuantity } from "../client/cartItemOperations";
+import Duplicate from "../client/Duplicate";
 
 type cartItem = Prisma.cartItemGetPayload<{
   select: {
@@ -87,6 +88,7 @@ export default function Cart_item({ cartItem }: { cartItem: cartItem }) {
           <IncrementCartItemQuantity cartItemId={cartItem.id} />
         </div>
         <div className='edit_box flex gap-x-2 text-sm'>
+          <Duplicate cartItemId={cartItem.id} />
           {withIncludes && <EditCartItem productId={`${customGift ? customGift.id : premade?.id}`} targetProductType={customGift ? "customGift" : "premade"} />}
           <DeleteCartItem cartItemId={customGift ? customGift.id : cartItem.id} cartItemType={customGift ? "customGift" : "other"} />
         </div>

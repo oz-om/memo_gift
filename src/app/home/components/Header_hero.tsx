@@ -12,7 +12,7 @@ export default function Header_hero() {
           <p className='text-end text-lg'>Since 2014. Let us do the gift wrapping for you.</p>
         </div>
         <div className='header_start_cat mt-4 flex flex-wrap gap-3 justify-end'>
-          <BuiltNewCustomGift />
+          <BuiltNewCustomGift className='uppercase py-5 px-9 text-sm whitespace-nowrap w-56 font-semibold border-2 border-teal-100 rounded-md hover:bg-white/20' />
           <Link href='/collections/premade' className='uppercase py-5 px-9 text-sm whitespace-nowrap w-56 font-semibold border-2 border-teal-100 rounded-md hover:bg-white/20'>
             ready memori_gift
           </Link>

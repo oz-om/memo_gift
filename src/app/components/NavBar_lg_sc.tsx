@@ -1,8 +1,7 @@
 import { authOptions } from "@/utils/nextAuthOptions";
 import { getServerSession } from "next-auth";
-import Image from "next/image";
 import Link from "next/link";
-import { AccountIcon } from "./client/Navbar";
+import BuiltNewCustomGift from "../home/components/client/BuiltNewCustomGift";
 
 export default async function NavBar_lg_sc() {
   const login = await getServerSession(authOptions);
@@ -10,9 +9,7 @@ export default async function NavBar_lg_sc() {
   return (
     <nav className='header_navigate relative hidden md:block mb-2'>
       <ul className='flex items-center text-sm'>
-        <Link className='px-2 capitalize whitespace-nowrap hover:text-teal-300' href={"/build-a-memori_gift?step=one"}>
-          build a MemoryGift
-        </Link>
+        <BuiltNewCustomGift className='px-2 capitalize whitespace-nowrap hover:text-teal-300' />
         <Link className='px-2 capitalize whitespace-nowrap hover:text-teal-300' href={"/collections/premade"}>
           marketplace
         </Link>

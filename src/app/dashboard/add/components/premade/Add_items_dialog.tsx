@@ -1,6 +1,6 @@
 "use client";
 import Pagination from "@/app/components/Pagination";
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import Chosed_item from "./Chosed_Item";
 import { CloseDialog } from "../client/Buttons";
 import Item from "../Item";
@@ -20,7 +20,6 @@ export default function Add_items_dialog({ reset }: { reset: boolean }) {
         }
       });
   }, []);
-
   let [chosedItems, setChosedItems] = useState<includeItemType[]>([]);
 
   useSignalEffect(() => {
@@ -28,6 +27,7 @@ export default function Add_items_dialog({ reset }: { reset: boolean }) {
       setChosedItems([...premade.value.includes]);
     }
   });
+
   useEffect(() => {
     if (reset) {
       setPremadeInput("includes", []);
@@ -115,10 +115,6 @@ export default function Add_items_dialog({ reset }: { reset: boolean }) {
                   let firstImage = JSON.parse(images);
                   return <Item key={id} id={id} images={firstImage[0]} name={name} price={price} setPremade={setPremadeInput} includes={chosedItems} />;
                 })}
-                {/* <Item id='123' images='/images/items_01.png' name='first items pens' price={12} />
-                <Item id='123' images='/images/items_02.png' name='second items non' price={22} />
-                <Item id='123' images='/images/items_03.png' name='third items' price={24} />
-                <Item id='123' images='/images/items_04.png' name='fourth items black night' price={14} /> */}
               </div>
               {items.length == 0 && (
                 <div className='spin_wrapper absolute left-0 top-0 w-full h-full grid place-content-center'>

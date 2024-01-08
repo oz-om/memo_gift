@@ -151,3 +151,76 @@ export async function editAction(productId: string, targetProductType: "premade"
     };
   }
 }
+
+export async function duplicate(cartItemId: string): Promise<{ success: true } | { success: false; error: string }> {
+  console.log(cartItemId);
+  if (!cartItemId) {
+    return {
+      success: false,
+      error: "Something went wrong, please try again",
+    };
+  }
+  let targetCartItem = await prisma.cartItem.findUnique({
+    where: {
+      id: cartItemId,
+    },
+  });
+  if (!targetCartItem) {
+    return {
+      success: false,
+      error: "Couldn't find cart item",
+    };
+  }
+  let anonymousUser = cookies().get("anonymousUserId")?.value;
+
+  if (!anonymousUser) {
+    anonymousUser = crypto.randomUUID();
+    cookies().set("anonymousUserId", anonymousUser);
+  }
+
+  let { createdAt, updatedAt, id, ...copyCartItem } = targetCartItem;
+  let isCustomGift = copyCartItem.custom_gift_id;
+  if (isCustomGift) {
+    let customGift = await prisma.customGift.findUnique({
+      where: {
+        id: isCustomGift,
+      },
+      include: {
+        includes: true,
+      },
+    });
+    let copiedCustomGift = await prisma.customGift.create({
+      data: {
+        name: customGift?.name,
+        price: customGift?.price,
+      },
+    });
+    customGift?.includes.map(async (include) => {
+      await prisma.customGiftIncudes.create({
+        data: {
+          customGift_id: copiedCustomGift.id,
+          item_id: include.item_id,
+          quantity: include.quantity,
+        },
+      });
+    });
+    isCustomGift = copiedCustomGift.id;
+  }
+
+  let duplicatedCartItem = await prisma.cartItem.create({
+    data: {
+      ...copyCartItem,
+      custom_gift_id: isCustomGift,
+    },
+  });
+  await prisma.cart.create({
+    data: {
+      anonymous_user: anonymousUser,
+      cart_item: duplicatedCartItem.id,
+    },
+  });
+  revalidatePath("");
+  return {
+    success: true,
+  };
+}

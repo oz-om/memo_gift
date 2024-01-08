@@ -13,6 +13,8 @@ import { useEffect, useState } from "react";
 import Includes from "../components/premade/Includes";
 import Price from "../components/premade/Price";
 import ErrorMessage from "../../components/client/ErrorMessage";
+import { toast } from "react-hot-toast";
+import { toastStyles } from "@/utils";
 
 export const premade = signal<premadeDataType>({
   name: "",
@@ -41,13 +43,16 @@ export default function Premade_gift({ action }: { action: (data: premadeDataTyp
   });
 
   async function createPremade() {
-    console.log(premade.value);
+    let alert = toast;
 
     let { name, desc, images, includes, price, variants } = premade.value;
     if (!name.trim().length || price < 1 || !desc.trim().length || !images.length || !includes.length || !variants.length) {
-      alert("you missing a required field");
+      alert.error("you missing a required field", {
+        style: toastStyles,
+      });
       return;
     }
+    alert.loading("just a second...", { style: toastStyles });
     // for confirm uploads
     let req = await fetch(uploadUrl, {
       method: "PATCH",
@@ -63,8 +68,11 @@ export default function Premade_gift({ action }: { action: (data: premadeDataTyp
       console.log(req);
 
       if (req.creation) {
+        alert.remove();
+        alert.success("successfully created", { style: toastStyles });
         setReset(true);
       } else {
+        alert.error("there are a problem with item creation", { style: toastStyles });
         console.error("there are a problem with item creation");
         setConfirmation({
           confirmed: req.creation,
@@ -72,6 +80,7 @@ export default function Premade_gift({ action }: { action: (data: premadeDataTyp
         });
       }
     } else {
+      alert.error("error with confirm uploads", { style: toastStyles });
       console.error("error with confirm uploads");
       setConfirmation({
         confirmed: res.confirmation,
