@@ -33,7 +33,7 @@ export function DecrementCartItemQuantity({ cartItemId }: { cartItemId: string }
   return <>{pending ? <i className='bx bx-loader bx-spin'></i> : <i onClick={() => startTransition(startDecrement)} className='bx bx-minus border grid place-content-center h-5 rounded-md font-bold cursor-pointer hover:border-slate-700'></i>}</>;
 }
 
-export function DeleteCartItem({ cartItemId, cartItemType }: { cartItemId: string; cartItemType: string }) {
+export function DeleteCartItem({ cartItemId, cartItemType }: { cartItemId: string; cartItemType: "customGift" | "product" }) {
   const [pending, startTransition] = useTransition();
   async function deleteCartItem() {
     let alert = toast;

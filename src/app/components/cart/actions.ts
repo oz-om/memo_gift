@@ -30,7 +30,7 @@ export async function controlCartItemQuantity(cartItemId: string, action: "incre
   }
 }
 
-export async function deleteAction(cartItemId: string, cartItemType: string) {
+export async function deleteAction(cartItemId: string, cartItemType: "customGift" | "product"): Promise<{ delete: true } | { delete: false; error: string }> {
   try {
     if (cartItemType === "customGift") {
       await prisma.customGift.delete({
@@ -55,6 +55,7 @@ export async function deleteAction(cartItemId: string, cartItemType: string) {
   } catch (error) {
     return {
       delete: false,
+      error: "ops! Something went wrong, please try again",
     };
   }
 }
@@ -153,7 +154,6 @@ export async function editAction(productId: string, targetProductType: "premade"
 }
 
 export async function duplicate(cartItemId: string): Promise<{ success: true } | { success: false; error: string }> {
-  console.log(cartItemId);
   if (!cartItemId) {
     return {
       success: false,
