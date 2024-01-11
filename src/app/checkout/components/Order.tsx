@@ -109,10 +109,12 @@ export default function Order({ cartItem }: { cartItem: cartItem }) {
     }
     alert.success("done");
   }
+
   function choseAddress(address: string) {
     setChosedAddress(address);
     setAddressesListState((prev) => !prev);
   }
+
   return (
     <div className='order bg-teal-50/10 p-2 rounded-md shadow-lg even:my-4'>
       <h4 className='text-sm flex justify-between items-center'>

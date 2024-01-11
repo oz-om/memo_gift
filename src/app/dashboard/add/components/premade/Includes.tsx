@@ -22,7 +22,7 @@ export default function Includes() {
           return <Item key={id} id={id} name={name} price={price} images={images} />;
         })}
       </div>
-      <p className='text-slate-400 text-center text-xs py-2 border rounded-md mb-2'>there is no items added yet</p>
+      {premade.value.includes.length == 0 && <p className='text-slate-400 text-center text-xs py-2 border rounded-md mb-2'>there is no items added yet</p>}
     </div>
   );
 }

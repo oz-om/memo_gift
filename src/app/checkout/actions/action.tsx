@@ -1,6 +1,5 @@
 "use server";
 import { prisma } from "@/lib/db/prisma";
-import { revalidatePath } from "next/cache";
 
 type T_CartItemData = {
   from: string;
@@ -21,8 +20,6 @@ export async function updateItemCartAction(cartItemId: string, data: T_CartItemD
       success: true,
     };
   } catch (error) {
-    console.log(error);
-
     return {
       success: false,
       error: "ops something went wrong, please try again",

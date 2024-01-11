@@ -1,5 +1,7 @@
 import { prisma } from "@/lib/db/prisma";
+import { authOptions } from "@/utils/nextAuthOptions";
 import { Prisma } from "@prisma/client";
+import { getServerSession } from "next-auth";
 import { cookies } from "next/headers";
 import Link from "next/link";
 import React from "react";
@@ -36,13 +38,24 @@ type T_cart = Prisma.CartGetPayload<{
   };
 }>[];
 export default async function CartItems() {
-  let anonymousUser = cookies().get("anonymousUserId")?.value;
+  let session = await getServerSession(authOptions);
+  let userId: string | undefined;
+  let userType: "user_id" | "anonymous_user" = "anonymous_user";
+  if (!session) {
+    let anonymousUser = cookies().get("anonymousUserId")?.value;
+    userId = anonymousUser;
+  } else {
+    userId = session.user.id;
+    userType = "user_id";
+  }
+
   let cart: T_cart = [];
   let totalPrice = 0;
-  if (anonymousUser) {
+
+  if (userId) {
     cart = await prisma.cart.findMany({
       where: {
-        anonymous_user: anonymousUser,
+        [userType]: userId,
       },
       include: {
         cartItem: {
@@ -79,6 +92,7 @@ export default async function CartItems() {
       return (acc += price * cartItem.quantity);
     }, 0);
   }
+
   return (
     <>
       <div className='cart_items  overflow-y-auto h-[calc(100%_-_100px)] custom-scroll-bar overscroll-contain'>

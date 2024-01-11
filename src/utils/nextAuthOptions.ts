@@ -3,6 +3,7 @@ import googleProvider from "next-auth/providers/google";
 import credentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "@/lib/db/prisma";
 import { compare } from "bcrypt";
+import { cookies } from "next/headers";
 
 export const authOptions: NextAuthOptions = {
   session: {
@@ -132,6 +133,13 @@ export const authOptions: NextAuthOptions = {
       };
     },
   },
+  events: {
+    async signIn({ user }) {
+      let anonymousUser = cookies().get("anonymousUserId")?.value;
+      await linkAnonymousWithUser(user.id, anonymousUser);
+    },
+  },
+
   secret: process.env.NEXTAUTH_SECRET,
   pages: {
     signIn: "/sign-in",
@@ -139,3 +147,19 @@ export const authOptions: NextAuthOptions = {
     error: "/sign-in",
   },
 };
+
+async function linkAnonymousWithUser(userId: string, anonymousUserId: string | undefined) {
+  if (!anonymousUserId) {
+    return;
+  }
+  await prisma.cart.updateMany({
+    where: {
+      anonymous_user: anonymousUserId,
+    },
+    data: {
+      user_id: userId,
+      anonymous_user: null,
+    },
+  });
+  cookies().delete("anonymousUserId");
+}

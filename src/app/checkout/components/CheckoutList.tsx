@@ -1,5 +1,8 @@
 import { prisma } from "@/lib/db/prisma";
+import { authOptions } from "@/utils/nextAuthOptions";
 import { Prisma } from "@prisma/client";
+import { getServerSession } from "next-auth";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import React from "react";
 import Order from "./Order";
@@ -37,6 +40,21 @@ type T_Orders = Prisma.CartGetPayload<{
 }>[];
 
 export default async function CheckoutList({ cartItemId }: { cartItemId: string | undefined }) {
+  let session = await getServerSession(authOptions);
+  let userType: "user_id" | "anonymous_user" = "anonymous_user";
+  let userId: string | undefined = undefined;
+  if (session) {
+    userId = session.user.id;
+    userType = "user_id";
+  } else {
+    let anonymousUserId = cookies().get("anonymousUserId")?.value;
+    userId = anonymousUserId;
+  }
+
+  if (!userId) {
+    redirect("/");
+  }
+
   let Orders: T_Orders = [];
   if (cartItemId && cartItemId.trim().length !== 0) {
     let singleCartItem = await prisma.cart.findUnique({
@@ -78,7 +96,7 @@ export default async function CheckoutList({ cartItemId }: { cartItemId: string 
   } else {
     let allCartItems = await prisma.cart.findMany({
       where: {
-        anonymous_user: "ddd1d48e-862b-4086-8bba-172ca8f67f78",
+        [userType]: userId,
       },
       include: {
         cartItem: {
@@ -113,11 +131,13 @@ export default async function CheckoutList({ cartItemId }: { cartItemId: string 
     }
     Orders = allCartItems;
   }
+
   let allCartItems = Orders.map(({ cartItem }) => cartItem);
   let totalPrice = allCartItems.reduce((acc, cartItem) => {
     let productPrice: number | undefined = cartItem.customGift?.price ?? cartItem.premade?.price ?? cartItem.item?.price;
     return (acc += Number(productPrice) * cartItem.quantity);
   }, 0);
+
   return (
     <>
       <div className='orders_list'>

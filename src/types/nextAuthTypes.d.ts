@@ -1,6 +1,7 @@
 import { Session } from "inspector";
 import NextAuth from "next-auth";
 export type authUser = {
+  id: string;
   email: string;
   username: string;
   role: string;

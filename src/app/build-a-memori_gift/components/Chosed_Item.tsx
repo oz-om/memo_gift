@@ -1,7 +1,6 @@
 import Image from "next/image";
 import React from "react";
-import DeleteChosedItem from "./client/DeleteChosedItem";
-import { Decrement, Increment } from "./client/quantityControl";
+import DeleteChosedItem, { Decrement, Increment } from "./client/quantityControl";
 
 type chosedItemProps = {
   id: string;

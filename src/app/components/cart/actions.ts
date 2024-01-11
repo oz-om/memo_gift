@@ -1,7 +1,9 @@
 "use server";
 
 import { prisma } from "@/lib/db/prisma";
+import { authOptions } from "@/utils/nextAuthOptions";
 import { Prisma } from "@prisma/client";
+import { getServerSession } from "next-auth";
 
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
@@ -160,67 +162,83 @@ export async function duplicate(cartItemId: string): Promise<{ success: true } |
       error: "Something went wrong, please try again",
     };
   }
-  let targetCartItem = await prisma.cartItem.findUnique({
-    where: {
-      id: cartItemId,
-    },
-  });
-  if (!targetCartItem) {
-    return {
-      success: false,
-      error: "Couldn't find cart item",
-    };
-  }
-  let anonymousUser = cookies().get("anonymousUserId")?.value;
-
-  if (!anonymousUser) {
-    anonymousUser = crypto.randomUUID();
-    cookies().set("anonymousUserId", anonymousUser);
-  }
-
-  let { createdAt, updatedAt, id, ...copyCartItem } = targetCartItem;
-  let isCustomGift = copyCartItem.custom_gift_id;
-  if (isCustomGift) {
-    let customGift = await prisma.customGift.findUnique({
+  try {
+    let targetCartItem = await prisma.cartItem.findUnique({
       where: {
-        id: isCustomGift,
-      },
-      include: {
-        includes: true,
+        id: cartItemId,
       },
     });
-    let copiedCustomGift = await prisma.customGift.create({
-      data: {
-        name: customGift?.name,
-        price: customGift?.price,
-      },
-    });
-    customGift?.includes.map(async (include) => {
-      await prisma.customGiftIncudes.create({
-        data: {
-          customGift_id: copiedCustomGift.id,
-          item_id: include.item_id,
-          quantity: include.quantity,
+    if (!targetCartItem) {
+      return {
+        success: false,
+        error: "Couldn't find cart item",
+      };
+    }
+    let userType: "user_id" | "anonymous_user" = "anonymous_user";
+    let userId: string | undefined = undefined;
+    let session = await getServerSession(authOptions);
+    if (session) {
+      userId = session.user.id;
+      userType = "user_id";
+    } else {
+      let anonymousUser = cookies().get("anonymousUserId")?.value;
+      userId = anonymousUser;
+    }
+
+    if (!userId) {
+      userId = crypto.randomUUID();
+      cookies().set("anonymousUserId", userId);
+    }
+
+    let { createdAt, updatedAt, id, ...copyCartItem } = targetCartItem;
+    let isCustomGift = copyCartItem.custom_gift_id;
+    if (isCustomGift) {
+      let customGift = await prisma.customGift.findUnique({
+        where: {
+          id: isCustomGift,
+        },
+        include: {
+          includes: true,
         },
       });
-    });
-    isCustomGift = copiedCustomGift.id;
-  }
+      let copiedCustomGift = await prisma.customGift.create({
+        data: {
+          name: customGift?.name,
+          price: customGift?.price,
+        },
+      });
+      customGift?.includes.map(async (include) => {
+        await prisma.customGiftIncudes.create({
+          data: {
+            customGift_id: copiedCustomGift.id,
+            item_id: include.item_id,
+            quantity: include.quantity,
+          },
+        });
+      });
+      isCustomGift = copiedCustomGift.id;
+    }
 
-  let duplicatedCartItem = await prisma.cartItem.create({
-    data: {
-      ...copyCartItem,
-      custom_gift_id: isCustomGift,
-    },
-  });
-  await prisma.cart.create({
-    data: {
-      anonymous_user: anonymousUser,
-      cart_item: duplicatedCartItem.id,
-    },
-  });
-  revalidatePath("");
-  return {
-    success: true,
-  };
+    let duplicatedCartItem = await prisma.cartItem.create({
+      data: {
+        ...copyCartItem,
+        custom_gift_id: isCustomGift,
+      },
+    });
+    await prisma.cart.create({
+      data: {
+        [userType]: userId,
+        cart_item: duplicatedCartItem.id,
+      },
+    });
+    revalidatePath("");
+    return {
+      success: true,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: "something went wrong, please try again",
+    };
+  }
 }

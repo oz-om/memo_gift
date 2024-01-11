@@ -1,8 +1,11 @@
 "use server";
 
 import { prisma } from "@/lib/db/prisma";
+import { authOptions } from "@/utils/nextAuthOptions";
+import { getServerSession } from "next-auth";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
+import { useId } from "react";
 
 async function getCustomGift(customGiftId: string) {
   let builtBox = await prisma.customGift.findUnique({
@@ -319,27 +322,28 @@ export async function setCustomGiftIntoCartItem(customGiftId: string): Promise<
       error: "cannot continue to next step",
     };
   }
-  let customGiftIncludes = await prisma.customGift.findUnique({
-    where: {
-      id: customGiftId,
-    },
-    select: {
-      includes: {
-        include: {
-          item: true,
+
+  try {
+    let customGiftIncludes = await prisma.customGift.findUnique({
+      where: {
+        id: customGiftId,
+      },
+      select: {
+        includes: {
+          include: {
+            item: true,
+          },
         },
       },
-    },
-  });
-  if (customGiftIncludes?.includes.length === 0) {
-    return {
-      success: false,
-      error: "please chose one item at least",
-    };
-  }
+    });
+    if (customGiftIncludes?.includes.length === 0) {
+      return {
+        success: false,
+        error: "please chose one item at least",
+      };
+    }
 
-  let cartItemId = cookies().get("cartItemId")?.value;
-  try {
+    let cartItemId = cookies().get("cartItemId")?.value;
     if (!cartItemId) {
       let newCartItemId = await setCustomGiftAsCartItem(customGiftId);
       return {
@@ -552,8 +556,19 @@ export async function setFriendlyMessageToCartItem(params: T_setFriendlyMessageT
   }
 }
 async function setProductIdIntoCartItemAndSetCartItemToCart(called: "premade" | "item", productId: string, cartItemId: string, variantId: string | null) {
-  let anonymousUser = cookies().get("anonymousUserId")?.value;
-  let anonymousUserId = anonymousUser ?? crypto.randomUUID();
+  let session = await getServerSession(authOptions);
+  let userType: "user_id" | "anonymous_user" = "anonymous_user";
+  let userId: string | undefined = undefined;
+  if (session) {
+    userType = "user_id";
+    userId = session.user.id;
+  } else {
+    let anonymousUser = cookies().get("anonymousUserId")?.value;
+    userId = anonymousUser;
+  }
+
+  userId = userId ?? crypto.randomUUID();
+
   await prisma.cartItem.update({
     where: {
       id: cartItemId,
@@ -566,12 +581,14 @@ async function setProductIdIntoCartItemAndSetCartItemToCart(called: "premade" | 
   }),
     await prisma.cart.create({
       data: {
-        anonymous_user: anonymousUserId,
+        [userType]: userId,
         cart_item: cartItemId,
       },
     });
   cookies().delete("cartItemId");
-  cookies().set("anonymousUserId", anonymousUserId);
+  if (userType == "anonymous_user") {
+    cookies().set("anonymousUserId", userId);
+  }
 }
 
 // add variant to cartItem that include the custom gift|premade|item and add cartItem to cart
@@ -586,30 +603,42 @@ async function addVariantToCartItem(variantId: string, cartItemId: string) {
   });
 }
 export async function setVariantAndAddCartItemToCart(cartItemId: string, variantId: string) {
+  let session = await getServerSession(authOptions);
+
+  let userType: "user_id" | "anonymous_user" = "anonymous_user";
+  let userId: string | undefined = undefined;
+
+  if (session) {
+    userType = "user_id";
+    userId = session.user.id;
+  } else {
+    let anonymousUser = cookies().get("anonymousUserId")?.value;
+    userId = anonymousUser;
+  }
+
   try {
     await addVariantToCartItem(variantId, cartItemId);
-    // add cart item to cart
-    let anonymousUser = cookies().get("anonymousUserId")?.value;
-    if (!anonymousUser) {
-      let newAnonymousUser = crypto.randomUUID();
+    // add cartItem to cart
+    if (!userId) {
+      userId = crypto.randomUUID();
       await prisma.cart.create({
         data: {
-          anonymous_user: newAnonymousUser,
+          [userType]: userId,
           cart_item: cartItemId,
         },
       });
       cookies().delete("customGiftId");
       cookies().delete("cartItemId");
-      cookies().set("anonymousUserId", newAnonymousUser);
+      cookies().set("anonymousUserId", userId);
       return {
         success: true,
-        anonymousUser: newAnonymousUser,
+        userId: userId,
       };
     }
 
     await prisma.cart.create({
       data: {
-        anonymous_user: anonymousUser,
+        [userType]: userId,
         cart_item: cartItemId,
       },
     });
@@ -617,12 +646,12 @@ export async function setVariantAndAddCartItemToCart(cartItemId: string, variant
     cookies().delete("cartItemId");
     return {
       success: true,
-      anonymousUser: anonymousUser,
+      userId: userId,
     };
   } catch (error) {
     return {
       success: false,
-      anonymousUser: null,
+      userId: null,
     };
   }
 }
