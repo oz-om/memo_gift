@@ -24,12 +24,6 @@ type variant = {
   variantName: string;
   variantTheme: string;
 };
-// type includeItemType = {
-//   id: string;
-//   name: string;
-//   images: string;
-//   price: number;
-// };
 type includeItemType = Prisma.ItemGetPayload<{
   select: {
     id: true;
@@ -38,3 +32,12 @@ type includeItemType = Prisma.ItemGetPayload<{
     images: true;
   };
 }>;
+type T_Variant = {
+  name: string;
+  preview: string;
+  value: string;
+};
+type T_PostCard = {
+  name: string;
+  image: string;
+};

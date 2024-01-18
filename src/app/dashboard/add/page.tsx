@@ -5,9 +5,10 @@ import Item from "./type/Item";
 import Postcard from "./type/Postcard";
 import { createNewItem, createNewPremade } from "../_actions/actions";
 import Loading from "@/app/components/LoadingSpin";
+import Variants from "./type/Variants";
 
 export default function AddPage({ searchParams: { type } }: { searchParams: { type: string } }) {
-  if (type !== "premade-gift" && type !== "item" && type !== "postcard") {
+  if (type !== "premade-gift" && type !== "item" && type !== "postcard" && type != "variant") {
     redirect("/dashboard/add?type=premade-gift");
   }
 
@@ -19,14 +20,19 @@ export default function AddPage({ searchParams: { type } }: { searchParams: { ty
         </Suspense>
       )}
       {type == "item" && (
-        // <Suspense fallback={"waiting create item ..."}>
-        <Item action={createNewItem} />
-        // </Suspense>
+        <Suspense fallback={"waiting create item ..."}>
+          <Item action={createNewItem} />
+        </Suspense>
       )}
       {type == "postcard" && (
-        // <Suspense fallback={"waiting PostCard..."}>
-        <Postcard />
-        // </Suspense>
+        <Suspense fallback={"waiting PostCard..."}>
+          <Postcard />
+        </Suspense>
+      )}
+      {type == "variant" && (
+        <Suspense fallback={"waiting variants..."}>
+          <Variants />
+        </Suspense>
       )}
     </>
   );

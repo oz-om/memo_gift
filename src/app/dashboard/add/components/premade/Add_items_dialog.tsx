@@ -34,7 +34,7 @@ export default function Add_items_dialog({ reset }: { reset: boolean }) {
     }
   }, [reset]);
   return (
-    <dialog className='items_dialog_wrapper fixed left-0 right-0 top-0 bottom-0 border w-[95%] h-[95%] z-10 max-w-4xl m-auto bg-slate-50 shadow-md rounded-md custom-scroll-bar overscroll-contain'>
+    <dialog className='items_dialog_wrapper fixed left-0 right-0 top-0 bottom-0 border w-[95%] h-[95%] z-10 max-w-4xl m-auto bg-slate-50 shadow-md rounded-md overflow-auto custom-scroll-bar overscroll-contain'>
       <div className='close_dialog text-end'>
         <CloseDialog />
       </div>

@@ -1,42 +1,40 @@
 "use client";
 import { toastStyles } from "@/utils";
-import { type } from "os";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { signal } from "signals-react-safe";
 import Input from "../../components/client/inputs";
 import { UploadInput } from "../../components/client/inputs/UploadInput";
-import { createNewPostCard } from "../../_actions/actions";
-
+import { createNewVariant } from "../../_actions/actions";
 type images = {
   id: string;
   name: string;
 };
-type postCardDataType = {
+type T_Variant = {
   name: string;
+  value: string;
   images: images[];
 };
-type T_FieldPostCard = keyof postCardDataType;
-export const postCardData = signal<postCardDataType>({
+const variant = signal<T_Variant>({
   name: "",
+  value: "",
   images: [],
 });
-
-function setPostCard(fieldType: string, value: any) {
-  postCardData.value = {
-    ...postCardData.value,
+type T_FieldVariant = keyof T_Variant;
+function setValue(fieldType: string, value: string) {
+  variant.value = {
+    ...variant.value,
     [fieldType]: value,
   };
 }
-
 let uploadUrl = process.env.NEXT_PUBLIC_UPLOAD_URL as string;
-export default function Postcard() {
+export default function Variants() {
   let [reset, setReset] = useState(false);
-  async function createPostCard() {
+  async function createVariant() {
     let alert = toast;
-    let field: T_FieldPostCard;
-    for (field in postCardData.value) {
-      if (postCardData.value[field].length == 0) {
+    let field: T_FieldVariant;
+    for (field in variant.value) {
+      if (variant.value[field].length == 0) {
         alert.error("please enter all fields");
         return;
       }
@@ -48,13 +46,14 @@ export default function Postcard() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(postCardData.value.images),
+      body: JSON.stringify(variant.value.images),
     });
     let upload = await req.json();
     if (upload.confirmation) {
-      let res = await createNewPostCard({
-        name: postCardData.value.name,
-        image: postCardData.value.images[0].name,
+      let res = await createNewVariant({
+        name: variant.value.name,
+        value: variant.value.value,
+        preview: variant.value.images[0].name,
       });
       alert.remove();
       if (!res.success) {
@@ -75,13 +74,17 @@ export default function Postcard() {
     }
   }, [reset]);
   return (
-    <div className='postcard_wrapper mb-20 px-3 max-w-4xl mx-auto bg-white shadow rounded  p-4'>
-      <Input name='name' type={"text"} placeholder='name' setValue={setPostCard} reset={reset} />
-      <div className='uploads_wrapper my-4'>
-        <UploadInput setUploads={setPostCard} reset={reset} />
+    <div className='variants_wrapper mb-20 px-3 max-w-4xl mx-auto bg-white shadow rounded  p-4'>
+      <div className='add_variant'>
+        <Input name='name' type='text' placeholder='name' setValue={setValue} reset={reset} />
+        <Input name='value' type='text' placeholder='value' setValue={setValue} reset={reset} />
+        <div className='uploads_wrapper my-4'>
+          <h4 className='text-center text-slate-500 font-medium text-xs'>upload an image preview for the variant box</h4>
+          <UploadInput setUploads={setValue} reset={reset} />
+        </div>
       </div>
-      <div className='publish_wrapper '>
-        <button onClick={createPostCard} className='px-4 py-1 bg-teal-500 text-white rounded-md w-28 block ml-auto mr-5 hover:bg-teal-700'>
+      <div className='publish_button'>
+        <button onClick={createVariant} className='px-4 py-1 bg-teal-500 text-white rounded-md w-28 block ml-auto mr-5 hover:bg-teal-700'>
           publish
         </button>
       </div>

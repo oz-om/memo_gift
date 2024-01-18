@@ -138,10 +138,7 @@ export function UploadInput({ setUploads, reset }: uploadInputType) {
     // delete image from state
     setChosedImages(chosedImages.filter(({ id }) => id != (e.target as HTMLElement).id));
     // delete images from global state (signal)
-    setUploads(
-      "images",
-      chosedImages.filter(({ id }) => id != (e.target as HTMLElement).id),
-    );
+
     // delete images from ui (preview images)
     images.value = images.value.filter(({ id }) => id != (e.target as HTMLElement).id);
   }
@@ -173,7 +170,7 @@ export function UploadInput({ setUploads, reset }: uploadInputType) {
     }
   }, [reset]);
 
-  // when remove/add new chosed image
+  // update signal state when remove/add new chosed image
   useEffect(() => {
     setUploads("images", chosedImages);
   }, [chosedImages]);

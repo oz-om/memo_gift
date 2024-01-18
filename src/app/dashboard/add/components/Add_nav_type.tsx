@@ -17,6 +17,7 @@ export default function Add_nav_type() {
       <Nav_Link query={"premade-gift"} name='Premade Gift' currentQuery={type} />
       <Nav_Link query={"item"} name='Item' currentQuery={type} />
       <Nav_Link query={"postcard"} name='Post Card' currentQuery={type} />
+      <Nav_Link query={"variant"} name='Variant' currentQuery={type} />
     </div>
   );
 }

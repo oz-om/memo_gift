@@ -6,7 +6,7 @@ import { getCookie } from "cookies-next";
 import Image from "next/image";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
-import { updateItemCartAction } from "../actions/action";
+import { setAddressToCartItem, updateItemCartAction } from "../../actions/action";
 import { formState } from "./Address_form";
 
 type cartItem = Prisma.cartItemGetPayload<{
@@ -47,7 +47,14 @@ type cartItem = Prisma.cartItemGetPayload<{
     postcard: true;
   };
 }>;
-export default function Order({ cartItem }: { cartItem: cartItem }) {
+export type T_Address = Prisma.AddressGetPayload<{
+  select: {
+    user_id: true;
+    address: true;
+    id: true;
+  };
+}>;
+export default function Order({ cartItem, addresses }: { cartItem: cartItem; addresses: T_Address[] }) {
   const { id, customGift, premade, item, quantity, variant, postcard, empty_card, with_note, to, from, note } = cartItem;
   const [addressesListState, setAddressesListState] = useState(false);
   let order = customGift ?? premade ?? item;
@@ -58,17 +65,19 @@ export default function Order({ cartItem }: { cartItem: cartItem }) {
   let [updatedNote, setUpdatedNote] = useState(with_note ? (note as string) : "");
   let [changed, setChanged] = useState(false);
   let alert = toast;
-  let [availableAddresses, setAvailableAddresses] = useState<string[]>([]);
+  let [availableAddresses, setAvailableAddresses] = useState<T_Address[]>(addresses);
   let [chosedAddress, setChosedAddress] = useState<string | null>(null);
 
   function toggleAddressesList() {
     let allAddresses = getCookie("addresses");
     setAvailableAddresses(JSON.parse(allAddresses ? (allAddresses as string) : "[]"));
+
     setAddressesListState((prev) => !prev);
   }
 
   function toggleAddressesFormState() {
     formState.value = !formState.value;
+    setAddressesListState((prev) => !prev);
   }
 
   async function updateCartItem() {
@@ -87,7 +96,7 @@ export default function Order({ cartItem }: { cartItem: cartItem }) {
       alert.error(res.error, { style: toastStyles });
       return;
     }
-    alert.success("done");
+    alert.success("done", { style: toastStyles });
   }
   async function duplicateCartItem() {
     alert.loading("just a second...", { style: toastStyles });
@@ -97,7 +106,7 @@ export default function Order({ cartItem }: { cartItem: cartItem }) {
       alert.error(res.error, { style: toastStyles });
       return;
     }
-    alert.success("done");
+    alert.success("done", { style: toastStyles });
   }
   async function deleteCartItem() {
     alert.loading("just a second...", { style: toastStyles });
@@ -107,12 +116,24 @@ export default function Order({ cartItem }: { cartItem: cartItem }) {
       alert.error(res.error, { style: toastStyles });
       return;
     }
-    alert.success("done");
+    alert.success("done", { style: toastStyles });
   }
 
-  function choseAddress(address: string) {
+  async function choseAddress(address: string) {
     setChosedAddress(address);
     setAddressesListState((prev) => !prev);
+    if (chosedAddress == address) {
+      return;
+    }
+    alert.loading("just a second...", { style: toastStyles });
+    let res = await setAddressToCartItem(address, id);
+    alert.remove();
+    if (!res.success) {
+      alert.error(res.error, { style: toastStyles });
+      setChosedAddress("");
+      return;
+    }
+    alert.success("done", { style: toastStyles });
   }
 
   return (
@@ -169,21 +190,21 @@ export default function Order({ cartItem }: { cartItem: cartItem }) {
           </div>
           <div className='order_address_wrapper mt-4'>
             <div className='order_address relative'>
-              {!chosedAddress ? (
-                <div onClick={toggleAddressesList} className='chosed_address px-4 py-2 text-xs bg-white border-2 rounded-md cursor-pointer hover:bg-slate-100'>
+              {!chosedAddress && !cartItem.address ? (
+                <div onClick={toggleAddressesList} className='chosed_address px-4 py-2 text-xs bg-white border-2 rounded-md cursor-pointer hover:bg-slate-100 md:max-w-xs lg:max-w-sm'>
                   <p>chose/create address</p>
                 </div>
               ) : (
                 <div onClick={toggleAddressesList} className='chosed_address px-4 py-2 text-xs bg-white border-2 rounded-md cursor-pointer hover:bg-slate-100 md:max-w-xs lg:max-w-sm'>
-                  <p>{chosedAddress}</p>
+                  <p>{cartItem.address ?? chosedAddress}</p>
                 </div>
               )}
-              <ul className={"address_list absolute left-0 top-[90%] bg-slate-50 w-full rounded-b-md border-2 border-t-transparent " + (addressesListState ? "block" : "hidden")}>
+              <ul className={"address_list absolute left-0 top-[90%] bg-slate-50 w-full rounded-b-md border-2 border-t-transparent md:max-w-xs lg:max-w-sm " + (addressesListState ? "block" : "hidden")}>
                 <li onClick={toggleAddressesFormState} className='new_address py-2 px-4 cursor-pointer hover:bg-teal-50 font-medium text-sm'>
                   new address
                 </li>
                 {availableAddresses.map((a, i) => {
-                  let address = a.split("_").join(" ");
+                  let address = a.address;
                   return (
                     <li key={i} onClick={() => choseAddress(address)} className=' py-2 px-4 cursor-pointer hover:bg-teal-50 text-xs'>
                       {address}
@@ -247,10 +268,15 @@ export default function Order({ cartItem }: { cartItem: cartItem }) {
               ></textarea>
             </div>
           </div>
-
-          <figure className='max-w-xs mx-auto basis-1/4 md:basis-auto md:h-48 overflow-hidden rounded-md'>
-            <Image src={`${postcard?.image}`} alt='Post Card' width={450} height={450} className='h-full' />
-          </figure>
+          {!!postcard ? (
+            <figure className='max-w-xs mx-auto basis-1/4 md:basis-auto md:h-48 overflow-hidden rounded-md'>
+              <Image src={`${postcard?.image}`} alt='Post Card' width={450} height={450} className='h-full' />
+            </figure>
+          ) : (
+            <div className='no_postcard max-w-xs mx-auto basis-1/4 md:basis-auto md:h-48 overflow-hidden rounded-md'>
+              <p>no post card</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

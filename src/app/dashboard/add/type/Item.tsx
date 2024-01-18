@@ -29,7 +29,7 @@ export async function setItemInput(fieldType: string, value: any) {
 let uploadUrl = process.env.NEXT_PUBLIC_UPLOAD_URL as string;
 export default function Item({ action }: { action: (data: itemDataType) => Promise<any> }) {
   let [confirmation, setConfirmation] = useState<{ confirmed: boolean; msg: string }>({ confirmed: true, msg: "" });
-  let [reset, setReset] = useState<boolean>(false);
+  let [reset, setReset] = useState(false);
   console.log("render item wrapper");
 
   async function publish() {
@@ -91,7 +91,7 @@ export default function Item({ action }: { action: (data: itemDataType) => Promi
     <div className='add_item_wrapper'>
       {confirmation.confirmed == false ? <ErrorMessage msg={confirmation.msg} close={closeErrorMessage} /> : ""}
       <div className='form mb-20 px-3'>
-        <div className='about_item md:flex md:gap-x-10'>
+        <div className='about_item md:flex md:gap-x-10 bg-white shadow rounded p-4 mb-5'>
           <div className='inputs_wrapper basis-1/2 max-w-lg'>
             <Input name='name' type='text' placeholder='name' setValue={setItemInput} reset={reset} />
             <Textarea name='desc' placeholder={"description"} setValue={setItemInput} reset={reset} />

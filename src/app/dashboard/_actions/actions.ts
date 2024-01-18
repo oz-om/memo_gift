@@ -1,6 +1,6 @@
 "use server";
 import { prisma } from "@/lib/db/prisma";
-import type { itemDataType, premadeDataType } from "@/types/types";
+import type { itemDataType, premadeDataType, T_PostCard, T_Variant } from "@/types/types";
 
 function createCategories(categories: string[]) {
   return prisma.category.createMany({
@@ -10,7 +10,7 @@ function createCategories(categories: string[]) {
     skipDuplicates: true, // This will skip creating categories if they already exist
   });
 }
-function reSorted(images: { id: string; name: string }[]) {
+function reSortedAndGetImagesAsURL(images: { id: string; name: string }[]) {
   let imagesNames = images.map((image) => `https://omzid.serv00.net/images/${image.name}`);
   imagesNames.sort((a, b) => {
     let timestampA = parseInt(a.split("_")[1]);
@@ -21,7 +21,7 @@ function reSorted(images: { id: string; name: string }[]) {
 }
 export async function createNewItem(data: itemDataType) {
   // sort uploads as the user sorted insert
-  let imagesNames = reSorted(data.images);
+  let imagesURLs = reSortedAndGetImagesAsURL(data.images);
 
   try {
     let req = await prisma.$transaction([
@@ -30,7 +30,7 @@ export async function createNewItem(data: itemDataType) {
         data: {
           name: data.name,
           desc: data.desc,
-          images: JSON.stringify(imagesNames),
+          images: JSON.stringify(imagesURLs),
           theme: data.theme,
           price: Number(data.price),
           categories: {
@@ -73,7 +73,7 @@ export async function createNewItem(data: itemDataType) {
 }
 
 export async function createNewPremade(data: premadeDataType) {
-  let imagesNames = reSorted(data.images);
+  let imagesURLs = reSortedAndGetImagesAsURL(data.images);
   try {
     let req = await prisma.$transaction([
       createCategories(data.categories),
@@ -82,7 +82,7 @@ export async function createNewPremade(data: premadeDataType) {
           name: data.name,
           desc: data.desc,
           price: Number(data.price),
-          images: JSON.stringify(imagesNames),
+          images: JSON.stringify(imagesURLs),
           categories: {
             connectOrCreate: data.categories.map((cat) => ({
               where: { premade_id_cat_name: { premade_id: "", cat_name: cat } },
@@ -146,6 +146,64 @@ export async function createNewPremade(data: premadeDataType) {
     return {
       creation: false,
       error: error,
+    };
+  }
+}
+
+type T_VariantFieldKey = keyof T_Variant;
+export async function createNewVariant(data: T_Variant): Promise<{ success: true } | { success: false; error: string }> {
+  let field: T_VariantFieldKey;
+  for (field in data) {
+    if (data[field].trim().length == 0) {
+      return {
+        success: false,
+        error: "please enter all fields",
+      };
+    }
+  }
+  try {
+    await prisma.variant.create({
+      data: {
+        ...data,
+        preview: `https://omzid.serv00.net/images/${data.preview}`,
+      },
+    });
+    return {
+      success: true,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: "ops something went wrong, please try again",
+    };
+  }
+}
+
+type T_PostCardKey = keyof T_PostCard;
+export async function createNewPostCard(data: T_PostCard): Promise<{ success: true } | { success: false; error: string }> {
+  let field: T_PostCardKey;
+  for (field in data) {
+    if (data[field].trim().length == 0) {
+      return {
+        success: false,
+        error: "please enter all fields",
+      };
+    }
+  }
+  try {
+    await prisma.postCard.create({
+      data: {
+        name: data.name,
+        image: `https://omzid.serv00.net/images/${data.image}`,
+      },
+    });
+    return {
+      success: true,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: "ops something went wrong, please try again",
     };
   }
 }

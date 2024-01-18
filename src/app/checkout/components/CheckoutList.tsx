@@ -5,8 +5,9 @@ import { getServerSession } from "next-auth";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import React from "react";
-import Order from "./Order";
-type T_Orders = Prisma.CartGetPayload<{
+import SetupOrder from "./client/SetupOrder";
+import Order from "./client/Order";
+export type T_Orders = Prisma.CartGetPayload<{
   include: {
     cartItem: {
       include: {
@@ -34,6 +35,17 @@ type T_Orders = Prisma.CartGetPayload<{
         item: true;
         variant: true;
         postcard: true;
+      };
+    };
+    user: {
+      select: {
+        address: {
+          select: {
+            user_id: true;
+            address: true;
+            id: true;
+          };
+        };
       };
     };
   };
@@ -87,6 +99,17 @@ export default async function CheckoutList({ cartItemId }: { cartItemId: string 
             postcard: true,
           },
         },
+        user: {
+          select: {
+            address: {
+              select: {
+                user_id: true,
+                address: true,
+                id: true,
+              },
+            },
+          },
+        },
       },
     });
     if (!singleCartItem) {
@@ -124,6 +147,17 @@ export default async function CheckoutList({ cartItemId }: { cartItemId: string 
             postcard: true,
           },
         },
+        user: {
+          select: {
+            address: {
+              select: {
+                user_id: true,
+                address: true,
+                id: true,
+              },
+            },
+          },
+        },
       },
     });
     if (allCartItems.length === 0) {
@@ -141,13 +175,16 @@ export default async function CheckoutList({ cartItemId }: { cartItemId: string 
   return (
     <>
       <div className='orders_list'>
-        {Orders.map(({ cartItem }) => {
-          return <Order key={cartItem.id} cartItem={cartItem} />;
+        {Orders.map(({ cartItem, user }) => {
+          return <Order key={cartItem.id} cartItem={cartItem} addresses={user?.address ?? []} />;
         })}
       </div>
       <div className='total_price flex items-center justify-end gap-x-4 my-3'>
         <span>subtotal: </span>
         <p className='font-sans text-2xl'>{totalPrice}$</p>
+      </div>
+      <div className='confirm_checkout flex justify-end'>
+        <SetupOrder orders={Orders} />
       </div>
     </>
   );

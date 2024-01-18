@@ -1,11 +1,14 @@
 "use client";
 
 import { toastStyles } from "@/utils";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useSignalEffect } from "signals-react-safe";
 import { signal } from "signals-react-safe";
 import { setCookie, getCookie } from "cookies-next";
+import { Session } from "next-auth";
+import { addNewAddress } from "../../actions/action";
+import { T_Address } from "./Order";
 
 export const formState = signal(false);
 type T_AddressInfo = {
@@ -21,7 +24,7 @@ type T_AddressInfo = {
 };
 type T_fieldKey = keyof T_AddressInfo;
 
-export default function Address_form() {
+export default function Address_form({ session }: { session: Session | null }) {
   const [r, setRerender] = useState(false);
   let [address, setAddress] = useState<T_AddressInfo>({
     first_name: "",
@@ -34,7 +37,7 @@ export default function Address_form() {
     zipcode: "",
     phone: "",
   });
-  let alert = toast;
+  const formRef = useRef<HTMLFormElement>(null);
 
   function toggleAddressesFormState() {
     formState.value = false;
@@ -53,7 +56,9 @@ export default function Address_form() {
       [field]: input.value,
     }));
   }
-  function saveNewAddress() {
+  async function saveNewAddress() {
+    let alert = toast;
+    // check inputs validity
     let moroccanNumberPattern = /((^(0)(?=(7|6)))|(^(\+212|212)(?=(7|6)))).{9}/;
     let validNumber = moroccanNumberPattern.test(address.phone);
     let field: T_fieldKey;
@@ -67,25 +72,45 @@ export default function Address_form() {
       alert.error("all fields are required", { style: toastStyles });
       return;
     }
+
+    // saved address
     let addressString = "";
     for (field in address) {
-      addressString += `${address[field]}_`;
+      addressString += `${address[field]} `;
     }
-    let savedAddresses = getCookie("addresses");
+    let fullAddress: T_Address = {
+      address: addressString,
+      user_id: "anonymous_user",
+      id: crypto.randomUUID(),
+    };
 
+    if (session) {
+      alert.loading("just a second...", { style: toastStyles });
+      let res = await addNewAddress(session.user.id, addressString);
+      alert.remove();
+      if (!res.success) {
+        alert.error(res.error, { style: toastStyles });
+        return;
+      }
+      alert.success("done", { style: toastStyles });
+      fullAddress = res.address;
+    }
+
+    let savedAddresses = getCookie("addresses");
     if (!savedAddresses) {
-      setCookie("addresses", JSON.stringify([addressString]));
+      setCookie("addresses", JSON.stringify([fullAddress]));
     } else {
-      let allAddresses: string[] = JSON.parse(savedAddresses);
-      allAddresses.push(addressString);
+      let allAddresses: T_Address[] = JSON.parse(savedAddresses);
+      allAddresses.push(fullAddress);
       setCookie("addresses", JSON.stringify(allAddresses));
     }
 
+    formRef.current?.reset();
     toggleAddressesFormState();
   }
   return (
     <>
-      <div className={"address_form z-10 fixed w-full h-fit max-w-md inset-0 py-2 px-4 bg-white shadow-xl m-auto rounded-md " + (formState.value ? "grid" : "hidden")}>
+      <form ref={formRef} action={saveNewAddress} className={"address_form z-10 fixed w-full h-fit max-w-md inset-0 py-2 px-4 bg-white shadow-xl m-auto rounded-md " + (formState.value ? "grid" : "hidden")}>
         <div className='close_form text-end'>
           <i onClick={toggleAddressesFormState} className='bx bx-x text-red-400 border border-red-400 bg-red-50 rounded cursor-pointer text-lg'></i>
         </div>
@@ -132,11 +157,11 @@ export default function Address_form() {
           </div>
         </div>
         <div className='save_address'>
-          <button onClick={saveNewAddress} className='border border-teal-500 text-teal-500 rounded-md w-full py-2 my-4 cursor-pointer hover:bg-teal-50'>
+          <button type='submit' className='border border-teal-500 text-teal-500 rounded-md w-full py-2 my-4 cursor-pointer hover:bg-teal-50'>
             save
           </button>
         </div>
-      </div>
+      </form>
       <div onClick={toggleAddressesFormState} className={"address_form_wrapper fixed w-full h-full top-0 left-0 bg-slate-400/25 " + (formState.value ? "block" : "hidden")}></div>
     </>
   );

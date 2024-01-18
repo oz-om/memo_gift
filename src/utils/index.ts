@@ -6,7 +6,8 @@ export function toggleDialog(dialogClass: string) {
   if (d.open) {
     d.close();
   } else {
-    d.showModal();
+    d.setAttribute("open", "true");
+    // d.showModal();
   }
   document.body.classList.toggle("overflow-hidden");
   document.body.classList.toggle("sm:overflow-auto");
@@ -47,3 +48,40 @@ export const toastStyles = {
   padding: "2px",
   fontSize: "12px",
 };
+
+export function timeDetails(time: Date) {
+  const createdAt = new Date(time);
+  const hours = createdAt.getHours();
+  const minutes = createdAt.getMinutes();
+  const dayOfWeek = createdAt.getDay();
+  let day: string = "Sunday";
+
+  switch (dayOfWeek) {
+    case 0:
+      day = "Sunday";
+      break;
+    case 1:
+      day = "Monday";
+      break;
+    case 2:
+      day = "Tuesday";
+      break;
+    case 3:
+      day = "Wednesday";
+      break;
+    case 4:
+      day = "Thursday";
+      break;
+    case 5:
+      day = "Friday";
+      break;
+    case 6:
+      day = "Saturday";
+      break;
+  }
+  return {
+    hours,
+    minutes,
+    day,
+  };
+}

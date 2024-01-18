@@ -1,10 +1,7 @@
 import { CloseBuiltBoxButton, OpenBuiltBoxButton } from "../components/client/Buttons";
-import Chosed_Item from "../components/Chosed_Item";
 import Pagination from "../../components/Pagination";
-import Product_item from "../components/Product_item";
 import Step_intro from "../components/Step_intro";
 import Filter from "@/app/components/Filter";
-import { prisma } from "@/lib/db/prisma";
 import { redirect } from "next/navigation";
 import GoToStepTwo from "../components/client/GoToStepTwo";
 import { cookies } from "next/headers";
@@ -44,9 +41,9 @@ export default async function Step_one({ searchParams }: { searchParams: { cgid:
                 <div className='pagination_wrapper mt-auto'>
                   <Pagination />
                 </div>
-                <div className='next_step'>
+                {/* <div className='next_step'>
                   <GoToStepTwo customGiftId={cgid} className='bg-teal-400 text-white text-center px-4 py-2 rounded-md mx-auto min-w-max w-2/5 block sm:hidden' />
-                </div>
+                </div> */}
               </div>
             </div>
           </section>

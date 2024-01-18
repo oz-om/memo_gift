@@ -6,5 +6,9 @@ export const metadata: Metadata = {
 };
 
 export default function Shipping() {
-  return <div>shipping</div>;
+  return (
+    <div>
+      <h1>shipping</h1>
+    </div>
+  );
 }

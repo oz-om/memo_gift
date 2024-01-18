@@ -21,6 +21,12 @@ export default async function ChosedItems({ customGiftId }: { customGiftId: stri
   if (!customGift) {
     redirect("/");
   }
+
+  let totalPrice = customGift.includes.reduce((acc, include) => {
+    acc += include.item.price * include.quantity;
+    return acc;
+  }, 0);
+
   return (
     <>
       <div className='chosed_items custom-scroll-bar pb-20 sm:pb-0 sm:overflow-auto sm:mb-0'>
@@ -38,10 +44,10 @@ export default async function ChosedItems({ customGiftId }: { customGiftId: stri
       <div className='check_out_box fixed bottom-0  bg-teal-50 w-full flex justify-between p-2 mt-auto sm:relative'>
         <div className='price'>
           <span className='text-sm '>Total Price:</span>
-          <span className='text-sm ml-2'>${customGift?.price}</span>
+          <span className='text-sm ml-2'>${totalPrice}</span>
         </div>
         <div className='next_step'>
-          <GoToStepTwo customGiftId={customGift.id} className='bg-teal-400 text-white text-center px-4 py-2 rounded-md mx-auto min-w-max w-2/5 block' />
+          <GoToStepTwo customGiftId={customGift.id} customGiftPrice={totalPrice} className='bg-teal-400 text-white text-center px-4 py-2 rounded-md mx-auto min-w-max w-2/5 block' />
         </div>
       </div>
     </>

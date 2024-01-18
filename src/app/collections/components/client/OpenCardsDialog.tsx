@@ -17,7 +17,7 @@ export default function OpenCardsDialog() {
     }
   }, [params.get("v")]);
   return (
-    <button onClick={openCardsDialog} disabled={disabled} className='w-52 mx-auto sm:mr-0 block text-sm font-semibold bg-teal-500 text-white rounded-lg px-4 py-2 hover:bg-teal-400 uppercase disabled:bg-teal-800/25'>
+    <button onClick={openCardsDialog} disabled={disabled} className='w-52 mx-auto sm:mr-0 block text-sm font-semibold bg-teal-500 text-white rounded-lg px-4 py-2 cursor-pointer hover:bg-teal-400 uppercase disabled:bg-teal-800/25'>
       set Card / add to Cart
     </button>
   );

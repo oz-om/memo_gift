@@ -1,6 +1,20 @@
 :root {
   --active-bg: theme(colors.teal.300);
 }
+main.dashboard::after {
+  @apply content-[''] fixed w-80 h-80 bg-teal-100 top-0 bottom-0 left-0 right-0 m-auto -z-[1] blur-[182px] rounded-full;
+}
+/* 
+// dashboard > home / styels
+*/
+.text-stroke {
+  -webkit-text-stroke: 1px gray;
+  -moz-text-stroke: 1px gray;
+  -o-text-stroke: 1px gray;
+  -ms-text-stroke: 1px gray;
+  text-stroke: 1px gray;
+}
+
 /* 
 // dashboard > add / styels
 // nav links 

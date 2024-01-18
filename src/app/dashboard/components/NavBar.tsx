@@ -16,6 +16,7 @@ export default async function NavBar() {
             <ul className='nave_menu flex flex-col bg-teal-50 fixed z-10 bg-sky-300/10 overflow-hidden w-0 max-w-[13rem] left-0 top-0 h-full sm:w-10 sm:pt-10 md:w-40 transition-[width]'>
               <Close_menu />
               <Navigate_link name={"Dashboard"} to='/dashboard' icon={"bx-home-circle"} />
+              <Navigate_link name={"Orders"} to='/dashboard/orders' icon={"bxs-store"} />
               <Navigate_link name={"Products"} to='/dashboard/products' icon={"bxs-package"} />
               <Navigate_link name={"Add new"} to='/dashboard/add' icon={"bx-customize"} />
             </ul>

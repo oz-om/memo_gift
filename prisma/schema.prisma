@@ -155,6 +155,7 @@ model cartItem {
   post_card      String?
   quantity       Int          @default(1)
   chosed_variant String?
+  address        String?
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
   premade        PremadeGift? @relation(fields: [premade_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -184,16 +185,18 @@ model Cart {
 model Order {
   id             String           @id @default(uuid())
   user_id        String?
-  order_number   Int?
+  order_number   BigInt
   address        String
   email          String
-  order_status   String
+  order_status   String           @default("pending")
   product_id     String
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
   product        cartItem         @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user           User?            @relation(fields: [user_id], references: [id], onDelete: NoAction)
   confirmedOrder ConfirmedOrder[]
 
+  @@index([id], map: "order_id_fkey")
   @@map("orders")
 }
 
@@ -222,20 +225,21 @@ model ShippedOrder {
 }
 
 model User {
-  id          String   @id @default(uuid())
+  id          String    @id @default(uuid())
   username    String
   first_name  String
   last_name   String
-  email       String   @unique
-  role        String   @default("user")
-  password    String   @db.Text
+  email       String    @unique
+  role        String    @default("user")
+  password    String    @db.Text
   phone       String?
   address_id  String?
-  profile_pic String?  @db.Text
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  address     Address? @relation(fields: [address_id], references: [id])
+  profile_pic String?   @db.Text
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  address     Address[]
   cart        Cart[]
+  order       Order[]
 
   @@index([id], map: "users_id_fkey")
   @@map("users")
@@ -243,10 +247,12 @@ model User {
 
 model Address {
   id        String   @id @default(uuid())
+  user_id   String
   address   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  user      User[]
+  user      User     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
+  @@index([id, user_id], map: "user_addresses_id_fkey")
   @@map("addresses")
 }

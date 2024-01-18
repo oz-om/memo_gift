@@ -107,7 +107,7 @@ export default function Premade_gift({ action }: { action: (data: premadeDataTyp
     <section className='premade_gift_wrapper'>
       {confirmation.confirmed == false ? <ErrorMessage msg={confirmation.msg} close={closeErrorMessage} /> : ""}
       <div className='form mb-20 px-3'>
-        <div className='about_premade md:flex md:gap-x-10'>
+        <div className='about_premade md:flex md:gap-x-10 bg-white mb-5 px-2 py-4 shadow-md rounded'>
           <div className='inputs_wrapper basis-1/2 max-w-lg'>
             <Input name='name' type={"text"} placeholder='name' setValue={setPremadeInput} reset={reset} />
             <Textarea name='desc' placeholder={"description"} setValue={setPremadeInput} reset={reset} />
@@ -125,7 +125,7 @@ export default function Premade_gift({ action }: { action: (data: premadeDataTyp
             <UploadInput setUploads={setPremadeInput} reset={reset} />
           </div>
         </div>
-        <div className='includes_wrapper pt-4'>
+        <div className='includes_wrapper py-4 px-2 bg-white  shadow-md rounded'>
           <h4 className='capitalize text-sm flex justify-between items-center'>
             <p>includes:</p>
             <OpenDialog />

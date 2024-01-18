@@ -1,17 +1,8 @@
 import "./styles/style.css";
 import NavBar from "./components/NavBar";
-import type { Metadata } from "next";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/utils/nextAuthOptions";
 import { redirect } from "next/navigation";
-
-export const metadata: Metadata = {
-  title: "Dashboard",
-  robots: {
-    index: false,
-    nocache: true,
-  },
-};
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   let session = await getServerSession(authOptions);
@@ -21,9 +12,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <>
       <header>
+        {/* @ts-ignore async component */}
         <NavBar />
       </header>
-      <main className='dashboard sm:ml-10 md:ml-40'>{children}</main>
+      <main className='dashboard relative sm:ml-10 md:ml-40 px-2 py-4  '>{children}</main>
     </>
   );
 }
