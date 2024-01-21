@@ -50,19 +50,19 @@ export default function LastOrder({ order }: { order: T_Order }) {
         </div>
       </div>
       <div className='order_extra_details flex gap-x-3 justify-around grow basis-3/5'>
-        <div className='order_type'>
+        <div className='order_type flex-1'>
           <p className='mb-2'>type</p>
           <span className={"p-1 rounded text-white text-center text-xs " + (productType == "premade" ? "bg-teal-400" : productType == "customGift" ? "bg-blue-400" : "bg-orange-400")}>{productType}</span>
         </div>
-        <div className='includes_count'>
+        <div className='includes_count flex-1 flex flex-col items-center'>
           <p className='mb-2'>includes</p>
           <span className='text-center block'>{withIncludes ? withIncludes.includes.length : "single"}</span>
         </div>
-        <div className='price text'>
+        <div className='price text flex-1 flex flex-col items-center'>
           <p className='mb-2'>price</p>
           <span className='text-center block'>{targetProduct!.price * product.quantity}$</span>
         </div>
-        <div className='go_to grid place-content-center'>
+        <div className='go_to grid place-content-center flex-1'>
           <Link href={"/dashboard/orders/" + order.id} className='px-2 py-1 rounded bg-violet-500 text-white text-xs cursor-pointer'>
             manage
           </Link>

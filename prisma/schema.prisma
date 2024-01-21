@@ -54,7 +54,7 @@ model PremadeGift {
   createdAt  DateTime      @default(now())
   updatedAt  DateTime      @updatedAt
   categories boxCategory[]
-  variants   boxVarint[]
+  variants   boxVariant[]
   includes   includes[]
   cartItem   cartItem[]
 
@@ -71,7 +71,7 @@ model includes {
   @@index([premade_id], map: "includes_premade_id_fkey")
 }
 
-model boxVarint {
+model boxVariant {
   premade_id String
   variant_id String
   premade    PremadeGift @relation(fields: [premade_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -83,13 +83,13 @@ model boxVarint {
 }
 
 model Variant {
-  id        String      @id @default(uuid())
-  name      String      @unique
+  id        String       @id @default(uuid())
+  name      String       @unique
   value     String
-  preview   String?
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-  premade   boxVarint[]
+  preview   String
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  premade   boxVariant[]
   cartItem  cartItem[]
 
   @@map("variants")

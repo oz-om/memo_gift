@@ -40,10 +40,8 @@ export default async function LastAdded() {
           <div className='price'>{lastPremade?.price}$</div>
           <div className='variants flex px-4 gap-x-4'>
             {lastPremade?.variants.map(({ variant }) => {
-              return <span key={variant.id} className={"rounded-md px-2 py-1 inline-block border w-10 " + variant.value}></span>;
+              return <span key={variant.id} className={"rounded-md px-2 py-1 inline-block border w-10 "} style={{ backgroundColor: variant.value }}></span>;
             })}
-            {/* <span>white</span>
-            <span>black</span> */}
           </div>
         </div>
         <div className='add_new grid place-content-center mt-auto'>

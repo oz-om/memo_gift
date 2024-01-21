@@ -10,7 +10,7 @@ function Nav_Link({ query, name, currentQuery }: { [key: string]: string }) {
     </Link>
   );
 }
-export default function Add_nav_type() {
+export default function NavTypeSwitch() {
   const type = useSearchParams().get("type") || "";
   return (
     <div className='choices flex gap-x-3 ml-3 border-b '>

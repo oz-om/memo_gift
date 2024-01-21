@@ -1,6 +1,14 @@
 "use client";
 import React from "react";
+import LoadingSpin from "./components/LoadingSpin";
 
 export default function Error() {
-  return <div>our services is busy</div>;
+  return (
+    <>
+      <div className='error'>
+        our services is busy
+        <LoadingSpin />
+      </div>
+    </>
+  );
 }
