@@ -1,18 +1,16 @@
 "use client";
-import Chosed_image from "@/app/dashboard/add/components/Chosed_image";
+import Image from "next/image";
 import { useEffect, useState } from "react";
-import { signal } from "signals-react-safe";
 let uploadUrl = process.env.NEXT_PUBLIC_UPLOAD_URL as string;
 type uploadInputType = { setUploads: (fieldType: string, value: any) => void; reset: boolean };
-type imageItem = {
+type T_uploadingImageItem = {
   id: string;
   src: string;
   pending: boolean;
 };
 
-let images = signal<imageItem[]>([]);
-type resCallbackType = { id: string; upload: boolean; error: string; msg: string } | null;
-async function uploadImage(image: File, id: string, sessionId: string, callback: (err: Error | null, res: resCallbackType, completedAt: number) => void) {
+type resCallbackType = { upload: true; id: string } | { upload: false };
+async function uploadImage(image: File, id: string, sessionId: string, callback: (err: string | null, res: resCallbackType) => void) {
   let formDate = new FormData();
   formDate.append("image", image);
   formDate.append("id", id);
@@ -24,33 +22,22 @@ async function uploadImage(image: File, id: string, sessionId: string, callback:
     .then((response) => response.json())
     .then((res) => {
       if (res.upload) {
-        let imagesCopy = JSON.parse(JSON.stringify(images.value));
-        for (let i = 0; i < imagesCopy.length; i++) {
-          if (imagesCopy[i].id == res.id) {
-            imagesCopy[i].pending = false;
-          }
-        }
-        let updatedImages = imagesCopy;
-        images.value = updatedImages;
-
-        // maker render to update ui
-        let completedAt = new Date().getTime();
-        callback(null, res, completedAt);
+        callback(null, { upload: true, id: res.id });
+      } else {
+        callback("uploading failed", { upload: false });
       }
     })
     .catch((error) => {
-      let completedAt = new Date().getTime();
       console.log(error);
-      callback(new Error(error.message), null, completedAt);
+      callback("something went wrong", { upload: false });
     });
 }
 
-export function UploadInput({ setUploads, reset }: uploadInputType) {
+export function UploadInput({ setUploads }: uploadInputType) {
   console.log("render upload input");
 
-  let [chosedImages, setChosedImages] = useState<{ id: string; name: string }[]>([]);
+  let [uploadingImages, addUploadingImage] = useState<T_uploadingImageItem[]>([]);
   let [sessionId, setSessionId] = useState<string | null>(null);
-  let [rerendering, setRerendering] = useState<number>(0);
 
   // init new session
   useEffect(() => {
@@ -63,10 +50,6 @@ export function UploadInput({ setUploads, reset }: uploadInputType) {
           console.error("something went wrong!");
         }
       });
-    return () => {
-      images.value = [];
-      setChosedImages([]);
-    };
   }, []);
 
   function dropHandler(ev: React.DragEvent<HTMLLabelElement>) {
@@ -84,16 +67,29 @@ export function UploadInput({ setUploads, reset }: uploadInputType) {
           let src = URL.createObjectURL(file);
           let name = file.name;
 
-          setImages(id, src, `upat_${id}_${name}`);
+          // add image to uploading list
+          addUploadingImage((prev) => [
+            ...prev,
+            {
+              id,
+              src,
+              pending: true,
+            },
+          ]);
 
-          setRerendering(+id); // rerender for update ui with new uploaded image
-
-          uploadImage(file, id, sessionId as string, (err, res, time) => {
-            if (err) {
+          uploadImage(file, id, sessionId as string, (err, res) => {
+            if (!res.upload) {
               console.log(err);
+              return;
             }
-            console.log(res);
-            setRerendering(time);
+            // return the uploaded image
+            setUploads("images", {
+              id: res.id,
+              name: `https://omzid.serv00.net/images/upat_${id}_${name}`,
+            });
+
+            // filter uploading images by getting the pending images only
+            addUploadingImage((prev) => prev.filter((image) => image.id !== res.id));
           });
         }
       });
@@ -113,67 +109,35 @@ export function UploadInput({ setUploads, reset }: uploadInputType) {
       alert("pleas wait");
       return;
     }
-
     for (let i = 0; i < input.files!.length; i++) {
       let id = String(new Date().getTime());
       let src = URL.createObjectURL(input.files?.[i] as File);
       let name = input.files?.[i].name;
-
-      setImages(id, src, `upat_${id}_${name}`);
-
-      setRerendering(+id);
-
-      uploadImage(input.files![i], id, sessionId as string, (err, res, time) => {
-        if (err) {
+      // add image to uploading list
+      addUploadingImage((prev) => [
+        ...prev,
+        {
+          id,
+          src,
+          pending: true,
+        },
+      ]);
+      uploadImage(input.files![i], id, sessionId as string, (err, res) => {
+        if (!res.upload) {
           console.log(err);
+          return;
         }
-        console.log(res);
-        setRerendering(time);
+        // return the uploaded image
+        setUploads("images", {
+          id: res.id,
+          name: `https://omzid.serv00.net/images/upat_${id}_${name}`,
+        });
+        // filter uploading images by getting the pending images only
+        addUploadingImage((prev) => prev.filter((image) => image.id !== res.id));
       });
     }
     input.value = "";
   }
-
-  function removeChosedImage(e: React.MouseEvent) {
-    // delete image from state
-    setChosedImages(chosedImages.filter(({ id }) => id != (e.target as HTMLElement).id));
-    // delete images from global state (signal)
-
-    // delete images from ui (preview images)
-    images.value = images.value.filter(({ id }) => id != (e.target as HTMLElement).id);
-  }
-
-  function setImages(id: string, src: string, name: string) {
-    images.value = [
-      ...images.value,
-      {
-        id,
-        src: src,
-        pending: true,
-      },
-    ];
-
-    setChosedImages((prev) => [
-      ...prev,
-      {
-        id,
-        name,
-      },
-    ]);
-  }
-
-  // when reset happen
-  useEffect(() => {
-    if (reset) {
-      setChosedImages([]);
-      images.value = [];
-    }
-  }, [reset]);
-
-  // update signal state when remove/add new chosed image
-  useEffect(() => {
-    setUploads("images", chosedImages);
-  }, [chosedImages]);
 
   return (
     <div className={"uploads " + (sessionId == null ? "animate-pulse pointer-events-none" : "animate-none")}>
@@ -191,23 +155,22 @@ export function UploadInput({ setUploads, reset }: uploadInputType) {
         </div>
         <input onChange={setNewFile} id='file' type='file' multiple className='hidden' />
       </label>
-      <div className='chosed_images_wrapper'>
-        <div className='images my-2 grid gap-5 grid-cols-[repeat(auto-fit,_theme(width.28))] justify-evenly'>
-          {images.value.map(({ id, pending, src }, i) => (
-            <div key={i} className='chosed_wrapper relative'>
-              <Chosed_image id={id} image={src} removeImage={removeChosedImage} />
-              {pending ? (
-                <div className='overlay grid absolute w-full h-full bg-black/30 place-content-center top-0 left-0 text-white'>
-                  <i className='bx bx-loader bx-sm bx-spin text-center'></i>
-                  <p className='text-xs'>loading...</p>
-                </div>
-              ) : (
-                ""
-              )}
-            </div>
-          ))}
-        </div>
-        {images.value.length == 0 ? <p className='text-slate-400 text-center text-xs py-2 border rounded-md mb-2'>there is no images added yet</p> : ""}
+      <div className='uploading_images my-2 grid gap-5 grid-cols-[repeat(auto-fit,_theme(width.28))] justify-evenly'>
+        {uploadingImages.map(({ id, pending, src }, i) => (
+          <div key={i} className='chosed_image relative h-full w-28 rounded-md shadow p-1'>
+            <figure className='overflow-hidden rounded h-full'>
+              <Image src={src} alt='chosed_image' width={470} height={470} className='object-contain' />
+            </figure>
+            {pending ? (
+              <div className='overlay grid absolute w-full h-full bg-black/30 place-content-center top-0 left-0 text-white'>
+                <i className='bx bx-loader bx-sm bx-spin text-center'></i>
+                <p className='text-xs'>loading...</p>
+              </div>
+            ) : (
+              ""
+            )}
+          </div>
+        ))}
       </div>
     </div>
   );
