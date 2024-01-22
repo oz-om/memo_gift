@@ -4,19 +4,18 @@ import Add_items_dialog from "../components/premade/Add_items_dialog";
 import { OpenDialog } from "../components/client/Buttons";
 import Custom_Checkbox from "../components/premade/Custom_Checkbox";
 import { signal } from "signals-react-safe";
-import type { premadeDataType } from "@/types/types";
+import type { T_PremadeData, T_PremadeVariant } from "@/types/types";
 import Input, { Textarea } from "../../components/client/inputs";
 import { CategoriesInput } from "../../components/client/inputs/CategoriesInput";
-import { UploadInput } from "../../components/client/inputs/UploadInput";
 import SubmitButton from "../../components/client/SubmitButton";
 import { useEffect, useState } from "react";
 import Includes from "../components/premade/Includes";
 import Price from "../components/premade/Price";
-import ErrorMessage from "../../components/client/ErrorMessage";
 import { toast } from "react-hot-toast";
 import { toastStyles } from "@/utils";
+import PremadeChosedImages from "../components/premade/PremadeChosedImages";
 
-export const premade = signal<premadeDataType>({
+export const premade = signal<T_PremadeData>({
   name: "",
   desc: "",
   categories: [],
@@ -26,15 +25,15 @@ export const premade = signal<premadeDataType>({
   price: 0,
 });
 
-export function setPremadeInput(fieldType: string, value: any) {
+export function setPremadeInput<fieldType extends keyof T_PremadeData>(field: fieldType, value: T_PremadeData[fieldType]) {
   premade.value = {
     ...premade.value,
-    [fieldType]: value,
+    [field]: value,
   };
 }
 let uploadUrl = process.env.NEXT_PUBLIC_UPLOAD_URL as string;
 
-export default function Premade_gift({ action }: { action: (data: premadeDataType) => Promise<any> }) {
+export default function Premade_gift({ action, variants }: { action: (data: T_PremadeData) => Promise<any>; variants: T_PremadeVariant[] }) {
   console.log("render premade wrapper");
   let [reset, setReset] = useState(false);
 
@@ -93,14 +92,15 @@ export default function Premade_gift({ action }: { action: (data: premadeDataTyp
             <div className='box_variant_wrapper'>
               <h4 className='capitalize text-sm'>box variants:</h4>
               <div className='box-variants_list max-w-sm'>
-                <Custom_Checkbox id={"339256a2-dab1-4e4a-b7da-aae1aee1dc81"} key={"theme_id_01"} variantName={"mattel black"} variantTheme='bg-slate-600' reset={reset} />
-                <Custom_Checkbox id={"5f86abf7-4f49-47d0-a55b-906c44ef7911"} key={"theme_id_02"} variantName={"origin crime"} variantTheme='bg-yellow-100' reset={reset} />
+                {variants.map(({ id, name, value }) => {
+                  return <Custom_Checkbox id={id} key={id} name={name} value={value} reset={reset} />;
+                })}
               </div>
             </div>
           </div>
-          <div className='premade_photos_wrapper basis-1/2 md:max-w-lg'>
-            <h4 className='capitalize mb-2 text-sm'>chose images:</h4>
-            <UploadInput setUploads={setPremadeInput} reset={reset} />
+          <div className='premade_photos_wrapper basis-1/2 md:max-w-lg flex flex-col'>
+            <h4 className='capitalize mb-2 text-sm'>chosed images:</h4>
+            <PremadeChosedImages premadeImages={premade.value.images} />
           </div>
         </div>
         <div className='includes_wrapper py-4 px-2 bg-white  shadow-md rounded'>
@@ -112,7 +112,7 @@ export default function Premade_gift({ action }: { action: (data: premadeDataTyp
         </div>
         <div className='price_wrapper mt-20'>
           <p className='capitalize text-sm'>computed price: </p>
-          <Price />
+          <Price readOnly={true} setValue={setPremadeInput} />
         </div>
         <div className='publish_wrapper'>
           <SubmitButton publish={createPremade} />

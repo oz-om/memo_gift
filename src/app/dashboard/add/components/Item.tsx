@@ -1,9 +1,9 @@
-import { includeItemType } from "@/types/types";
+import { includeItemType, T_setInputsValue } from "@/types/types";
 import Image from "next/image";
 
 type itemProps = includeItemType & {
   includes?: includeItemType[];
-  setPremade?: (fieldType: string, value: any) => void;
+  setPremade?: T_setInputsValue;
 };
 export default function Item({ id, images, name, price, includes, setPremade }: itemProps) {
   function addToIncludes() {

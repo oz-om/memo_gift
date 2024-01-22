@@ -1,6 +1,6 @@
 "use server";
 import { prisma } from "@/lib/db/prisma";
-import type { itemDataType, premadeDataType, T_PostCard, T_Variant } from "@/types/types";
+import type { itemDataType, T_PostCard, T_PremadeData } from "@/types/types";
 
 function createCategories(categories: string[]) {
   return prisma.category.createMany({
@@ -19,6 +19,8 @@ function reSortedAndGetImagesAsURL(images: { id: string; name: string }[]) {
   });
   return imagesNames;
 }
+
+// create new item
 export async function createNewItem(data: itemDataType) {
   // sort uploads as the user sorted insert
   let imagesURLs = reSortedAndGetImagesAsURL(data.images);
@@ -72,10 +74,11 @@ export async function createNewItem(data: itemDataType) {
   }
 }
 
-export async function createNewPremade(data: premadeDataType): Promise<{ creation: true } | { creation: false; error: string }> {
+// create new premade
+export async function createNewPremade(data: T_PremadeData): Promise<{ creation: true } | { creation: false; error: string }> {
   let imagesURLs = reSortedAndGetImagesAsURL(data.images);
   try {
-    let req = await prisma.$transaction([
+    await prisma.$transaction([
       createCategories(data.categories),
       prisma.premadeGift.create({
         data: {
@@ -118,23 +121,6 @@ export async function createNewPremade(data: premadeDataType): Promise<{ creatio
             })),
           },
         },
-        include: {
-          categories: {
-            select: {
-              cat_name: true,
-            },
-          },
-          variants: {
-            select: {
-              variant: true,
-            },
-          },
-          includes: {
-            select: {
-              item: true,
-            },
-          },
-        },
       }),
     ]);
     return {
@@ -149,6 +135,12 @@ export async function createNewPremade(data: premadeDataType): Promise<{ creatio
   }
 }
 
+//  create new variant
+type T_Variant = {
+  name: string;
+  value: string;
+  preview: string;
+};
 type T_VariantFieldKey = keyof T_Variant;
 export async function createNewVariant(data: T_Variant): Promise<{ success: true } | { success: false; error: string }> {
   let field: T_VariantFieldKey;
@@ -178,6 +170,7 @@ export async function createNewVariant(data: T_Variant): Promise<{ success: true
   }
 }
 
+// create new post card
 type T_PostCardKey = keyof T_PostCard;
 export async function createNewPostCard(data: T_PostCard): Promise<{ success: true } | { success: false; error: string }> {
   let field: T_PostCardKey;

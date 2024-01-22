@@ -1,7 +1,12 @@
 "use client";
-import { inputProps } from "@/types/inputsType";
+import { T_setInputsValue } from "@/types/types";
 import { useEffect, useState } from "react";
 
+type inputProps = {
+  className?: string;
+  setValue: T_setInputsValue;
+  reset: boolean;
+};
 export function CategoriesInput({ className, setValue, reset }: inputProps) {
   console.log("render categories input");
   const [categories, updateCategories] = useState<string[]>([]);
@@ -48,7 +53,7 @@ export function CategoriesInput({ className, setValue, reset }: inputProps) {
 type categoryProps = {
   name: string;
   cats: string[];
-  remove: (fieldType: string, value: any) => void;
+  remove: T_setInputsValue;
   updateCategories: React.Dispatch<React.SetStateAction<string[]>>;
 };
 function Category({ name, cats, remove, updateCategories }: categoryProps) {

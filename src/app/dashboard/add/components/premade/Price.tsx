@@ -1,9 +1,10 @@
 "use client";
+import { T_setInputsValue } from "@/types/types";
 import { useEffect, useRef, useState } from "react";
 import { signal, useSignalEffect } from "signals-react-safe";
-import { premade, setPremadeInput } from "../../type/Premade_gift";
+import { premade } from "../../type/Premade_gift";
 let price = signal(0);
-export default function Price() {
+export default function Price({ readOnly = false, setValue }: { readOnly?: boolean; setValue: T_setInputsValue }) {
   console.log("rendering price");
   const priceRef = useRef<HTMLInputElement>(null);
   let [includesPrice, setIncludesPrice] = useState<{ count: number; totalPrice: number }>({
@@ -21,7 +22,7 @@ export default function Price() {
     }
   });
   useEffect(() => {
-    setPremadeInput("price", includesPrice.totalPrice);
+    setValue("price", includesPrice.totalPrice);
     if (priceRef.current) {
       priceRef.current.value = `${includesPrice.totalPrice}`;
     }
@@ -36,14 +37,16 @@ export default function Price() {
   function setNewPrice(e: React.ChangeEvent<HTMLInputElement>) {
     let input = e.target;
     price.value = +input.value;
-    setPremadeInput("price", price.value);
+    setValue("price", price.value);
   }
   return (
     <div className='price flex items-center gap-x-2 ml-4 mt-2'>
-      <input ref={priceRef} onInput={setNewPrice} type='number' className='font-semibold w-14 border outline-none' readOnly placeholder={`${price.value}`} />$
-      <button onClick={toggleReadOnly} className='text-xs text-teal-500'>
-        edit
-      </button>
+      <input ref={priceRef} onInput={setNewPrice} type='number' className='font-semibold w-14 border outline-none' readOnly={readOnly} placeholder={`${price.value}`} />$
+      {readOnly && (
+        <button onClick={toggleReadOnly} className='text-xs text-teal-500'>
+          edit
+        </button>
+      )}
     </div>
   );
 }

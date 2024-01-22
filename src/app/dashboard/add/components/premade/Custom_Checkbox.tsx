@@ -4,12 +4,12 @@ import { premade, setPremadeInput } from "../../type/Premade_gift";
 
 type checkboxProps = {
   id: string;
-  variantTheme: string;
-  variantName: string;
+  value: string;
+  name: string;
   reset: boolean;
 };
 
-export default function Custom_Checkbox({ id, variantTheme, variantName, reset }: checkboxProps) {
+export default function Custom_Checkbox({ id, value, name, reset }: checkboxProps) {
   let checkbox = useRef<HTMLInputElement | null>(null);
   function handleChecked({ target: checkbox }: React.ChangeEvent<HTMLInputElement>) {
     let variants = premade.value.variants;
@@ -18,8 +18,6 @@ export default function Custom_Checkbox({ id, variantTheme, variantName, reset }
         ...variants,
         {
           id,
-          variantName,
-          variantTheme,
         },
       ]);
     } else {
@@ -40,9 +38,9 @@ export default function Custom_Checkbox({ id, variantTheme, variantName, reset }
           <path d='M16 26l9.2 8.4 17.4-21.4' className='checkmark-kick [transition:_stroke-dashoffset_0.3s]' strokeDasharray='50' strokeDashoffset='50'></path>
         </svg>
       </div>
-      <label htmlFor={id} className={"flex p-1 rounded cursor-pointer " + variantTheme}>
+      <label htmlFor={id} className={"flex p-1 rounded cursor-pointer "} style={{ backgroundColor: value }}>
         <span className='block w-6 h-6'></span>
-        <p className='bg-white rounded px-1'>{variantName}</p>
+        <p className='bg-white rounded px-1'>{name}</p>
       </label>
     </div>
   );

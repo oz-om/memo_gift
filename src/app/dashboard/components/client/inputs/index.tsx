@@ -1,18 +1,27 @@
 "use client";
-import { inputProps } from "@/types/inputsType";
+import { T_setInputsValue } from "@/types/types";
 import React, { useRef, useState } from "react";
 
+type inputProps = {
+  name: "name" | "desc";
+  type?: string;
+  placeholder?: string;
+  className?: string;
+  setValue: T_setInputsValue;
+  reset: boolean;
+};
 export default function Input({ name, type, placeholder, className = "", setValue, reset }: inputProps) {
   console.log("render", placeholder);
   let inputEle = useRef<HTMLInputElement | null>(null);
   if (reset) {
-    setValue(placeholder || "name", "");
+    setValue(name, "");
     if (inputEle.current) {
       inputEle.current.value = "";
     }
   }
   function handleInput({ target: input }: React.ChangeEvent<HTMLInputElement>) {
-    setValue(placeholder || "name", input.value);
+    // setValue(placeholder || "name", input.value);
+    setValue(name, input.value);
   }
   return (
     <div className={"input_field relative border rounded mt-8 h-10 w-full " + className}>

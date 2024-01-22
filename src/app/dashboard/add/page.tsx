@@ -6,17 +6,30 @@ import Postcard from "./type/Postcard";
 import { createNewItem, createNewPremade } from "../_actions/actions";
 import Loading from "@/app/components/LoadingSpin";
 import Variants from "./type/Variants";
+import { T_PremadeVariant } from "@/types/types";
+import { prisma } from "@/lib/db/prisma";
 
-export default function AddPage({ searchParams: { type } }: { searchParams: { type: string } }) {
-  if (type !== "premade-gift" && type !== "item" && type !== "postcard" && type != "variant") {
+export default async function AddPage({ searchParams: { type } }: { searchParams: { type: string } }) {
+  if (type !== "premade-gift" && type !== "item" && type !== "postcard" && type !== "variant") {
     redirect("/dashboard/add?type=premade-gift");
+  }
+  let variants: T_PremadeVariant[] = [];
+  if (type == "premade-gift") {
+    variants = await prisma.variant.findMany({
+      select: {
+        id: true,
+        name: true,
+        value: true,
+        preview: true,
+      },
+    });
   }
 
   return (
     <>
       {(!type || type == "premade-gift") && (
         <Suspense fallback={<Loading />}>
-          <Premade_gift action={createNewPremade} />
+          <Premade_gift action={createNewPremade} variants={variants} />
         </Suspense>
       )}
       {type == "item" && (

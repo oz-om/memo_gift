@@ -1,30 +1,39 @@
 import { Item, Prisma } from "@prisma/client";
-
-type basedType = {
-  name: string;
-  desc: string;
-  images: images[];
-  price: number;
-  categories: string[];
-};
-type images = {
+// based types between item and premade
+type image = {
   id: string;
   name: string;
 };
+type basedType = {
+  name: string;
+  desc: string;
+  images: image[];
+  price: number;
+  categories: string[];
+};
+
+// item type
 export type itemDataType = basedType & {
   theme: string;
 };
 
-export type premadeDataType = basedType & {
-  variants: variant[];
+// premade types
+export type T_PremadeData = {
+  name: string;
+  desc: string;
+  categories: string[];
+  variants: { id: string }[];
+  images: image[];
   includes: includeItemType[];
+  price: number;
 };
-type variant = {
+export type T_PremadeVariant = {
   id: string;
-  variantName: string;
-  variantTheme: string;
+  name: string;
+  value: string;
+  preview: string;
 };
-type includeItemType = Prisma.ItemGetPayload<{
+export type includeItemType = Prisma.ItemGetPayload<{
   select: {
     id: true;
     name: true;
@@ -32,12 +41,12 @@ type includeItemType = Prisma.ItemGetPayload<{
     images: true;
   };
 }>;
-type T_Variant = {
-  name: string;
-  preview: string;
-  value: string;
-};
+
+// post card types
 type T_PostCard = {
   name: string;
   image: string;
 };
+
+// set inputs value type for (premade|item|postcard|variant) inputs
+export type T_setInputsValue = <fieldType extends keyof T_PremadeData>(field: fieldType, value: T_PremadeData[fieldType]) => void;
