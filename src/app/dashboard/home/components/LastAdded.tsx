@@ -35,7 +35,7 @@ export default async function LastAdded() {
           <span className='absolute top-0 left-0 bg-teal-400 rounded-md  py-1 px-2 text-white text-sm'>premade</span>
           <Image src={`${JSON.parse(lastPremade!.images)[0]}`} alt={"last added premade"} width={200} height={200} />
         </figure>
-        <div className='name'>{lastPremade?.name}</div>
+        <div className='name max-w-64'>{lastPremade?.name}</div>
         <div className='details flex justify-between mt-2 mb-5'>
           <div className='price'>{lastPremade?.price}$</div>
           <div className='variants flex px-4 gap-x-4'>
@@ -56,7 +56,7 @@ export default async function LastAdded() {
           <span className='absolute top-0 left-0 bg-blue-400 rounded-md  py-1 px-2 text-white text-sm'>item</span>
           <Image src={`${JSON.parse(lastItem!.images)[0]}`} alt={"last added premade"} width={200} height={200} />
         </figure>
-        <div className='name'>{lastItem?.name}</div>
+        <div className='name max-w-64'>{lastItem?.name}</div>
         <div className='details flex justify-between mt-2 mb-5'>
           <div className='price'>{lastItem?.price}$</div>
         </div>
@@ -72,7 +72,7 @@ export default async function LastAdded() {
           <span className='absolute top-0 left-0 bg-orange-400 rounded-md  py-1 px-2 text-white text-sm'>post card</span>
           <Image src={`${lastPostCard?.image}`} alt={"last added premade"} width={200} height={200} />
         </figure>
-        <div className='name mb-5'>{lastPostCard?.name}</div>
+        <div className='name mb-5 max-w-64'>{lastPostCard?.name}</div>
         <div className='add_new grid place-content-center mt-auto'>
           <Link href={"/dashboard/add?type=postcard"} className='w-fit px-8 py-1 bg-orange-600 text-white rounded-md'>
             add new
