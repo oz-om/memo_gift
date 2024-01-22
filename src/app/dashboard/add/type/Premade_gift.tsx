@@ -37,10 +37,6 @@ let uploadUrl = process.env.NEXT_PUBLIC_UPLOAD_URL as string;
 export default function Premade_gift({ action }: { action: (data: premadeDataType) => Promise<any> }) {
   console.log("render premade wrapper");
   let [reset, setReset] = useState(false);
-  let [confirmation, setConfirmation] = useState({
-    confirmed: true,
-    msg: "",
-  });
 
   async function createPremade() {
     let alert = toast;
@@ -62,30 +58,20 @@ export default function Premade_gift({ action }: { action: (data: premadeDataTyp
       body: JSON.stringify(premade.value.images),
     });
     let res = await req.json();
-
+    // if upload is successful than create premade
     if (res.confirmation) {
       let req = await action(premade.value);
-      console.log(req);
-
       if (req.creation) {
         alert.remove();
         alert.success("successfully created", { style: toastStyles });
         setReset(true);
       } else {
-        alert.error("there are a problem with item creation", { style: toastStyles });
-        console.error("there are a problem with item creation");
-        setConfirmation({
-          confirmed: req.creation,
-          msg: req.error,
-        });
+        alert.error(req.error, { style: toastStyles });
+        console.error(req.error);
       }
     } else {
-      alert.error("error with confirm uploads", { style: toastStyles });
-      console.error("error with confirm uploads");
-      setConfirmation({
-        confirmed: res.confirmation,
-        msg: res.error,
-      });
+      alert.error(res.error, { style: toastStyles });
+      console.error(res.error);
     }
   }
 
@@ -96,16 +82,8 @@ export default function Premade_gift({ action }: { action: (data: premadeDataTyp
     }
   }, [reset]);
 
-  function closeErrorMessage() {
-    setConfirmation({
-      confirmed: true,
-      msg: "",
-    });
-  }
-
   return (
     <section className='premade_gift_wrapper'>
-      {confirmation.confirmed == false ? <ErrorMessage msg={confirmation.msg} close={closeErrorMessage} /> : ""}
       <div className='form mb-20 px-3'>
         <div className='about_premade md:flex md:gap-x-10 bg-white mb-5 px-2 py-4 shadow-md rounded'>
           <div className='inputs_wrapper basis-1/2 max-w-lg'>

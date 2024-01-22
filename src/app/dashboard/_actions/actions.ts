@@ -72,7 +72,7 @@ export async function createNewItem(data: itemDataType) {
   }
 }
 
-export async function createNewPremade(data: premadeDataType) {
+export async function createNewPremade(data: premadeDataType): Promise<{ creation: true } | { creation: false; error: string }> {
   let imagesURLs = reSortedAndGetImagesAsURL(data.images);
   try {
     let req = await prisma.$transaction([
@@ -139,13 +139,12 @@ export async function createNewPremade(data: premadeDataType) {
     ]);
     return {
       creation: true,
-      req,
     };
   } catch (error) {
     console.log(error);
     return {
       creation: false,
-      error: error,
+      error: "ops! Something went wrong, please try again",
     };
   }
 }
