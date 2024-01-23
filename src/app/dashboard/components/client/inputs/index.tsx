@@ -3,7 +3,7 @@ import { T_setInputsValue } from "@/types/types";
 import React, { useRef, useState } from "react";
 
 type inputProps = {
-  name: "name" | "desc";
+  name: "name" | "desc" | "price" | "value";
   type?: string;
   placeholder?: string;
   className?: string;
