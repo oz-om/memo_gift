@@ -3,8 +3,9 @@ import { toastStyles } from "@/utils";
 import React from "react";
 import { toast } from "react-hot-toast";
 import { signal } from "signals-react-safe";
-import { updatePremadeDetailsAction } from "../action";
+import { updatePremadeDetailsAction } from "../../action";
 import { T_PremadeProductType } from "../[premade_id]/page";
+import { newUploadedImages } from "./PremadeImages";
 
 type premadeVariant = {
   id: string;
@@ -30,8 +31,11 @@ export const premadeUpdateDetails = signal<T_premadeDetails>({
 });
 type premadeFieldKey = keyof T_premadeDetails;
 export const reset = signal(false);
+let uploadUrl = process.env.NEXT_PUBLIC_UPLOAD_URL as string;
+
 export default function UpdatePremadeDetails({ premade }: { premade: T_PremadeProductType }) {
   const { name, price, desc, images, variants, categories } = premade;
+  // save the all premade details to compare ist after with the premadeUpdateDetails
   let originPremadeDetails = {
     name: premade.name,
     price: premade.price,
@@ -54,7 +58,7 @@ export default function UpdatePremadeDetails({ premade }: { premade: T_PremadePr
     let premadeDataUpdatedFields = {};
     let premadeRelatedDataUpdatedFields = {};
     let premadeFieldKey: premadeFieldKey;
-    // get only the updated fields
+    // // get only the updated fields with compare the data the we store at originPremadeDetails with the update data comes from premadeUpdateDetails signal
     for (premadeFieldKey in originPremadeDetails) {
       if (JSON.stringify(originPremadeDetails[premadeFieldKey]) !== JSON.stringify(premadeUpdateDetails.value[premadeFieldKey])) {
         if (premadeFieldKey == "categories" || premadeFieldKey == "variants") {
@@ -71,13 +75,34 @@ export default function UpdatePremadeDetails({ premade }: { premade: T_PremadePr
       }
     }
     alert.loading("just a second...", { style: toastStyles });
-    const res = await updatePremadeDetailsAction(premade.id, premadeDataUpdatedFields, premadeRelatedDataUpdatedFields);
-    alert.remove();
-    if (!res.success) {
+    // make a request to file manager to confirm our new uploads if exist
+    let confirmUploadedRequest: Response | null = null;
+    if (newUploadedImages.value.length > 0) {
+      confirmUploadedRequest = await fetch(uploadUrl, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newUploadedImages.value),
+      });
+    }
+    // get the response from the request if it sends
+    let res: any = confirmUploadedRequest ? await confirmUploadedRequest.json() : null;
+    // if the response exists and its failed
+    if (res && !res.confirmation) {
+      alert.remove();
       alert.error(res.error, { style: toastStyles });
       return;
     }
-    reset.value = true;
+    // if upload is successful than update premade
+    const updateAction = await updatePremadeDetailsAction(premade.id, premadeDataUpdatedFields, premadeRelatedDataUpdatedFields);
+    alert.remove();
+    if (!updateAction.success) {
+      alert.error(updateAction.error, { style: toastStyles });
+      return;
+    }
+    // reset the uploads images is its not empty
+    newUploadedImages.value = [];
     alert.success("Done", { style: toastStyles });
   }
   return (
