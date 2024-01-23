@@ -1,8 +1,9 @@
 "use client";
 
+import { T_setInputsValue } from "@/types/types";
 import { useRef } from "react";
 
-export default function Item_theme({ setTheme, reset }: { setTheme: (fieldType: string, value: any) => void; reset: boolean }) {
+export default function Item_theme({ setTheme, reset }: { setTheme: T_setInputsValue; reset: boolean }) {
   let defaultSelected = useRef<HTMLOptionElement | null>(null);
   if (reset) {
     setTheme("theme", "white-to-black");
