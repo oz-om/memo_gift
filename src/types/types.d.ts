@@ -4,16 +4,14 @@ type image = {
   id: string;
   name: string;
 };
-type basedType = {
+
+// item type
+export type itemDataType = {
   name: string;
   desc: string;
   images: image[];
   price: number;
   categories: string[];
-};
-
-// item type
-export type itemDataType = basedType & {
   theme: string;
 };
 
@@ -49,4 +47,16 @@ type T_PostCard = {
 };
 
 // set inputs value type for (premade|item|postcard|variant) inputs
-export type T_setInputsValue = <fieldType extends keyof T_PremadeData>(field: fieldType, value: T_PremadeData[fieldType]) => void;
+type T_allFields = {
+  name: string;
+  desc: string;
+  price: number;
+  images: image[];
+  image: string;
+  theme: string;
+  categories: string[];
+  includes: includeItemType[];
+  variants: { id: string }[];
+  value: string;
+};
+export type T_setInputsValue = <fieldType extends keyof T_allFields>(field: fieldType, value: T_allFields[fieldType]) => void;
