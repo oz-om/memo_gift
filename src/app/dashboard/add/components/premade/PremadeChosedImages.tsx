@@ -2,10 +2,10 @@
 import { UploadInput } from "@/app/dashboard/components/client/inputs/UploadInput";
 import React, { useState } from "react";
 import { premade } from "../../type/Premade_gift";
-import Chosed_image from "../Chosed_image";
+import Chosed_image from "../../../components/client/Chosed_image";
 
-export default function PremadeChosedImages({ premadeImages }: { premadeImages: { name: string; id: string }[] }) {
-  const [chosedImages, setChosedImages] = useState<{ src?: string; id: string }[]>(premadeImages);
+export default function PremadeChosedImages() {
+  const [chosedImages, setChosedImages] = useState<{ src?: string; id: string }[]>([]);
   function getUploadedImage(image: { name: string; id: string; src: string }) {
     setChosedImages((prev) => [...prev, { src: image.src, id: image.id }]);
     premade.value.images = [...premade.value.images, { name: image.name, id: image.id }];
@@ -17,7 +17,7 @@ export default function PremadeChosedImages({ premadeImages }: { premadeImages: 
   return (
     <>
       <div className='chosed_images_wrapper'>
-        <div className='grid gap-5 min-[300px]:grid-cols-2 sm:grid-cols-[repeat(auto-fit,_minmax(150px,_1fr))] lg:grid-cols-4'>
+        <div className='grid gap-5 min-[300px]:grid-cols-2 sm:grid-cols-[repeat(auto-fit,_minmax(112px,_1fr))] lg:grid-cols-4'>
           {chosedImages.map(({ src, id }) => (
             <Chosed_image key={id} id={id} src={`${src}`} removeImage={removeChosedImage} />
           ))}
