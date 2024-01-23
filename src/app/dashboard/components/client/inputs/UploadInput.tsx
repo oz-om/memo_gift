@@ -2,7 +2,8 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 let uploadUrl = process.env.NEXT_PUBLIC_UPLOAD_URL as string;
-type uploadInputType = { setUploads: (fieldType: string, value: any) => void; reset: boolean };
+
+type uploadInputType = { setUploads: (image: { id: string; name: string; src: string }) => void; reset: boolean };
 type T_uploadingImageItem = {
   id: string;
   src: string;
@@ -83,9 +84,10 @@ export function UploadInput({ setUploads }: uploadInputType) {
               return;
             }
             // return the uploaded image
-            setUploads("images", {
+            setUploads({
               id: res.id,
-              name: `https://omzid.serv00.net/images/upat_${id}_${name}`,
+              src: `https://omzid.serv00.net/images/upat_${id}_${name}`,
+              name: `upat_${id}_${name}`,
             });
 
             // filter uploading images by getting the pending images only
@@ -128,9 +130,10 @@ export function UploadInput({ setUploads }: uploadInputType) {
           return;
         }
         // return the uploaded image
-        setUploads("images", {
+        setUploads({
           id: res.id,
-          name: `https://omzid.serv00.net/images/upat_${id}_${name}`,
+          src: `https://omzid.serv00.net/images/upat_${id}_${name}`,
+          name: `upat_${id}_${name}`,
         });
         // filter uploading images by getting the pending images only
         addUploadingImage((prev) => prev.filter((image) => image.id !== res.id));
