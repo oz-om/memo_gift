@@ -1,4 +1,5 @@
 "use client";
+import { T_setInputsValue } from "@/types/types";
 import { toastStyles } from "@/utils";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
@@ -6,6 +7,7 @@ import { signal } from "signals-react-safe";
 import Input from "../../components/client/inputs";
 import { UploadInput } from "../../components/client/inputs/UploadInput";
 import { createNewVariant } from "../../_actions/actions";
+import Chosed_image from "../../components/client/Chosed_image";
 type images = {
   id: string;
   name: string;
@@ -21,12 +23,12 @@ const variant = signal<T_Variant>({
   images: [],
 });
 type T_FieldVariant = keyof T_Variant;
-function setValue(fieldType: string, value: string) {
+const setValue: T_setInputsValue = (field, value) => {
   variant.value = {
     ...variant.value,
-    [fieldType]: value,
+    [field]: value,
   };
-}
+};
 let uploadUrl = process.env.NEXT_PUBLIC_UPLOAD_URL as string;
 export default function Variants() {
   let [reset, setReset] = useState(false);
@@ -79,8 +81,8 @@ export default function Variants() {
         <Input name='name' type='text' placeholder='name' setValue={setValue} reset={reset} />
         <Input name='value' type='text' placeholder='value' setValue={setValue} reset={reset} />
         <div className='uploads_wrapper my-4'>
-          <h4 className='text-center text-slate-500 font-medium text-xs'>upload an image preview for the variant box</h4>
-          <UploadInput setUploads={setValue} reset={reset} />
+          <h4 className='text-center text-slate-500 font-medium text-xs my-4'>upload an image preview for the variant box</h4>
+          <VariantChosedImage />
         </div>
       </div>
       <div className='publish_button'>
@@ -89,5 +91,30 @@ export default function Variants() {
         </button>
       </div>
     </div>
+  );
+}
+
+function VariantChosedImage() {
+  const [chosedImages, setChosedImages] = useState<{ src: string; id: string }[]>([]);
+  function getUploadedImage(image: { name: string; id: string; src: string }) {
+    setChosedImages((prev) => [...prev, { src: image.src, id: image.id }]);
+    variant.value.images = [...variant.value.images, { name: image.name, id: image.id }];
+  }
+  function removeChosedImage(id: string) {
+    setChosedImages((prev) => prev.filter((image) => image.id !== id));
+    variant.value.images = variant.value.images.filter((image) => image.id !== id);
+  }
+  return (
+    <>
+      <div className='chosed_images_wrapper'>
+        <div className='grid gap-5 min-[300px]:grid-cols-2 sm:grid-cols-[repeat(auto-fit,_minmax(112px,_1fr))] lg:grid-cols-4'>
+          {chosedImages.map(({ src, id }) => (
+            <Chosed_image key={id} id={id} src={`${src}`} removeImage={removeChosedImage} />
+          ))}
+        </div>
+      </div>
+      {chosedImages.length == 0 ? <p className='text-slate-400 text-center text-xs py-2 border rounded-md mb-2 h-full grid place-content-center'>there is no images added yet</p> : ""}
+      <UploadInput setUploads={getUploadedImage} reset={false} />
+    </>
   );
 }
