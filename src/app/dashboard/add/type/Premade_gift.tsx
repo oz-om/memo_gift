@@ -4,7 +4,7 @@ import Add_items_dialog from "../components/premade/Add_items_dialog";
 import { OpenDialog } from "../components/client/Buttons";
 import Custom_Checkbox from "../components/premade/Custom_Checkbox";
 import { signal } from "signals-react-safe";
-import type { T_PremadeData, T_PremadeVariant } from "@/types/types";
+import type { T_PremadeData, T_PremadeVariant, T_setInputsValue } from "@/types/types";
 import Input, { Textarea } from "../../components/client/inputs";
 import { CategoriesInput } from "../../components/client/inputs/CategoriesInput";
 import SubmitButton from "../../components/client/SubmitButton";
@@ -25,12 +25,12 @@ export const premade = signal<T_PremadeData>({
   price: 0,
 });
 
-export function setPremadeInput<fieldType extends keyof T_PremadeData>(field: fieldType, value: T_PremadeData[fieldType]) {
+export const setPremadeInput: T_setInputsValue = (field, value) => {
   premade.value = {
     ...premade.value,
     [field]: value,
   };
-}
+};
 let uploadUrl = process.env.NEXT_PUBLIC_UPLOAD_URL as string;
 
 export default function Premade_gift({ action, variants }: { action: (data: T_PremadeData) => Promise<any>; variants: T_PremadeVariant[] }) {
@@ -100,7 +100,7 @@ export default function Premade_gift({ action, variants }: { action: (data: T_Pr
           </div>
           <div className='premade_photos_wrapper basis-1/2 md:max-w-lg flex flex-col'>
             <h4 className='capitalize mb-2 text-sm'>chosed images:</h4>
-            <PremadeChosedImages premadeImages={premade.value.images} />
+            <PremadeChosedImages />
           </div>
         </div>
         <div className='includes_wrapper py-4 px-2 bg-white  shadow-md rounded'>
