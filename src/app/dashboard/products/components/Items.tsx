@@ -19,7 +19,7 @@ export default async function Items() {
                 <div className='price'>{item?.price}$</div>
               </div>
               <div className='control_item flex justify-end items-center flex-wrap  mt-auto  '>
-                <Link href={"/dashboard/add?type=premade"} className='w-fit px-4 py-1 bg-blue-50  text-blue-500 rounded-md border border-transparent text-xs hover:border-blue-500'>
+                <Link href={"/dashboard/products/item/" + item.id} className='w-fit px-4 py-1 bg-blue-50  text-blue-500 rounded-md border border-transparent text-xs hover:border-blue-500'>
                   view
                 </Link>
                 <Link href={"/dashboard/add?type=premade"} className='w-fit px-4 py-1  text-red-500 rounded-md text-xs'>
