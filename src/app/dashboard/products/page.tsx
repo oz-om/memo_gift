@@ -11,25 +11,25 @@ export const metadata: Metadata = {
 };
 
 export default function Products({ searchParams: { type } }: { searchParams: { type: string } }) {
-  if (type !== "premade-gift" && type !== "item" && type !== "postcard" && type != "variant") {
-    redirect("/dashboard/products?type=premade-gift");
+  if (type !== "premade-gifts" && type !== "items" && type !== "postcards" && type != "variants") {
+    redirect("/dashboard/products?type=premade-gifts");
   }
 
   return (
     <>
-      {(!type || type == "premade-gift") && (
+      {(!type || type == "premade-gifts") && (
         /* @ts-ignore async component */
         <Premades />
       )}
-      {type == "item" && (
+      {type == "items" && (
         /* @ts-ignore async component */
         <Items />
       )}
-      {type == "postcard" && (
+      {type == "postcards" && (
         /* @ts-ignore async component */
         <Postcards />
       )}
-      {type == "variant" && (
+      {type == "variants" && (
         /* @ts-ignore async component */
         <Variants />
       )}
