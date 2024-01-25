@@ -12,11 +12,11 @@ export default async function Variants() {
           return (
             <div key={variant.id} className='added py-3 bg-violet-50 px-2 rounded flex flex-col'>
               <figure className=' overflow-hidden rounded-md mb-2'>
-                <Image src={`${variant?.preview}`} alt={"last added premade"} width={200} height={200} />
+                <Image src={`${variant?.preview}`} alt={"last added variant"} width={200} height={200} />
               </figure>
               <div className='name mb-5'>{variant?.name}</div>
               <div className='control_variant flex justify-end items-center flex-wrap  mt-auto  '>
-                <Link href={"/dashboard/add?type=premade"} className='w-fit px-4 py-1 bg-blue-50  text-blue-500 rounded-md border border-transparent text-xs hover:border-blue-500'>
+                <Link href={"/dashboard/products/variant/" + variant.id} className='w-fit px-4 py-1 bg-blue-50  text-blue-500 rounded-md border border-transparent text-xs hover:border-blue-500'>
                   view
                 </Link>
                 <Link href={"/dashboard/add?type=premade"} className='w-fit px-4 py-1  text-red-500 rounded-md text-xs'>

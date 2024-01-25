@@ -250,3 +250,34 @@ export async function updatePostcardDetailsAction(postcardId: string, postcardDa
     };
   }
 }
+
+// update variant details
+type T_UpdatedVariantData = {
+  name?: string;
+  value?: string;
+  preview?: string;
+};
+export async function updateVariantDetailsAction(variantId: string, variantData: T_UpdatedVariantData): Promise<{ success: true } | { success: false; error: string }> {
+  try {
+    if (variantData.name || variantData.value || variantData.preview) {
+      await prisma.variant.update({
+        where: {
+          id: variantId,
+        },
+        data: {
+          ...variantData,
+        },
+      });
+    }
+    return {
+      success: true,
+    };
+  } catch (error) {
+    console.log(error);
+
+    return {
+      success: false,
+      error: "ops! something went wrong, please try again",
+    };
+  }
+}
