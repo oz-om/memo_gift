@@ -12,11 +12,11 @@ export default async function Postcards() {
           return (
             <div key={postcard.id} className='added py-3 bg-orange-50 px-2 rounded flex flex-col'>
               <figure className=' overflow-hidden rounded-md mb-2'>
-                <Image src={`${postcard?.image}`} alt={"last added premade"} width={200} height={200} />
+                <Image src={`${postcard?.image}`} alt={"last added postcard"} width={200} height={200} />
               </figure>
               <div className='name mb-5'>{postcard?.name}</div>
               <div className='control_postcard flex justify-end items-center flex-wrap  mt-auto  '>
-                <Link href={"/dashboard/add?type=premade"} className='w-fit px-4 py-1 bg-blue-50  text-blue-500 rounded-md border border-transparent text-xs hover:border-blue-500'>
+                <Link href={"/dashboard/products/postcard/" + postcard.id} className='w-fit px-4 py-1 bg-blue-50  text-blue-500 rounded-md border border-transparent text-xs hover:border-blue-500'>
                   view
                 </Link>
                 <Link href={"/dashboard/add?type=premade"} className='w-fit px-4 py-1  text-red-500 rounded-md text-xs'>

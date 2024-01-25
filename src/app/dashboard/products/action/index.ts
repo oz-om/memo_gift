@@ -220,3 +220,33 @@ export async function updateItemDetailsAction(itemId: string, itemData: T_Update
     };
   }
 }
+
+// update postcard details
+type T_UpdatedPostcardData = {
+  name?: string;
+  image?: string;
+};
+export async function updatePostcardDetailsAction(postcardId: string, postcardData: T_UpdatedPostcardData): Promise<{ success: true } | { success: false; error: string }> {
+  try {
+    if (postcardData.name || postcardData.image) {
+      await prisma.postCard.update({
+        where: {
+          id: postcardId,
+        },
+        data: {
+          ...postcardData,
+        },
+      });
+    }
+    return {
+      success: true,
+    };
+  } catch (error) {
+    console.log(error);
+
+    return {
+      success: false,
+      error: "ops! something went wrong, please try again",
+    };
+  }
+}
