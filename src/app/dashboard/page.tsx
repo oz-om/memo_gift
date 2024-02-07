@@ -1,9 +1,12 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import React, { Suspense } from "react";
+import LastOrdersLoading from "./home/components/loading/lastOrdersLoading";
 import LastAdded from "./home/components/LastAdded";
 import LastOrdersList from "./home/LastOrdersList";
 import StatisticsList from "./home/StatisticsList";
+import StatisticLoading from "./home/components/loading/StatisticLoading";
+import LastAddedLoading from "./home/components/loading/LastAddedLoading";
 
 export const metadata: Metadata = {
   title: "Dashboard",
@@ -19,7 +22,7 @@ export default function Dashboard() {
       <section className='orders_progress_section mb-3'>
         <div className='orders_today px-2 pb-4 bg-white rounded shadow'>
           <p className='mb-2'>today</p>
-          <Suspense fallback='loading statistics...'>
+          <Suspense fallback={<StatisticLoading />}>
             {/* @ts-ignore async component */}
             <StatisticsList />
           </Suspense>
@@ -30,7 +33,7 @@ export default function Dashboard() {
           <Link href={"/dashboard/orders"} className='flex justify-between items-center'>
             <span>last orders</span> <span className='w-12 text-sm text-blue-600'>vew all</span>
           </Link>
-          <Suspense fallback='loading last order...'>
+          <Suspense fallback={<LastOrdersLoading />}>
             {/* @ts-ignore async component */}
 
             <LastOrdersList />
@@ -40,7 +43,7 @@ export default function Dashboard() {
       <section className='last_added_section mt-2'>
         <div className='last_added_wrapper px-2 bg-white rounded shadow'>
           <p>last added</p>
-          <Suspense fallback='loading last added'>
+          <Suspense fallback={<LastAddedLoading />}>
             {/* @ts-ignore async component */}
             <LastAdded />
           </Suspense>
