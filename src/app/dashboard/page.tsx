@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import React, { Suspense } from "react";
-import LastOrdersLoading from "./home/components/loading/lastOrdersLoading";
+import LastOrdersLoading from "./home/components/loading/LastOrdersLoading";
 import LastAdded from "./home/components/LastAdded";
 import LastOrdersList from "./home/LastOrdersList";
 import StatisticsList from "./home/StatisticsList";
