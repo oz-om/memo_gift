@@ -131,7 +131,7 @@ export default async function ManageOrderPage({ params }: { params: { order_id: 
                         quantity = include.quantity;
                       }
                       return (
-                        <div key={include.item_id} className='item flex flex-col border rounded p-2'>
+                        <div key={include.item_id} className='item flex flex-col border rounded p-2 flex-1'>
                           <figure className='item_image overflow-hidden rounded relative'>
                             {quantity >= 1 && <span className='include_item_quantity absolute top-0 left-0 text-[10px] w-4 h-4 pt-[1px] grid place-content-center font-semibold border border-teal-50 bg-teal-500 text-teal-50 rounded-full '>{quantity}</span>}
                             <Image src={`${JSON.parse(include.item!.images)[0]}`} alt={"item image"} width={100} height={100} />
