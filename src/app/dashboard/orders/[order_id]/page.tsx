@@ -138,7 +138,7 @@ export default async function ManageOrderPage({ params }: { params: { order_id: 
                           </figure>
                           <div className='item_name text-sm'>{include.item?.name}</div>
                           <div className='view mt-auto'>
-                            <Link href={"/dashboard/products/item"} className='bg-blue-400 text-white rounded px-2 flex items-center w-fit'>
+                            <Link href={"/dashboard/products/item/" + include.item_id} className='bg-blue-400 text-white rounded px-2 flex items-center w-fit'>
                               <span>view</span> <i className='bx bx-arrow-back bx-flip-horizontal'></i>
                             </Link>
                           </div>
