@@ -2,6 +2,7 @@ import React, { Suspense } from "react";
 import AllOrders from "./components/AllOrders";
 
 import type { Metadata } from "next";
+import LastOrdersLoading from "../components/loading/LastOrdersLoading";
 export const metadata: Metadata = {
   title: "Orders - Dashboard",
   robots: {
@@ -17,7 +18,7 @@ export default function OrdersPage() {
         <p className=''>last orders</p>
       </section>
       <section className='all_orders_wrapper px-2 bg-white/50 rounded shadow'>
-        <Suspense fallback='waiting all orders...'>
+        <Suspense fallback={<LastOrdersLoading />}>
           {/* @ts-ignore async component */}
           <AllOrders />
         </Suspense>

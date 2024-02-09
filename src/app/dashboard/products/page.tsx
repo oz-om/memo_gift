@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
-import React from "react";
+import React, { Suspense } from "react";
+import { ItemsPulsLoading, PostCardsPulsLoading, PremadesPulsLoading } from "../components/loading/LastAddedLoading";
 import Items from "./components/Items";
 import Postcards from "./components/Postcards";
 import Premades from "./components/Premades";
@@ -18,16 +19,22 @@ export default function Products({ searchParams: { type } }: { searchParams: { t
   return (
     <>
       {(!type || type == "premade-gifts") && (
-        /* @ts-ignore async component */
-        <Premades />
+        <Suspense fallback={<PremadesPulsLoading />}>
+          {/* @ts-ignore async component */}
+          <Premades />
+        </Suspense>
       )}
       {type == "items" && (
-        /* @ts-ignore async component */
-        <Items />
+        <Suspense fallback={<ItemsPulsLoading />}>
+          {/* @ts-ignore async component */}
+          <Items />
+        </Suspense>
       )}
       {type == "postcards" && (
-        /* @ts-ignore async component */
-        <Postcards />
+        <Suspense fallback={<PostCardsPulsLoading />}>
+          {/* @ts-ignore async component */}
+          <Postcards />
+        </Suspense>
       )}
       {type == "variants" && (
         /* @ts-ignore async component */

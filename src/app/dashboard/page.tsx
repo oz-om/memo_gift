@@ -1,12 +1,12 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import React, { Suspense } from "react";
-import LastOrdersLoading from "./home/components/loading/LastOrdersLoading";
+import LastOrdersLoading from "./components/loading/LastOrdersLoading";
 import LastAdded from "./home/components/LastAdded";
 import LastOrdersList from "./home/LastOrdersList";
 import StatisticsList from "./home/StatisticsList";
-import StatisticLoading from "./home/components/loading/StatisticLoading";
-import LastAddedLoading from "./home/components/loading/LastAddedLoading";
+import StatisticLoading from "./components/loading/StatisticLoading";
+import LastAddedLoading from "./components/loading/LastAddedLoading";
 
 export const metadata: Metadata = {
   title: "Dashboard",
