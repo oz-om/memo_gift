@@ -17,6 +17,7 @@ i {
   --sb-size: 3px;
 
   scrollbar-color: var(--sb-thumb-color) var(--sb-track-color);
+  scrollbar-width: thin;
 }
 
 .custom-scroll-bar::-webkit-scrollbar {

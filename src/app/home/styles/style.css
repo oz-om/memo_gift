@@ -26,6 +26,14 @@
   }
 
   /* rectents bloges section */
+  .recent_blogs.dragging {
+    cursor: grab;
+    scroll-behavior: auto;
+  }
+  .recent_blogs.dragging .blog_item {
+    pointer-events: none;
+  }
+
   .blogs_cols_count {
     width: 100%;
   }

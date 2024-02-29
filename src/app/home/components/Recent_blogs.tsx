@@ -1,96 +1,63 @@
 "use client";
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { useRef } from "react";
 
 export default function Recent_blogs() {
-  const [startDragging, setStartDragging] = useState(false);
-  const [Dragging, setDragging] = useState(false);
-  const [prevPageX, setPrevPageX] = useState(0);
-  const [prevScrollLeft, setPrevScrollLeft] = useState(0);
-  const [scrolledSpace, setScrolledSpace] = useState(0);
-
   const blogsCarousel = useRef<HTMLDivElement>(null);
-  const leftArrow = useRef(null);
-  const rightArrow = useRef(null);
+  const firstBlogItem = blogsCarousel.current?.querySelectorAll(".blog_item")[0];
+  const firstBlogWidth = firstBlogItem?.clientWidth as number;
+  const isDragStart = useRef(false);
+  const prevPageX = useRef(0);
+  const prevScrollLeft = useRef(0);
+  const positionDiff = useRef(0);
+
+  function dragStart(e: React.MouseEvent<HTMLDivElement, MouseEvent> | React.TouchEvent<HTMLDivElement>) {
+    const PageX = "touches" in e ? e.touches[0].pageX : e.pageX;
+    isDragStart.current = true;
+    prevPageX.current = PageX;
+    prevScrollLeft.current = blogsCarousel.current!.scrollLeft;
+  }
+
+  function dragging(e: React.MouseEvent<HTMLDivElement, MouseEvent> | React.TouchEvent<HTMLDivElement>) {
+    if (!isDragStart.current) return;
+    "pageX" in e && e.preventDefault();
+    // e.preventDefault();
+    blogsCarousel.current?.classList.add("dragging");
+    const PageX = "touches" in e ? e.touches[0].pageX : e.pageX;
+    positionDiff.current = PageX - prevPageX.current;
+    blogsCarousel.current!.scrollLeft = prevScrollLeft.current - positionDiff.current;
+  }
+
+  function dragStop() {
+    isDragStart.current = false;
+    blogsCarousel.current?.classList.remove("dragging");
+    autoSlideComplete();
+  }
+
+  function autoSlideComplete() {
+    positionDiff.current = Math.abs(positionDiff.current);
+    const valDiff = firstBlogWidth - positionDiff.current;
+    if (blogsCarousel.current!.scrollLeft > prevScrollLeft.current) {
+      return (blogsCarousel.current!.scrollLeft += positionDiff.current > firstBlogWidth / 3 ? valDiff : -positionDiff.current);
+    }
+    blogsCarousel.current!.scrollLeft -= positionDiff.current > firstBlogWidth / 3 ? valDiff : -positionDiff.current;
+  }
 
   const nextSlideHandel = (e: React.MouseEvent<HTMLButtonElement>) => {
-    const icon = e.currentTarget;
-    let firstChildren = blogsCarousel.current?.firstChild;
-    let itemWidth = parseInt(getComputedStyle(firstChildren as HTMLElement).width);
-
-    if (blogsCarousel.current != null) {
-      blogsCarousel.current.scrollLeft += icon.id == "left" ? -itemWidth : itemWidth;
-    }
-  };
-
-  const dargStart = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
-    setStartDragging(true);
-    if (e instanceof MouseEvent) {
-      setPrevPageX(e.pageX);
-    }
-    if (e instanceof TouchEvent) {
-      setPrevPageX(e.touches[0].pageX);
-    }
-
-    if (blogsCarousel.current != null) setPrevScrollLeft(blogsCarousel.current.scrollLeft);
-  };
-
-  const duringDragging = (e: React.MouseEvent<HTMLDivElement> | React.TouchEvent<HTMLDivElement>) => {
-    // scrolling images/carousel to left according to mouse pointer
-    if (!startDragging) return;
-    if (e instanceof MouseEvent) {
-      e.pageX && e.preventDefault();
-    }
-
-    blogsCarousel.current?.classList.add("dragging");
-    setDragging(true);
-    if (e instanceof MouseEvent) {
-      setScrolledSpace(e.pageX - prevPageX);
-    }
-    if (e instanceof TouchEvent) {
-      setScrolledSpace(e.touches[0].pageX - prevPageX);
-    }
-    if (blogsCarousel.current != null) blogsCarousel.current.scrollLeft = prevScrollLeft - scrolledSpace;
-  };
-
-  const dragEnd = () => {
-    setStartDragging(false);
-    if (blogsCarousel.current != null) blogsCarousel.current.classList.remove("dragging");
-    if (!Dragging) return;
-    setDragging(false);
-    autoSlide();
-  };
-
-  const autoSlide = () => {
-    let item = blogsCarousel.current!.firstChild;
-    // if there is no image left to scroll then return from here
-    if (blogsCarousel.current!.scrollLeft - (blogsCarousel.current!.scrollWidth - parseInt(getComputedStyle(blogsCarousel.current as HTMLElement).width)) > -1 || blogsCarousel.current!.scrollLeft <= 0) return;
-
-    setScrolledSpace(Math.abs(scrolledSpace)); // making positionDiff value to positive
-    let itemWidth = parseInt(getComputedStyle(item as HTMLElement).width);
-    // getting difference value that needs to add or reduce from carousel left to take middle img center
-    let valDifference = itemWidth - scrolledSpace;
-
-    if (blogsCarousel.current!.scrollLeft > prevScrollLeft) {
-      // if user is scrolling to the left
-      return (blogsCarousel.current!.scrollLeft += scrolledSpace > itemWidth / 3 ? valDifference : -scrolledSpace);
-    }
-
-    // if user is scrolling to the right
-    blogsCarousel.current!.scrollLeft -= scrolledSpace > itemWidth / 3 ? valDifference : -scrolledSpace;
+    blogsCarousel.current!.scrollLeft += e.currentTarget.id == "left" ? -firstBlogWidth : firstBlogWidth;
   };
 
   return (
     <>
-      <i ref={leftArrow} id='left' onClick={nextSlideHandel} className='bx bxs-chevron-left bg-teal-200/30 p-2 rounded-full absolute -top-10 cursor-pointer'></i>
-      <div ref={blogsCarousel} onTouchStart={dargStart} onMouseDown={dargStart} onTouchMove={duringDragging} onMouseMove={duringDragging} onTouchEnd={dragEnd} onMouseUp={dragEnd} className='recent_blogs custom-scroll-bar whitespace-nowrap overflow-x-auto scroll-smooth'>
+      <i id='left' onClick={nextSlideHandel} className='bx bxs-chevron-left bg-teal-200/30 p-2 rounded-full absolute -top-10 cursor-pointer'></i>
+      <div ref={blogsCarousel} onMouseMove={dragging} onMouseDown={dragStart} onMouseUp={dragStop} onMouseLeave={dragStop} onTouchStart={dragStart} onTouchMove={dragging} onTouchEnd={dragStop} className='recent_blogs custom-scroll-bar whitespace-nowrap overflow-x-auto scroll-smooth'>
         <Blog image={"/images/blog_01.jpg"} title={"2023 Holiday Shipping Deadlines"} publishedAT={"October 16,2023"} publishedBy={"Anime Slayer"} />
         <Blog image={"/images/blog_02.jpg"} title={"The 5 Ways BOXFOX Makes Holiday Shopping Easier"} publishedAT={"October 16,2023"} publishedBy={"Anime Slayer"} />
         <Blog image={"/images/blog_03.jpg"} title={"Shop Now, Ship Later with HOLD FOR HOLIDAY"} publishedAT={"October 16,2023"} publishedBy={"Anime Slayer"} />
         <Blog image={"/images/blog_04.jpg"} title={"How to Build the Perfect Gift Box"} publishedAT={"October 16,2023"} publishedBy={"Anime Slayer"} />
         <Blog image={"/images/blog_05.jpg"} title={"The Best Holiday Corporate Gifting Solution 2023"} publishedAT={"October 16,2023"} publishedBy={"Anime Slayer"} />
       </div>
-      <i ref={rightArrow} id='right' onClick={nextSlideHandel} className='bx bxs-chevron-right bg-teal-200/30 p-2 rounded-full absolute -top-10 cursor-pointer right-0'></i>
+      <i id='right' onClick={nextSlideHandel} className='bx bxs-chevron-right bg-teal-200/30 p-2 rounded-full absolute -top-10 cursor-pointer right-0'></i>
     </>
   );
 }
@@ -103,7 +70,7 @@ type BlogProps = {
 };
 function Blog({ image, title, publishedAT, publishedBy }: BlogProps) {
   return (
-    <div className='blog_item cursor-grab px-4 inline-block align-top min-[450px]:blogs_cols_count_sm sm:blogs_cols_count_sm md:blogs_cols_count_md lg:blogs_cols_count_lg'>
+    <div className='blog_item cursor-grab px-4 inline-block align-top min-[450px]:blogs_cols_count_sm sm:blogs_cols_count_sm md:blogs_cols_count_md lg:blogs_cols_count_lg' draggable='false'>
       <div className='block_cover'>
         <Image className='aspect-square' src={image} alt={title} width={600} height={600} />
       </div>
