@@ -12,8 +12,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <>
       <header>
-        {/* @ts-ignore async component */}
-        <NavBar />
+        <NavBar adminInfo={session.user} />
       </header>
       <main className='dashboard relative sm:ml-10 md:ml-40 px-2 py-4  '>{children}</main>
     </>

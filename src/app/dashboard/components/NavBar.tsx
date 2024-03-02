@@ -1,12 +1,9 @@
-import { authOptions } from "@/utils/nextAuthOptions";
-import { getServerSession } from "next-auth";
+import { authUser } from "@/types/nextAuthTypes";
 import Image from "next/image";
 import Link from "next/link";
 import { Navigate_link, Close_menu, Open_menu } from "./client/Navbar";
 
-export default async function NavBar() {
-  let login = await getServerSession(authOptions);
-
+export default function NavBar({ adminInfo }: { adminInfo: authUser }) {
   return (
     <nav className='relative'>
       <div className='pt-4 pb-5 md:relative'>
@@ -31,7 +28,7 @@ export default async function NavBar() {
           <div className='account'>
             <div className='account_toggle flex items-center justify-center cursor-pointer'>
               <figure className='w-6 h-6 rounded-full overflow-hidden'>
-                <Image src={`${login?.user.profile_pic}`} alt={"profile picture"} width={50} height={50} />
+                <Image src={`${adminInfo.profile_pic}`} alt={"profile picture"} width={50} height={50} />
               </figure>
               <i className='bx bx-chevron-down'></i>
             </div>
