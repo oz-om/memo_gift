@@ -6,7 +6,7 @@ import { signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { toast } from "react-hot-toast";
 
 function toggleMenu() {
@@ -60,6 +60,7 @@ export function AccountIcon({ user }: { user: authUser }) {
       accountMenu.current.classList.toggle("hidden");
       document.body.classList.toggle("overflow-hidden");
       document.body.classList.toggle("sm:overflow-auto");
+      document.body.classList.toggle("mr-4");
     }
   }
 
@@ -69,7 +70,7 @@ export function AccountIcon({ user }: { user: authUser }) {
         <Image onClick={toggleAccountMenu} src={`${user.profile_pic}`} className='w-full h-full object-cover' alt='user profile' width={100} height={100} />
       </figure>
 
-      <div ref={accountMenu} onClick={toggleAccountMenu} className='overlay fixed top-0 left-0 w-full h-full z-10 bg-slate-900/15 hidden'>
+      <div ref={accountMenu} onClick={toggleAccountMenu} className='overlay fixed top-0 left-0 w-full h-full z-10 bg-slate-900/15 overscroll-contain hidden'>
         <ul className='account_options absolute w-full h-full max-w-60 right-0 bg-white text-black z-10  px-2 py-1 rounded border shadow '>
           <li className='flex items-center justify-between mb-4 border-b py-2'>
             <div className='flex items-center gap-x-4'>

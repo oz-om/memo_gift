@@ -16,6 +16,7 @@ export default function NavBar({ adminInfo }: { adminInfo: authUser }) {
               <Navigate_link name={"Orders"} to='/dashboard/orders' icon={"bxs-store"} />
               <Navigate_link name={"Products"} to='/dashboard/products' icon={"bxs-package"} />
               <Navigate_link name={"Add new"} to='/dashboard/add' icon={"bx-customize"} />
+              <Navigate_link name={"blogs"} to='/dashboard/blogs' icon={"bx-text"} />
             </ul>
           </div>
           <div className='logo'>
