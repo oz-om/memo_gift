@@ -1,27 +1,26 @@
 "use client";
 import Image from "next/image";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 export default function Recent_blogs() {
   const blogsCarousel = useRef<HTMLDivElement>(null);
   const firstBlogItem = blogsCarousel.current?.querySelectorAll(".blog_item")[0];
   const firstBlogWidth = firstBlogItem?.clientWidth as number;
-  const isDragStart = useRef(false);
+  const [isDragging, setDragging] = useState(false);
   const prevPageX = useRef(0);
   const prevScrollLeft = useRef(0);
   const positionDiff = useRef(0);
 
   function dragStart(e: React.MouseEvent<HTMLDivElement, MouseEvent> | React.TouchEvent<HTMLDivElement>) {
     const PageX = "touches" in e ? e.touches[0].pageX : e.pageX;
-    isDragStart.current = true;
+    setDragging(true);
     prevPageX.current = PageX;
     prevScrollLeft.current = blogsCarousel.current!.scrollLeft;
   }
 
   function dragging(e: React.MouseEvent<HTMLDivElement, MouseEvent> | React.TouchEvent<HTMLDivElement>) {
-    if (!isDragStart.current) return;
+    if (!isDragging) return;
     "pageX" in e && e.preventDefault();
-    // e.preventDefault();
     blogsCarousel.current?.classList.add("dragging");
     const PageX = "touches" in e ? e.touches[0].pageX : e.pageX;
     positionDiff.current = PageX - prevPageX.current;
@@ -29,18 +28,22 @@ export default function Recent_blogs() {
   }
 
   function dragStop() {
-    isDragStart.current = false;
     blogsCarousel.current?.classList.remove("dragging");
     autoSlideComplete();
+    setDragging(false);
   }
 
   function autoSlideComplete() {
     positionDiff.current = Math.abs(positionDiff.current);
     const valDiff = firstBlogWidth - positionDiff.current;
-    if (blogsCarousel.current!.scrollLeft > prevScrollLeft.current) {
-      return (blogsCarousel.current!.scrollLeft += positionDiff.current > firstBlogWidth / 3 ? valDiff : -positionDiff.current);
+
+    if (isDragging) {
+      if (blogsCarousel.current!.scrollLeft > prevScrollLeft.current) {
+        blogsCarousel.current!.scrollLeft += positionDiff.current > firstBlogWidth / 3 ? valDiff : -positionDiff.current;
+      } else {
+        blogsCarousel.current!.scrollLeft -= positionDiff.current > firstBlogWidth / 3 ? valDiff : -positionDiff.current;
+      }
     }
-    blogsCarousel.current!.scrollLeft -= positionDiff.current > firstBlogWidth / 3 ? valDiff : -positionDiff.current;
   }
 
   const nextSlideHandel = (e: React.MouseEvent<HTMLButtonElement>) => {
