@@ -85,3 +85,10 @@ export function timeDetails(time: Date) {
     day,
   };
 }
+
+export function stringToBoolean(booleanString: "true" | "false" | undefined) {
+  if (booleanString === "true") {
+    return true;
+  }
+  return false;
+}

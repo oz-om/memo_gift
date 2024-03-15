@@ -1,6 +1,6 @@
 "use client";
 import { T_setInputsValue } from "@/types/types";
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 
 type inputProps = {
   name: "name" | "desc" | "price" | "value";

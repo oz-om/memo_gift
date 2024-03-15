@@ -11,7 +11,7 @@ type T_uploadingImageItem = {
 };
 
 type resCallbackType = { upload: true; id: string } | { upload: false };
-async function uploadImage(image: File, id: string, sessionId: string, callback: (err: string | null, res: resCallbackType) => void) {
+export async function uploadImage(image: File, id: string, sessionId: string, callback: (err: string | null, res: resCallbackType) => void) {
   let formDate = new FormData();
   formDate.append("image", image);
   formDate.append("id", id);

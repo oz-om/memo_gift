@@ -3,11 +3,12 @@ import { T_setInputsValue } from "@/types/types";
 import { useEffect, useState } from "react";
 
 type inputProps = {
+  name?: string;
   className?: string;
   setValue: T_setInputsValue;
   reset: boolean;
 };
-export function CategoriesInput({ className, setValue, reset }: inputProps) {
+export function CategoriesInput({ name = "categories", className, setValue, reset }: inputProps) {
   console.log("render categories input");
   const [categories, updateCategories] = useState<string[]>([]);
   function addCategory(value: string) {
@@ -38,13 +39,13 @@ export function CategoriesInput({ className, setValue, reset }: inputProps) {
   }, [reset]);
   return (
     <div className={"categories_wrapper py-4 " + className}>
-      <h4 className='pb-2 capitalize text-sm'>categories:</h4>
+      <h4 className='pb-2 capitalize text-sm'>{name}:</h4>
       <div className='categories_input border w-fit flex flex-wrap gap-x-3 gap-y-2 p-1'>
         <input onKeyDownCapture={onInter} onBlur={onBlur} type='text' className='basis-32 w-full border rounded outline-none pl-1' placeholder='tag' />
         {categories.map((category, i) => (
           <Category key={i} name={category} cats={categories} remove={setValue} updateCategories={updateCategories} />
         ))}
-        {categories.length == 0 && <p className='text-slate-400 text-center text-xs'>there is noe categories added yet</p>}
+        {categories.length == 0 && <p className='text-slate-400 text-center text-xs'>there is noe {name} added yet</p>}
       </div>
     </div>
   );
