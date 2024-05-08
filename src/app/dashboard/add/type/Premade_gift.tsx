@@ -54,7 +54,7 @@ export default function Premade_gift({ action, variants }: { action: (data: T_Pr
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(premade.value.images),
+      body: JSON.stringify({ folder: "premade", images: premade.value.images }),
     });
     let res = await req.json();
     // if upload is successful than create premade

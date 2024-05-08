@@ -48,7 +48,7 @@ export default function Variants() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(variant.value.images),
+      body: JSON.stringify({ folder: "variant", images: variant.value.images }),
     });
     let upload = await req.json();
     if (upload.confirmation) {

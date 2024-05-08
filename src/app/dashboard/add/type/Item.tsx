@@ -48,7 +48,7 @@ export default function Item({ action }: { action: (data: itemDataType) => Promi
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(item.value.images),
+      body: JSON.stringify({ folder: "item", images: item.value.images }),
     });
     let res = await req.json();
     if (res.confirmation) {

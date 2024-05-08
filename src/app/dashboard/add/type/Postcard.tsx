@@ -51,7 +51,7 @@ export default function Postcard() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(postCardData.value.images),
+      body: JSON.stringify({ folder: "card", images: postCardData.value.images }),
     });
     let upload = await req.json();
     if (upload.confirmation) {
