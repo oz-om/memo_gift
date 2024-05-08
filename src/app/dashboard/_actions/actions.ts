@@ -1,6 +1,8 @@
 "use server";
 import { prisma } from "@/lib/db/prisma";
 import type { itemDataType, T_PostCard, T_PremadeData } from "@/types/types";
+import { authOptions } from "@/utils/nextAuthOptions";
+import { getServerSession } from "next-auth";
 
 function createCategories(categories: string[]) {
   return prisma.category.createMany({
@@ -196,6 +198,69 @@ export async function createNewPostCard(data: T_PostCard): Promise<{ success: tr
     return {
       success: false,
       error: "ops something went wrong, please try again",
+    };
+  }
+}
+
+// create new blog
+type blogInfo_T = {
+  title: string;
+  desc: string;
+  tags: string[];
+  cover: string;
+};
+function createBlogTags(blogTags: string[]) {
+  return prisma.tag.createMany({
+    data: blogTags.map((tag) => ({ tag: tag })),
+    skipDuplicates: true,
+  });
+}
+export async function createNewBlog(blogContent: string, blogInfo: blogInfo_T): Promise<{ success: true } | { success: false; error: string }> {
+  const auhSession = await getServerSession(authOptions);
+
+  try {
+    if (!auhSession || auhSession.user.role !== "admin") {
+      return {
+        success: false,
+        error: "not signed in",
+      };
+    }
+
+    await prisma.$transaction([
+      createBlogTags(blogInfo.tags),
+      prisma.blog.create({
+        data: {
+          title: blogInfo.title,
+          description: blogInfo.desc,
+          cover: blogInfo.cover,
+          content: blogContent,
+          author: auhSession.user.username,
+          tags: {
+            connectOrCreate: blogInfo.tags.map((tag) => ({
+              where: {
+                blog_id_tag: {
+                  tag: tag,
+                  blog_id: "",
+                },
+              },
+              create: {
+                tag: tag,
+              },
+            })),
+          },
+        },
+      }),
+    ]);
+
+    return {
+      success: true,
+    };
+  } catch (error) {
+    console.log(error);
+
+    return {
+      success: false,
+      error: "there was an error during creating new blog!",
     };
   }
 }

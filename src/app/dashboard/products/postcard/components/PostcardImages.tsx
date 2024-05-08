@@ -26,7 +26,7 @@ export default function PostcardImages({ postcardImage }: { postcardImage: strin
         <Chosed_image id={image} src={image} removeImage={deleteImage} />
       </div>
       <div className='upload_new_image mt-4'>
-        <UploadInput setUploads={addNewImage} reset={false} />
+        <UploadInput setUploads={addNewImage} folder='card' />
       </div>
     </div>
   );

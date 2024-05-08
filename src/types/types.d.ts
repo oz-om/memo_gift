@@ -53,10 +53,13 @@ type T_allFields = {
   price: number;
   images: image[];
   image: string;
+  cover: string;
   theme: string;
   categories: string[];
+  tags: string[];
   includes: includeItemType[];
   variants: { id: string }[];
   value: string;
+  title: string;
 };
 export type T_setInputsValue = <fieldType extends keyof T_allFields>(field: fieldType, value: T_allFields[fieldType]) => void;

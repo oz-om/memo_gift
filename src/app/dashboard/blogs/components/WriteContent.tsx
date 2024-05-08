@@ -4,6 +4,7 @@ import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useQuill } from "react-quilljs";
+// import QuillRender, { Document as QEditor_DOM } from "quilljs-renderer";
 import { uploadImage } from "../../components/client/inputs/UploadInput";
 let uploadUrl = process.env.NEXT_PUBLIC_UPLOAD_URL as string;
 
@@ -59,7 +60,7 @@ function openCloseList(list: Element, open: boolean) {
   }
 }
 
-export default function WriteContent() {
+export default function WriteContent({ uploadImagesSession }: { uploadImagesSession: { init: boolean; sessionID: string } | undefined }) {
   const { editor, editorRef, Quill } = useQuill({
     theme: "snow",
     modules: {
@@ -69,17 +70,22 @@ export default function WriteContent() {
     placeholder: "what's in your mind?",
   });
   const [openedList, setOpenedList] = useState<Element | null>(null);
-  const [uploadSession, setUploadSession] = useState<string | null>(null);
   const [resizedImage, setImageToResize] = useState<HTMLImageElement | null>(null);
 
   const resizeOptions = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (!editor || !editorRef) return;
+
     editor.on("editor-change", () => {
       openedList && openCloseList(openedList, false);
     });
-
+    editor.on("text-change", (e, j, l) => {
+      // console.log(e, j, l);
+      // QuillRender.loadFormat("html");
+      // const qEditor_doc = new QEditor_DOM(e);
+      // console.log(qEditor_doc.convertTo("html"));
+    });
     // imports fonts and set default font
     const FontAttributor = Quill.import("attributors/class/font");
     FontAttributor.whitelist = ["ibm_plex_sans", "fredoka_brando", "ubuntu_mono", "sofia", "Josefin_slab"];
@@ -198,48 +204,36 @@ export default function WriteContent() {
   // u/o list  handler
   function list_handler(e: React.MouseEvent<HTMLLIElement, MouseEvent>) {
     if (e.currentTarget.dataset.active == "true") {
-      console.log("remove list");
-
       if (editor) {
         editor.focus();
         editor.format("list", false);
         e.currentTarget.classList.remove("bg-blue-100");
-        e.currentTarget.dataset.value = "false";
+        e.currentTarget.dataset.active = "false";
       }
     } else {
-      console.log("add list");
-
       QEditor_format(e);
     }
   }
 
   // insert image handler
   function insertImageHandler(e: React.FormEvent<HTMLInputElement>) {
+    const alert = toast;
+
+    if (!uploadImagesSession) {
+      alert.error("there is a problem with images manager, refresh page and try again", { style: toastStyles });
+      console.error("images server doesn't response, we cant upload images right now ");
+      return;
+    }
     if (!e.currentTarget.files?.length) return;
 
     const file = e.currentTarget.files[0];
     const imageId = new Date().getTime();
     const imageName = file.name;
-    const alert = toast;
 
     alert.loading("uploading...", { style: toastStyles });
 
-    if (!uploadSession) {
-      fetch(uploadUrl)
-        .then((response) => response.json())
-        .then((res) => {
-          if (res.init) {
-            uploadImage(file, `${imageId}`, res.sessionID, uploadCallback);
-            setUploadSession(res.sessionID);
-          } else {
-            alert.remove();
-            alert.error("something went wrong!", { style: toastStyles });
-            console.error("something went wrong!");
-          }
-        });
-    } else {
-      uploadImage(file, `${imageId}`, uploadSession, uploadCallback);
-    }
+    uploadImage(file, `${imageId}`, uploadImagesSession.sessionID, "blog", uploadCallback);
+
     function uploadCallback(err: string | null, res: uploadResType) {
       alert.remove();
       if (!res.upload) {
@@ -248,7 +242,7 @@ export default function WriteContent() {
         return;
       }
       alert.success("done!", { style: toastStyles });
-      const imageUrl = `https://omzid.serv00.net/images/upat_${imageId}_${imageName}`;
+      const imageUrl = `${process.env.NEXT_PUBLIC_UPLOAD_URL}/images/blog/upat_${imageId}_${imageName}`;
       if (editor) {
         const range = editor.getSelection(true);
         editor.insertEmbed(range.index, "image", imageUrl);
@@ -266,11 +260,18 @@ export default function WriteContent() {
 
   // link handler
   function link_handler() {
+    function ensureHttps(url: string) {
+      if (!url.startsWith("http://") && !url.startsWith("https://")) {
+        return "https://" + url;
+      }
+      return url;
+    }
+
     if (editor) {
       const url = prompt("insert url", "www.google.com");
       if (url && url.trim().length > 0) {
         editor.focus();
-        editor.format("link", url);
+        editor.format("link", ensureHttps(url));
       }
     }
   }

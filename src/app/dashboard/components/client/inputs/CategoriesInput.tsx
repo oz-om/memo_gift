@@ -3,7 +3,7 @@ import { T_setInputsValue } from "@/types/types";
 import { useEffect, useState } from "react";
 
 type inputProps = {
-  name?: string;
+  name?: "categories" | "tags";
   className?: string;
   setValue: T_setInputsValue;
   reset: boolean;
@@ -13,7 +13,7 @@ export function CategoriesInput({ name = "categories", className, setValue, rese
   const [categories, updateCategories] = useState<string[]>([]);
   function addCategory(value: string) {
     updateCategories((prev) => [...prev, value]);
-    setValue("categories", [...categories, value]);
+    setValue(name, [...categories, value]);
   }
 
   function onInter({ code, target: inputElement }: React.KeyboardEvent) {
@@ -34,7 +34,7 @@ export function CategoriesInput({ name = "categories", className, setValue, rese
   useEffect(() => {
     if (reset) {
       updateCategories([]);
-      setValue("categories", []);
+      setValue(name, []);
     }
   }, [reset]);
   return (

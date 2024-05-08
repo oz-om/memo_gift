@@ -1,6 +1,5 @@
 "use client";
 import Image from "next/image";
-import React from "react";
 
 export default function Chosed_image({ id, src, removeImage }: { id: string; src: string; removeImage: (id: string) => void }) {
   return (

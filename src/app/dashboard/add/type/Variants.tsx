@@ -114,7 +114,7 @@ function VariantChosedImage() {
         </div>
       </div>
       {chosedImages.length == 0 ? <p className='text-slate-400 text-center text-xs py-2 border rounded-md mb-2 h-full grid place-content-center'>there is no images added yet</p> : ""}
-      <UploadInput setUploads={getUploadedImage} reset={false} />
+      <UploadInput setUploads={getUploadedImage} folder='variant' />
     </>
   );
 }

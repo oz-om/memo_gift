@@ -256,3 +256,38 @@ model Address {
   @@index([id, user_id], map: "user_addresses_id_fkey")
   @@map("addresses")
 }
+
+model blog {
+  id          String @id @default(uuid())
+  title       String @db.Text
+  author      String
+  description String @db.Text
+  cover       String @db.Text
+  content     String @db.Text
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  tags      blogTag[]
+
+  @@map("blogs")
+}
+
+model tag {
+  tag   String    @unique @default(uuid())
+  blogs blogTag[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("tags")
+}
+
+model blogTag {
+  blog_id String
+  tag     String
+  blogs   blog   @relation(fields: [blog_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  tags    tag    @relation(fields: [tag], references: [tag], onDelete: Cascade, onUpdate: Cascade)
+
+  @@unique([blog_id, tag])
+  @@map("blog_tags")
+}

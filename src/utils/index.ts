@@ -49,6 +49,7 @@ export const toastStyles = {
   fontSize: "12px",
 };
 
+// day  hours:minutes => "Monday 13:55"
 export function timeDetails(time: Date) {
   const createdAt = new Date(time);
   const hours = createdAt.getHours();
@@ -84,6 +85,21 @@ export function timeDetails(time: Date) {
     minutes,
     day,
   };
+}
+// month day_in_month, year =>  "May 6, 2024"
+export function formatDate(inputDateStr: string) {
+  const date = new Date(inputDateStr);
+
+  const options: {} = {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  };
+
+  const formatter = new Intl.DateTimeFormat("en-US", options);
+  const formattedDate = formatter.format(date);
+
+  return formattedDate;
 }
 
 export function stringToBoolean(booleanString: "true" | "false" | undefined) {

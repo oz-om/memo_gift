@@ -3,7 +3,10 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 let uploadUrl = process.env.NEXT_PUBLIC_UPLOAD_URL as string;
 
-type uploadInputType = { setUploads: (image: { id: string; name: string; src: string }) => void; reset: boolean };
+type uploadInputType = {
+  setUploads: (image: { id: string; name: string; src: string }) => void;
+  folder: "premade" | "item" | "card" | "variant" | "blog";
+};
 type T_uploadingImageItem = {
   id: string;
   src: string;
@@ -11,11 +14,12 @@ type T_uploadingImageItem = {
 };
 
 type resCallbackType = { upload: true; id: string } | { upload: false };
-export async function uploadImage(image: File, id: string, sessionId: string, callback: (err: string | null, res: resCallbackType) => void) {
+export async function uploadImage(image: File, id: string, sessionId: string, folder: string, callback: (err: string | null, res: resCallbackType) => void) {
   let formDate = new FormData();
   formDate.append("image", image);
   formDate.append("id", id);
   formDate.append("sessionId", sessionId);
+  formDate.append("folder", folder);
   fetch(uploadUrl, {
     method: "POST",
     body: formDate,
@@ -34,7 +38,7 @@ export async function uploadImage(image: File, id: string, sessionId: string, ca
     });
 }
 
-export function UploadInput({ setUploads }: uploadInputType) {
+export function UploadInput({ setUploads, folder }: uploadInputType) {
   console.log("render upload input");
 
   let [uploadingImages, addUploadingImage] = useState<T_uploadingImageItem[]>([]);
@@ -78,7 +82,7 @@ export function UploadInput({ setUploads }: uploadInputType) {
             },
           ]);
 
-          uploadImage(file, id, sessionId as string, (err, res) => {
+          uploadImage(file, id, sessionId as string, folder, (err, res) => {
             if (!res.upload) {
               console.log(err);
               return;
@@ -86,7 +90,7 @@ export function UploadInput({ setUploads }: uploadInputType) {
             // return the uploaded image
             setUploads({
               id: res.id,
-              src: `https://omzid.serv00.net/images/upat_${id}_${name}`,
+              src: `${uploadUrl}/images/${folder}/upat_${id}_${name}`,
               name: `upat_${id}_${name}`,
             });
 
@@ -124,7 +128,8 @@ export function UploadInput({ setUploads }: uploadInputType) {
           pending: true,
         },
       ]);
-      uploadImage(input.files![i], id, sessionId as string, (err, res) => {
+      // start uploading image
+      uploadImage(input.files![i], id, sessionId as string, folder, (err, res) => {
         if (!res.upload) {
           console.log(err);
           return;
@@ -132,7 +137,7 @@ export function UploadInput({ setUploads }: uploadInputType) {
         // return the uploaded image
         setUploads({
           id: res.id,
-          src: `https://omzid.serv00.net/images/upat_${id}_${name}`,
+          src: `${uploadUrl}/images/${folder}/upat_${id}_${name}`,
           name: `upat_${id}_${name}`,
         });
         // filter uploading images by getting the pending images only

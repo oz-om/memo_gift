@@ -16,8 +16,8 @@ export default async function NavBar_lg_sc() {
         <Link className='px-2 capitalize whitespace-nowrap hover:text-teal-300' href={"/"}>
           corporate gifting
         </Link>
-        <Link className='px-2 capitalize whitespace-nowrap  hover:text-teal-300' href={"/"}>
-          Contact
+        <Link className='px-2 capitalize whitespace-nowrap  hover:text-teal-300' href={"/blogs"}>
+          blogs
         </Link>
         {!login ? (
           <>

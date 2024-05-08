@@ -39,7 +39,7 @@ export default function ItemImages({ itemImages }: { itemImages: string }) {
         })}
       </div>
       <div className='upload_new_image mt-4'>
-        <UploadInput setUploads={addNewImage} reset={false} />
+        <UploadInput setUploads={addNewImage} folder='item' />
       </div>
     </div>
   );

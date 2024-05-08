@@ -3,8 +3,11 @@ import Link from "next/link";
 import BlogInfo from "../components/BlogInfo";
 import WriteContent from "../components/WriteContent";
 import "./styles/index.css";
+const uploadUrl = process.env.NEXT_PUBLIC_UPLOAD_URL as string;
+export default async function NewBlog() {
+  const uploadSessionReq = await fetch(uploadUrl, { cache: "no-cache" });
+  const uploadSession: { init: boolean; sessionID: string } | undefined = await uploadSessionReq.json();
 
-export default function NewBlog() {
   return (
     <>
       <nav className='border-b pb-2 flex justify-between'>
@@ -13,11 +16,11 @@ export default function NewBlog() {
           <span>back</span>
         </Link>
         <div className='publish relative'>
-          <BlogInfo />
+          <BlogInfo uploadImagesSession={uploadSession} />
         </div>
       </nav>
       <section>
-        <WriteContent />
+        <WriteContent uploadImagesSession={uploadSession} />
       </section>
     </>
   );

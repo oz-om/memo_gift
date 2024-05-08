@@ -55,6 +55,7 @@ export default async function Navbar() {
               </li>
               <Navigate_link name={"marketplace"} to='/collections/premade' icon={"bxs-package"} />
               <Navigate_link name={"corporate gifting"} to='/' icon={"bx-equalizer"} />
+              <Navigate_link name={"blogs"} to='/blogs' icon={"bxs-pen"} />
               <Navigate_link name={"about"} to='/' icon={"bx-info-circle"} />
               {!login ? (
                 <>

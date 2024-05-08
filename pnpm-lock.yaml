@@ -29,6 +29,9 @@ dependencies:
   quilljs:
     specifier: ^0.18.1
     version: 0.18.1
+  quilljs-renderer:
+    specifier: ^0.0.8
+    version: 0.0.8
   react:
     specifier: ^18.2.0
     version: 18.2.0
@@ -2155,6 +2158,10 @@ packages:
       semver: 6.3.1
     dev: false
 
+  /merge-recursive@0.0.3:
+    resolution: {integrity: sha512-WPyS8iu5hcexWNQxFO9lbpvB1lRDn+3hOZXXrD7kLwVrC8+4CKdL7rW7Rrxlmf5V/ySnpZRk2Moo6VAxb4lAeA==}
+    dev: false
+
   /merge2@1.4.1:
     resolution: {integrity: sha512-8q7VEgMJW4J8tcfVPy8g09NcQwZdbwFEqhe/WZkoIzjn/3TGDwtOCYtXGxA3O8tPzpczCCDgv+P2P5y00ZJOOg==}
     engines: {node: '>= 8'}
@@ -2697,6 +2704,13 @@ packages:
       quill-delta: 3.6.3
     dev: false
 
+  /quilljs-renderer@0.0.8:
+    resolution: {integrity: sha512-WiKaeAUIRtrrm1l2yAGht0tXCAr62Y+TQFOPi1VBlvHd7XEajfPzJmhVQbFkBVZkYoBmMe3INvjgUEpTilFuBw==}
+    dependencies:
+      merge-recursive: 0.0.3
+      stringformat: 0.0.5
+    dev: false
+
   /quilljs@0.18.1:
     resolution: {integrity: sha512-VKaO7GNehgnH4LlFPx5ZAl+KFDoRVtboY0I6UUbYXUsPHP8kR80Tg/CFEYqrqrpCOGQr4OQ5Tjm813gV1DUyQw==}
     engines: {node: '>=0.10'}
@@ -3033,6 +3047,12 @@ packages:
     resolution: {integrity: sha512-hkRX8U1WjJFd8LsDJ2yQ/wWWxaopEsABU1XfkM8A+j0+85JAGppt16cr1Whg6KIbb4okU6Mql6BOj+uup/wKeA==}
     dependencies:
       safe-buffer: 5.2.1
+    dev: false
+
+  /stringformat@0.0.5:
+    resolution: {integrity: sha512-yl77JaBIcWA2I7cYABq06d//cn2zVGi1U7vNzeddE5dcQL6eHpjDm4wni4ajF+k+fAThAGJ7oHVOtt5yYwNfoA==}
+    engines: {node: '>=0.4'}
+    deprecated: This package has been rendered useless by string literals, and may present unknown vulnerabilities. Please stop depending on it.
     dev: false
 
   /strip-ansi@6.0.1:
