@@ -1,4 +1,4 @@
-export default function getErrorMessage(error: unknown): string {
+export default function getErrorMessage(error: unknown, customErrorMessage?: string): string {
   let errorMessage: string;
   if (error instanceof Error) {
     errorMessage = error.message;
@@ -9,7 +9,7 @@ export default function getErrorMessage(error: unknown): string {
   } else if (typeof error === "string") {
     errorMessage = error;
   } else {
-    errorMessage = "something went wrong";
+    errorMessage = customErrorMessage ?? "something went wrong";
   }
 
   return errorMessage;

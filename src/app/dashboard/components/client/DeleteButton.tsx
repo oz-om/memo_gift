@@ -15,7 +15,7 @@ export default function DeleteButton({ id, target }: { id: string; target: Prism
       await deleteTarget(target, id);
       router.refresh();
     } catch (error) {
-      toast.error(`${error}`, {
+      toast.error("something went wrong during delete target item :(!", {
         style: toastStyles,
       });
     }
