@@ -4,6 +4,7 @@
     "Chosed",
     "premade",
     "quilljs",
+    "Uncapitalize",
     "upat"
   ],
   "typescript.tsdk": "node_modules\\typescript\\lib"

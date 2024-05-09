@@ -2,6 +2,7 @@ import { prisma } from "@/lib/db/prisma";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import DeleteButton from "../../components/client/DeleteButton";
 
 export default async function Postcards() {
   const postcards = await prisma.postCard.findMany();
@@ -19,9 +20,7 @@ export default async function Postcards() {
                 <Link href={"/dashboard/products/postcard/" + postcard.id} className='w-fit px-4 py-1 bg-blue-50  text-blue-500 rounded-md border border-transparent text-xs hover:border-blue-500'>
                   view
                 </Link>
-                <Link href={"/dashboard/add?type=premade"} className='w-fit px-4 py-1  text-red-500 rounded-md text-xs'>
-                  delete
-                </Link>
+                <DeleteButton target='postCard' id={postcard.id} />
               </div>
             </div>
           );
