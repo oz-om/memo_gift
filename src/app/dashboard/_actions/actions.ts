@@ -12,8 +12,8 @@ function createCategories(categories: string[]) {
     skipDuplicates: true, // This will skip creating categories if they already exist
   });
 }
-function reSortedAndGetImagesAsURL(images: { id: string; name: string }[]) {
-  let imagesNames = images.map((image) => `https://omzid.serv00.net/images/${image.name}`);
+function reSortedAndGetImagesAsURL(images: { id: string; name: string }[], folder: string) {
+  let imagesNames = images.map((image) => `https://omzid.serv00.net/images/${folder}/${image.name}`);
   imagesNames.sort((a, b) => {
     let timestampA = parseInt(a.split("_")[1]);
     let timestampB = parseInt(b.split("_")[1]);
@@ -25,7 +25,7 @@ function reSortedAndGetImagesAsURL(images: { id: string; name: string }[]) {
 // create new item
 export async function createNewItem(data: itemDataType) {
   // sort uploads as the user sorted insert
-  let imagesURLs = reSortedAndGetImagesAsURL(data.images);
+  let imagesURLs = reSortedAndGetImagesAsURL(data.images, "item");
 
   try {
     let req = await prisma.$transaction([
@@ -78,7 +78,7 @@ export async function createNewItem(data: itemDataType) {
 
 // create new premade
 export async function createNewPremade(data: T_PremadeData): Promise<{ creation: true } | { creation: false; error: string }> {
-  let imagesURLs = reSortedAndGetImagesAsURL(data.images);
+  let imagesURLs = reSortedAndGetImagesAsURL(data.images, "premade");
   try {
     await prisma.$transaction([
       createCategories(data.categories),
@@ -158,7 +158,7 @@ export async function createNewVariant(data: T_Variant): Promise<{ success: true
     await prisma.variant.create({
       data: {
         ...data,
-        preview: `https://omzid.serv00.net/images/${data.preview}`,
+        preview: `https://omzid.serv00.net/images/variant/${data.preview}`,
       },
     });
     return {
@@ -188,7 +188,7 @@ export async function createNewPostCard(data: T_PostCard): Promise<{ success: tr
     await prisma.postCard.create({
       data: {
         name: data.name,
-        image: `https://omzid.serv00.net/images/${data.image}`,
+        image: `https://omzid.serv00.net/images/card/${data.image}`,
       },
     });
     return {
