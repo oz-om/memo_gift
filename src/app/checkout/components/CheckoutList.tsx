@@ -7,6 +7,7 @@ import { redirect } from "next/navigation";
 import React from "react";
 import SetupOrder from "./client/SetupOrder";
 import Order from "./client/Order";
+import OrdersList from "./client/OrdersList";
 export type T_Orders = Prisma.CartGetPayload<{
   include: {
     cartItem: {
@@ -174,11 +175,12 @@ export default async function CheckoutList({ cartItemId }: { cartItemId: string 
 
   return (
     <>
-      <div className='orders_list'>
+      {/* <div className='orders_list'>
         {Orders.map(({ cartItem, user }) => {
           return <Order key={cartItem.id} cartItem={cartItem} addresses={user?.address ?? []} />;
         })}
-      </div>
+      </div> */}
+      <OrdersList Orders={Orders} userSession={session} />
       <div className='total_price flex items-center justify-end gap-x-4 my-3'>
         <span>subtotal: </span>
         <p className='font-sans text-2xl'>{totalPrice}$</p>

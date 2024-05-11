@@ -1,4 +1,3 @@
-"use client";
 import { deleteAction, duplicate } from "@/app/components/cart/actions";
 import { toastStyles } from "@/utils";
 import { Prisma } from "@prisma/client";
@@ -7,7 +6,6 @@ import Image from "next/image";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { setAddressToCartItem, updateItemCartAction } from "../../actions/action";
-import { formState } from "./Address_form";
 
 type cartItem = Prisma.cartItemGetPayload<{
   select: {
@@ -54,7 +52,8 @@ export type T_Address = Prisma.AddressGetPayload<{
     id: true;
   };
 }>;
-export default function Order({ cartItem, addresses }: { cartItem: cartItem; addresses: T_Address[] }) {
+
+export default function Order({ cartItem, addresses, openAddressForm }: { cartItem: cartItem; addresses: T_Address[]; openAddressForm: React.Dispatch<React.SetStateAction<boolean>> }) {
   const { id, customGift, premade, item, quantity, variant, postcard, empty_card, with_note, to, from, note } = cartItem;
   const [addressesListState, setAddressesListState] = useState(false);
   let order = customGift ?? premade ?? item;
@@ -68,15 +67,24 @@ export default function Order({ cartItem, addresses }: { cartItem: cartItem; add
   let [availableAddresses, setAvailableAddresses] = useState<T_Address[]>(addresses);
   let [chosedAddress, setChosedAddress] = useState<string | null>(null);
 
+  // when opening addresses list update available Addresses from cookies if there any new address .
   function toggleAddressesList() {
+    // get local addresses
     let allAddresses = getCookie("addresses");
-    setAvailableAddresses(JSON.parse(allAddresses ? (allAddresses as string) : "[]"));
+    const formattedAddresses: T_Address[] = JSON.parse(allAddresses ? (allAddresses as string) : "[]");
+    // return  addresses ids that we have local
+    const addressIdSet = new Set(formattedAddresses.map((address) => address.id));
+    // return only the addresses that we have on available addresses and not exist on local to merge them with local addresses
+    const availableNewAddresses = availableAddresses.filter((address) => !addressIdSet.has(address.id));
+    // merge available addresses that doesn't exist on local with local addresses
+    formattedAddresses.push(...availableNewAddresses);
 
+    setAvailableAddresses(formattedAddresses);
     setAddressesListState((prev) => !prev);
   }
-
+  // when address from is open, list of available addresses is hidden
   function toggleAddressesFormState() {
-    formState.value = !formState.value;
+    openAddressForm(true);
     setAddressesListState((prev) => !prev);
   }
 
@@ -196,17 +204,17 @@ export default function Order({ cartItem, addresses }: { cartItem: cartItem; add
                 </div>
               ) : (
                 <div onClick={toggleAddressesList} className='chosed_address px-4 py-2 text-xs bg-white border-2 rounded-md cursor-pointer hover:bg-slate-100 md:max-w-xs lg:max-w-sm'>
-                  <p>{cartItem.address ?? chosedAddress}</p>
+                  <p>{cartItem.address?.split("<*>").join(" ") ?? chosedAddress?.split("<*>").join(" ")}</p>
                 </div>
               )}
-              <ul className={"address_list absolute left-0 top-[90%] bg-slate-50 w-full rounded-b-md border-2 border-t-transparent md:max-w-xs lg:max-w-sm " + (addressesListState ? "block" : "hidden")}>
+              <ul className={"address_list absolute left-0 top-[90%] bg-slate-50 w-full rounded-b-md border-2 border-t-transparent md:max-w-xs lg:max-w-sm z-[1] " + (addressesListState ? "block" : "hidden")}>
                 <li onClick={toggleAddressesFormState} className='new_address py-2 px-4 cursor-pointer hover:bg-teal-50 font-medium text-sm'>
                   new address
                 </li>
                 {availableAddresses.map((a, i) => {
-                  let address = a.address;
+                  let address = a.address.split("<*>").join(" ");
                   return (
-                    <li key={i} onClick={() => choseAddress(address)} className=' py-2 px-4 cursor-pointer hover:bg-teal-50 text-xs'>
+                    <li key={i} onClick={() => choseAddress(a.address)} className=' py-2 px-4 cursor-pointer hover:bg-teal-50 text-xs'>
                       {address}
                     </li>
                   );

@@ -174,7 +174,7 @@ export default async function ManageOrderPage({ params }: { params: { order_id: 
               </div>
               <div className='address'>
                 <h4>address: </h4>
-                <p className='border rounded px-2 py1 bg-slate-200'>{product.address}</p>
+                <p className='border rounded px-2 py1 bg-slate-200'>{product.address?.split("<*>").join(" ")}</p>
               </div>
             </div>
             <div className='order_owner bg-white rounded shadow mt-3 p-2'>

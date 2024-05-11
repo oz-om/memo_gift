@@ -4,8 +4,6 @@ import { authOptions } from "@/utils/nextAuthOptions";
 import { Prisma } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { revalidatePath } from "next/cache";
-import { cookies } from "next/headers";
-import { T_Address } from "../components/client/Order";
 
 type T_CartItemData = {
   from: string;
@@ -33,32 +31,6 @@ export async function updateItemCartAction(cartItemId: string, data: T_CartItemD
   }
 }
 
-export async function addNewAddress(userId: string, address: string): Promise<{ success: true; address: T_Address } | { success: false; error: string }> {
-  try {
-    let createdAddress = await prisma.address.create({
-      data: {
-        user_id: userId,
-        address,
-      },
-      select: {
-        user_id: true,
-        id: true,
-        address: true,
-      },
-    });
-    revalidatePath("");
-    return {
-      success: true,
-      address: createdAddress,
-    };
-  } catch (error) {
-    return {
-      success: false,
-      error: "ops! something went wrong, please try again",
-    };
-  }
-}
-
 export async function setAddressToCartItem(address: string, cartItemId: string): Promise<{ success: true } | { success: false; error: string }> {
   try {
     await prisma.cartItem.update({
@@ -69,6 +41,7 @@ export async function setAddressToCartItem(address: string, cartItemId: string):
         address,
       },
     });
+    revalidatePath("");
     return {
       success: true,
     };

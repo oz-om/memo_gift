@@ -1,0 +1,19 @@
+.address_form label {
+  text-transform: capitalize;
+  color: rgb(17, 154, 94);
+}
+
+.address_form input {
+  outline: none;
+  border: 1px solid gray;
+  border-radius: 8px;
+  padding-block: 4px;
+  padding-inline: 8px;
+  display: block;
+  width: 100%;
+  font-size: small;
+  padding-top: 6px;
+}
+.address_form input::placeholder {
+  font-size: small;
+}

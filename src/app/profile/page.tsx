@@ -28,12 +28,14 @@ export default async function Profile_Page() {
         select: {
           id: true,
           address: true,
+          user_id: true,
         },
       },
     },
   });
   if (!user) return notFound();
   const { address, profile_pic, ...userDetails } = user;
+
   return (
     <section className='profile_wrapper'>
       <Profile_nav />
@@ -41,7 +43,7 @@ export default async function Profile_Page() {
         <User_Details userDetails={userDetails} />
         <div className='user_pick_address_wrapper border-y sm:border-y-0 py-2 my-5 relative sm:my-0 before:absolute before:top-0 before:left-1 before:h-full before:border-l-2  before:border-dashed sm:before:content-[""] after:absolute after:top-0 after:right-1 after:h-full after:border-l-2  after:border-dashed after:content-[""] after:hidden md:after:block'>
           <User_Pick />
-          <User_Addresses />
+          <User_Addresses session={userSession} addresses={address} />
         </div>
         <User_ResetPass />
       </section>

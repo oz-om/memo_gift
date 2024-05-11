@@ -5,7 +5,8 @@
     "premade",
     "quilljs",
     "Uncapitalize",
-    "upat"
+    "upat",
+    "zipcode"
   ],
   "typescript.tsdk": "node_modules\\typescript\\lib"
 }
