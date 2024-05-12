@@ -12,7 +12,7 @@ import { useEffect, useState } from "react";
 import Includes from "../components/premade/Includes";
 import Price from "../components/premade/Price";
 import { toast } from "react-hot-toast";
-import { toastStyles } from "@/utils";
+import { confirmUploadImages, toastStyles } from "@/utils";
 import PremadeChosedImages from "../components/premade/PremadeChosedImages";
 
 export const premade = signal<T_PremadeData>({
@@ -31,9 +31,10 @@ export const setPremadeInput: T_setInputsValue = (field, value) => {
     [field]: value,
   };
 };
-let uploadUrl = process.env.NEXT_PUBLIC_UPLOAD_URL as string;
+type T_PremadeGiftProps = { action: (data: T_PremadeData) => Promise<{ creation: true } | { creation: false; error: string }>; variants: T_PremadeVariant[] };
 
-export default function Premade_gift({ action, variants }: { action: (data: T_PremadeData) => Promise<any>; variants: T_PremadeVariant[] }) {
+export default function Premade_gift(props: T_PremadeGiftProps) {
+  const { action, variants } = props;
   console.log("render premade wrapper");
   let [reset, setReset] = useState(false);
 

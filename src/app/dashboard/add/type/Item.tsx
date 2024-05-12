@@ -1,10 +1,9 @@
 "use client";
 import type { itemDataType, T_setInputsValue } from "@/types/types";
-import { toastStyles } from "@/utils";
+import { toastStyles, UPLOAD_URL } from "@/utils";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
-import { effect, signal } from "signals-react-safe";
-import ErrorMessage from "../../components/client/ErrorMessage";
+import { signal } from "signals-react-safe";
 import Input, { Textarea } from "../../components/client/inputs";
 import { CategoriesInput } from "../../components/client/inputs/CategoriesInput";
 import { UploadInput } from "../../components/client/inputs/UploadInput";
@@ -27,9 +26,9 @@ export const setItemInput: T_setInputsValue = (field, value) => {
     [field]: value,
   };
 };
-
-let uploadUrl = process.env.NEXT_PUBLIC_UPLOAD_URL as string;
-export default function Item({ action }: { action: (data: itemDataType) => Promise<any> }) {
+type T_Item_Props = { action: (data: itemDataType) => Promise<any> };
+export default function Item(props: T_Item_Props) {
+  const { action } = props;
   let [reset, setReset] = useState(false);
   console.log("render item wrapper");
 
@@ -43,7 +42,7 @@ export default function Item({ action }: { action: (data: itemDataType) => Promi
     }
     // confirm uploads
     alert.loading("just a second...", { style: toastStyles });
-    let req = await fetch(uploadUrl, {
+    let req = await fetch(UPLOAD_URL, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
