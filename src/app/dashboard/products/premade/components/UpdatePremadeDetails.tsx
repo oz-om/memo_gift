@@ -1,5 +1,5 @@
 "use client";
-import { toastStyles } from "@/utils";
+import { T_confirmUploadsType, UPLOAD_URL, confirmUploadImages, toastStyles } from "@/utils";
 import React from "react";
 import { toast } from "react-hot-toast";
 import { signal } from "signals-react-safe";
@@ -31,7 +31,6 @@ export const premadeUpdateDetails = signal<T_premadeDetails>({
 });
 type premadeFieldKey = keyof T_premadeDetails;
 export const reset = signal(false);
-let uploadUrl = process.env.NEXT_PUBLIC_UPLOAD_URL as string;
 
 export default function UpdatePremadeDetails({ premade }: { premade: T_PremadeProductType }) {
   const { name, price, desc, images, variants, categories } = premade;
@@ -76,22 +75,14 @@ export default function UpdatePremadeDetails({ premade }: { premade: T_PremadePr
     }
     alert.loading("just a second...", { style: toastStyles });
     // make a request to file manager to confirm our new uploads if exist
-    let confirmUploadedRequest: Response | null = null;
+    let confirmUploadRes: T_confirmUploadsType | null = null;
     if (newUploadedImages.value.length > 0) {
-      confirmUploadedRequest = await fetch(uploadUrl, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newUploadedImages.value),
-      });
+      confirmUploadRes = await confirmUploadImages(newUploadedImages.value, "premade");
     }
-    // get the response from the request if it sends
-    let res: any = confirmUploadedRequest ? await confirmUploadedRequest.json() : null;
     // if the response exists and its failed
-    if (res && !res.confirmation) {
+    if (confirmUploadRes && !confirmUploadRes.confirmation) {
       alert.remove();
-      alert.error(res.error, { style: toastStyles });
+      alert.error(confirmUploadRes.error, { style: toastStyles });
       return;
     }
     // if upload is successful than update premade

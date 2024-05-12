@@ -50,16 +50,9 @@ export default function Premade_gift(props: T_PremadeGiftProps) {
     }
     alert.loading("just a second...", { style: toastStyles });
     // for confirm uploads
-    let req = await fetch(uploadUrl, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ folder: "premade", images: premade.value.images }),
-    });
-    let res = await req.json();
+    const confirmUploadRes = await confirmUploadImages(premade.value.images, "premade");
     // if upload is successful than create premade
-    if (res.confirmation) {
+    if (confirmUploadRes.confirmation) {
       let req = await action(premade.value);
       if (req.creation) {
         alert.remove();
@@ -70,8 +63,8 @@ export default function Premade_gift(props: T_PremadeGiftProps) {
         console.error(req.error);
       }
     } else {
-      alert.error(res.error, { style: toastStyles });
-      console.error(res.error);
+      alert.error(confirmUploadRes.error, { style: toastStyles });
+      console.error(confirmUploadRes.error);
     }
   }
 

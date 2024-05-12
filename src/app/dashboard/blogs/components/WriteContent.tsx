@@ -1,12 +1,9 @@
 "use client";
-import { stringToBoolean, toastStyles } from "@/utils";
+import { UPLOAD_URL, stringToBoolean, toastStyles, uploadImage } from "@/utils";
 import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useQuill } from "react-quilljs";
-// import QuillRender, { Document as QEditor_DOM } from "quilljs-renderer";
-import { uploadImage } from "../../components/client/inputs/UploadInput";
-let uploadUrl = process.env.NEXT_PUBLIC_UPLOAD_URL as string;
 
 type uploadResType = { upload: true; id: string } | { upload: false };
 
@@ -79,12 +76,6 @@ export default function WriteContent({ uploadImagesSession }: { uploadImagesSess
 
     editor.on("editor-change", () => {
       openedList && openCloseList(openedList, false);
-    });
-    editor.on("text-change", (e, j, l) => {
-      // console.log(e, j, l);
-      // QuillRender.loadFormat("html");
-      // const qEditor_doc = new QEditor_DOM(e);
-      // console.log(qEditor_doc.convertTo("html"));
     });
     // imports fonts and set default font
     const FontAttributor = Quill.import("attributors/class/font");
@@ -242,7 +233,7 @@ export default function WriteContent({ uploadImagesSession }: { uploadImagesSess
         return;
       }
       alert.success("done!", { style: toastStyles });
-      const imageUrl = `${process.env.NEXT_PUBLIC_UPLOAD_URL}/images/blog/upat_${imageId}_${imageName}`;
+      const imageUrl = `${UPLOAD_URL}/images/blog/upat_${imageId}_${imageName}`;
       if (editor) {
         const range = editor.getSelection(true);
         editor.insertEmbed(range.index, "image", imageUrl);

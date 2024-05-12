@@ -3,9 +3,9 @@ import Link from "next/link";
 import BlogInfo from "../components/BlogInfo";
 import WriteContent from "../components/WriteContent";
 import "./styles/index.css";
-const uploadUrl = process.env.NEXT_PUBLIC_UPLOAD_URL as string;
+import { UPLOAD_URL } from "@/utils";
 export default async function NewBlog() {
-  const uploadSessionReq = await fetch(uploadUrl, { cache: "no-cache" });
+  const uploadSessionReq = await fetch(UPLOAD_URL, { cache: "no-cache" });
   const uploadSession: { init: boolean; sessionID: string } | undefined = await uploadSessionReq.json();
 
   return (

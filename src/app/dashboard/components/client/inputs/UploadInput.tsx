@@ -1,7 +1,6 @@
-"use client";
+import { UPLOAD_URL, uploadImage } from "@/utils";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-let uploadUrl = process.env.NEXT_PUBLIC_UPLOAD_URL as string;
 
 type uploadInputType = {
   setUploads: (image: { id: string; name: string; src: string }) => void;
@@ -13,31 +12,6 @@ type T_uploadingImageItem = {
   pending: boolean;
 };
 
-type resCallbackType = { upload: true; id: string } | { upload: false };
-export async function uploadImage(image: File, id: string, sessionId: string, folder: string, callback: (err: string | null, res: resCallbackType) => void) {
-  let formDate = new FormData();
-  formDate.append("image", image);
-  formDate.append("id", id);
-  formDate.append("sessionId", sessionId);
-  formDate.append("folder", folder);
-  fetch(uploadUrl, {
-    method: "POST",
-    body: formDate,
-  })
-    .then((response) => response.json())
-    .then((res) => {
-      if (res.upload) {
-        callback(null, { upload: true, id: res.id });
-      } else {
-        callback("uploading failed", { upload: false });
-      }
-    })
-    .catch((error) => {
-      console.log(error);
-      callback("something went wrong", { upload: false });
-    });
-}
-
 export function UploadInput({ setUploads, folder }: uploadInputType) {
   console.log("render upload input");
 
@@ -46,7 +20,7 @@ export function UploadInput({ setUploads, folder }: uploadInputType) {
 
   // init new session
   useEffect(() => {
-    fetch(uploadUrl)
+    fetch(UPLOAD_URL)
       .then((response) => response.json())
       .then((res) => {
         if (res.init) {
@@ -90,7 +64,7 @@ export function UploadInput({ setUploads, folder }: uploadInputType) {
             // return the uploaded image
             setUploads({
               id: res.id,
-              src: `${uploadUrl}/images/${folder}/upat_${id}_${name}`,
+              src: `${UPLOAD_URL}/images/${folder}/upat_${id}_${name}`,
               name: `upat_${id}_${name}`,
             });
 
@@ -137,7 +111,7 @@ export function UploadInput({ setUploads, folder }: uploadInputType) {
         // return the uploaded image
         setUploads({
           id: res.id,
-          src: `${uploadUrl}/images/${folder}/upat_${id}_${name}`,
+          src: `${UPLOAD_URL}/images/${folder}/upat_${id}_${name}`,
           name: `upat_${id}_${name}`,
         });
         // filter uploading images by getting the pending images only

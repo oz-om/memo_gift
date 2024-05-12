@@ -1,4 +1,5 @@
 import { z } from "zod";
+type resCallbackType = { upload: true; id: string } | { upload: false };
 
 export function toggleDialog(dialogClass: string) {
   let dialog = document.querySelector(`dialog.${dialogClass}`);
@@ -107,4 +108,53 @@ export function stringToBoolean(booleanString: "true" | "false" | undefined) {
     return true;
   }
   return false;
+}
+// uploadUrl
+export const UPLOAD_URL = process.env.NEXT_PUBLIC_UPLOAD_URL as string;
+
+// upload images
+export async function uploadImage(image: File, id: string, sessionId: string, folder: string, callback: (err: string | null, res: resCallbackType) => void) {
+  let formDate = new FormData();
+  formDate.append("image", image);
+  formDate.append("id", id);
+  formDate.append("sessionId", sessionId);
+  formDate.append("folder", folder);
+  fetch(UPLOAD_URL, {
+    method: "POST",
+    body: formDate,
+  })
+    .then((response) => response.json())
+    .then((res) => {
+      if (res.upload) {
+        callback(null, { upload: true, id: res.id });
+      } else {
+        callback("uploading failed", { upload: false });
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+      callback("something went wrong", { upload: false });
+    });
+}
+
+// confirm uploaded images
+type T_uploadImages = {
+  id?: string;
+  name: string;
+}[];
+type T_uploadImagesFolder = "item" | "premade" | "card" | "variant" | "blog" | "user" | "";
+export type T_confirmUploadsType = { confirmation: true; uploads: string[] } | { confirmation: false; error: string };
+export async function confirmUploadImages(images: T_uploadImages, uploadImagesFolder: T_uploadImagesFolder) {
+  const confirmUploadReq = await fetch(UPLOAD_URL, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      folder: uploadImagesFolder,
+      images: images,
+    }),
+  });
+  const confirmUploadRes: T_confirmUploadsType = await confirmUploadReq.json();
+  return confirmUploadRes;
 }

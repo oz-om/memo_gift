@@ -1,12 +1,11 @@
 "use client";
 import type { itemDataType, T_setInputsValue } from "@/types/types";
-import { toastStyles, UPLOAD_URL } from "@/utils";
+import { confirmUploadImages, toastStyles } from "@/utils";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { signal } from "signals-react-safe";
 import Input, { Textarea } from "../../components/client/inputs";
 import { CategoriesInput } from "../../components/client/inputs/CategoriesInput";
-import { UploadInput } from "../../components/client/inputs/UploadInput";
 import SubmitButton from "../../components/client/SubmitButton";
 import ItemChosedImages from "../components/item/ItemChosedImages";
 import Item_theme from "../components/item/Item_theme";
@@ -42,15 +41,8 @@ export default function Item(props: T_Item_Props) {
     }
     // confirm uploads
     alert.loading("just a second...", { style: toastStyles });
-    let req = await fetch(UPLOAD_URL, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ folder: "item", images: item.value.images }),
-    });
-    let res = await req.json();
-    if (res.confirmation) {
+    const confirmUploadRes = await confirmUploadImages(item.value.images, "item");
+    if (confirmUploadRes.confirmation) {
       let req = await action(item.value);
       alert.remove();
       if (req.creation) {
@@ -61,7 +53,7 @@ export default function Item(props: T_Item_Props) {
         console.error("there are a problem with item creation");
       }
     } else {
-      alert.error(res.error, { style: toastStyles });
+      alert.error(confirmUploadRes.error, { style: toastStyles });
       console.error("error with confirm uploads");
     }
   }

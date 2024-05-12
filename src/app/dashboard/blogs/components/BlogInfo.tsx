@@ -1,13 +1,12 @@
 "use client";
 import { T_setInputsValue } from "@/types/types";
-import { toastStyles } from "@/utils";
+import { UPLOAD_URL, confirmUploadImages, toastStyles, uploadImage } from "@/utils";
 import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
 import { toast } from "react-hot-toast";
 import { signal } from "signals-react-safe";
 import Input, { Textarea } from "../../components/client/inputs";
 import { CategoriesInput } from "../../components/client/inputs/CategoriesInput";
-import { uploadImage } from "../../components/client/inputs/UploadInput";
 import { createNewBlog } from "../../_actions/actions";
 
 type blogDataType = {
@@ -87,20 +86,9 @@ export default function BlogInfo({ uploadImagesSession }: { uploadImagesSession:
 
     // confirm uploaded images
     const blogImages = extractImageSrcs(blogContent).map((image) => ({ name: image.replace(/.*\//, "") }));
-    const confirmReq = await fetch(process.env.NEXT_PUBLIC_UPLOAD_URL as string, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        folder: "blog",
-        images: [{ name: blogInfo.value.cover.replace(/.*\//, "") }, ...blogImages],
-      }),
-    });
-    const confirmRes: { confirmation: boolean; error: string } = await confirmReq.json();
-
-    if (!confirmRes.confirmation) {
-      alert.error(confirmRes.error, { style: toastStyles });
+    const confirmUploadRes = await confirmUploadImages([{ name: blogInfo.value.cover.replace(/.*\//, "") }, ...blogImages], "blog");
+    if (!confirmUploadRes.confirmation) {
+      alert.error(confirmUploadRes.error, { style: toastStyles });
       return;
     }
     // show success message
@@ -141,7 +129,7 @@ export default function BlogInfo({ uploadImagesSession }: { uploadImagesSession:
         console.log(err);
         return;
       }
-      const imageUrl = `${process.env.NEXT_PUBLIC_UPLOAD_URL}/images/blog/upat_${imageId}_${imageName}`;
+      const imageUrl = `${UPLOAD_URL}/images/blog/upat_${imageId}_${imageName}`;
       setBlogInfo("cover", imageUrl);
       alert.success("done!", { style: toastStyles });
     });

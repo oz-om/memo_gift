@@ -1,5 +1,5 @@
 "use client";
-import { toastStyles } from "@/utils";
+import { T_confirmUploadsType, UPLOAD_URL, confirmUploadImages, toastStyles } from "@/utils";
 import React from "react";
 import { toast } from "react-hot-toast";
 import { signal } from "signals-react-safe";
@@ -18,7 +18,6 @@ export const variantUpdateDetails = signal<T_variantDetails>({
   value: "",
 });
 type variantFieldKey = keyof T_variantDetails;
-let uploadUrl = process.env.NEXT_PUBLIC_UPLOAD_URL as string;
 
 export default function UpdateVariantDetails({ variant }: { variant: T_VariantProductType }) {
   const { name, preview, value } = variant;
@@ -49,22 +48,14 @@ export default function UpdateVariantDetails({ variant }: { variant: T_VariantPr
 
     alert.loading("just a second...", { style: toastStyles });
     // make a request to file manager to confirm our new uploads if exist
-    let confirmUploadedRequest: Response | null = null;
+    let confirmUploadRes: T_confirmUploadsType | null = null;
     if (newUploadedImage.value.length > 0) {
-      confirmUploadedRequest = await fetch(uploadUrl, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newUploadedImage.value),
-      });
+      confirmUploadRes = await confirmUploadImages(newUploadedImage.value, "variant");
     }
-    // get the response from the request if it sends
-    let res: any = confirmUploadedRequest ? await confirmUploadedRequest.json() : null;
     // if the response exists and its failed
-    if (res && !res.confirmation) {
+    if (confirmUploadRes && !confirmUploadRes.confirmation) {
       alert.remove();
-      alert.error(res.error, { style: toastStyles });
+      alert.error(confirmUploadRes.error, { style: toastStyles });
       return;
     }
 

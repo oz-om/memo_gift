@@ -1,5 +1,5 @@
 "use client";
-import { toastStyles } from "@/utils";
+import { T_confirmUploadsType, UPLOAD_URL, confirmUploadImages, toastStyles } from "@/utils";
 import React from "react";
 import { toast } from "react-hot-toast";
 import { signal } from "signals-react-safe";
@@ -22,7 +22,6 @@ export const itemUpdateDetails = signal<T_itemDetails>({
   categories: [],
 });
 type itemFieldKey = keyof T_itemDetails;
-let uploadUrl = process.env.NEXT_PUBLIC_UPLOAD_URL as string;
 
 export default function UpdateItemDetails({ item }: { item: T_ItemProductType }) {
   const { name, price, desc, images, categories } = item;
@@ -64,22 +63,14 @@ export default function UpdateItemDetails({ item }: { item: T_ItemProductType })
     }
     alert.loading("just a second...", { style: toastStyles });
     // make a request to file manager to confirm our new uploads if exist
-    let confirmUploadedRequest: Response | null = null;
+    let confirmUploadRes: T_confirmUploadsType | null = null;
     if (newUploadedImages.value.length > 0) {
-      confirmUploadedRequest = await fetch(uploadUrl, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(newUploadedImages.value),
-      });
+      confirmUploadRes = await confirmUploadImages(newUploadedImages.value, "item");
     }
-    // get the response from the request if it sends
-    let res: any = confirmUploadedRequest ? await confirmUploadedRequest.json() : null;
-    // if the response exists and its failed
-    if (res && !res.confirmation) {
+    // if the confirm req happen and  response failed
+    if (confirmUploadRes && !confirmUploadRes.confirmation) {
       alert.remove();
-      alert.error(res.error, { style: toastStyles });
+      alert.error(confirmUploadRes.error, { style: toastStyles });
       return;
     }
     // if upload is successful than update premade
@@ -93,6 +84,7 @@ export default function UpdateItemDetails({ item }: { item: T_ItemProductType })
     newUploadedImages.value = [];
     alert.success("Done", { style: toastStyles });
   }
+
   return (
     <button onClick={updateItemDetails} className='px-2 py-1 bg-teal-400 text-white ml-auto w-20 block rounded hover:bg-teal-500'>
       update

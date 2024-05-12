@@ -1,6 +1,6 @@
 "use client";
 import { T_setInputsValue } from "@/types/types";
-import { toastStyles } from "@/utils";
+import { UPLOAD_URL, confirmUploadImages, toastStyles } from "@/utils";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { signal } from "signals-react-safe";
@@ -30,7 +30,6 @@ const setPostCard: T_setInputsValue = (field, value) => {
   };
 };
 
-let uploadUrl = process.env.NEXT_PUBLIC_UPLOAD_URL as string;
 export default function Postcard() {
   let [reset, setReset] = useState(false);
   async function createPostCard() {
@@ -46,15 +45,8 @@ export default function Postcard() {
     }
 
     alert.loading("just a second...", { style: toastStyles });
-    let req = await fetch(uploadUrl, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ folder: "card", images: postCardData.value.images }),
-    });
-    let upload = await req.json();
-    if (upload.confirmation) {
+    const confirmUploadRes = await confirmUploadImages(postCardData.value.images, "card");
+    if (confirmUploadRes.confirmation) {
       let res = await createNewPostCard({
         name: postCardData.value.name,
         image: postCardData.value.images[0].name,
