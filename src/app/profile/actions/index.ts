@@ -22,3 +22,19 @@ export async function changeUserDetailsAction(userId: string, changedDetails: T_
     };
   }
 }
+
+export async function updateUserPick(userId: string, picture: string): Promise<{ success: true } | { success: false; error: string }> {
+  try {
+    await prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        profile_pic: picture,
+      },
+    });
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: "Something went wrong during update your picture, please try again" };
+  }
+}
