@@ -73,7 +73,7 @@ export const authOptions: NextAuthOptions = {
                 first_name: profile?.given_name as string,
                 last_name: profile?.family_name as string,
                 password: crypto.randomUUID(),
-                profile_pic: user.image,
+                profile_pic: user.image ?? "https://omzid.serv00.net/images/default.png",
                 role: "user",
               },
               select: {

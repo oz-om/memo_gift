@@ -234,7 +234,7 @@ model User {
   password    String    @db.Text
   phone       String?
   address_id  String?
-  profile_pic String?   @db.Text
+  profile_pic String    @db.Text
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   address     Address[]
