@@ -1,10 +1,13 @@
-import { authOptions } from "@/utils/nextAuthOptions";
-import { getServerSession } from "next-auth";
+"use client";
+// import { authOptions } from "@/utils/nextAuthOptions";
+// import { getServerSession } from "next-auth";
 import Link from "next/link";
 import BuiltNewCustomGift from "../home/components/client/BuiltNewCustomGift";
+import { useSession } from "next-auth/react";
 
-export default async function NavBar_lg_sc() {
-  const login = await getServerSession(authOptions);
+export default function NavBar_lg_sc() {
+  // const login = await getServerSession(authOptions);
+  const { data: login } = useSession();
 
   return (
     <nav className='header_navigate relative hidden md:block mb-2'>

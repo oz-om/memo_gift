@@ -6,6 +6,7 @@ import Navbar from "./components/NavBar";
 import NavBar_lg_sc from "./components/NavBar_lg_sc";
 import Footer from "./components/Footer";
 import { Toaster } from "react-hot-toast";
+import NextAuthProvider from "./components/client/NextAuthProvider";
 const rem = REM({
   weight: ["200", "300", "400", "500", "600", "700", "800", "900"],
   subsets: ["latin"],
@@ -53,15 +54,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script src='https://cdn.lordicon.com/lordicon-1.2.0.js' defer></script>
       </head>
       <body className={"custom-scroll-bar sm:overflow-auto " + rem.className}>
-        <Header>
-          {/*@ts-ignore */}
-          <Navbar />
-          {/*@ts-ignore */}
-          <NavBar_lg_sc />
-        </Header>
-        {children}
-        <Footer />
-        <Toaster />
+        <NextAuthProvider>
+          <Header>
+            <Navbar />
+            <NavBar_lg_sc />
+          </Header>
+          {children}
+          <Footer />
+          <Toaster />
+        </NextAuthProvider>
       </body>
     </html>
   );

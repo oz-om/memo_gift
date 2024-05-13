@@ -1,98 +1,27 @@
-import { prisma } from "@/lib/db/prisma";
-import { authOptions } from "@/utils/nextAuthOptions";
-import { Prisma } from "@prisma/client";
-import { getServerSession } from "next-auth";
-import { cookies } from "next/headers";
+// import { prisma } from "@/lib/db/prisma";
+// import { getServerSession } from "next-auth";
+// import { authOptions } from "@/utils/nextAuthOptions";
+// import { Prisma } from "@prisma/client";
+// import { cookies } from "next/headers";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Cart_item from "./Cart_item";
-type T_cart = Prisma.CartGetPayload<{
-  include: {
-    cartItem: {
-      include: {
-        customGift: {
-          include: {
-            includes: {
-              select: {
-                quantity: true;
-              };
-              include: {
-                item: true;
-              };
-            };
-          };
-        };
-        premade: {
-          include: {
-            includes: {
-              include: {
-                item: true;
-              };
-            };
-          };
-        };
-        item: true;
-        variant: true;
-      };
-    };
-  };
-}>[];
-export default async function CartItems() {
-  let session = await getServerSession(authOptions);
-  let userId: string | undefined;
-  let userType: "user_id" | "anonymous_user" = "anonymous_user";
-  if (!session) {
-    let anonymousUser = cookies().get("anonymousUserId")?.value;
-    userId = anonymousUser;
-  } else {
-    userId = session.user.id;
-    userType = "user_id";
-  }
+// import { useSession } from "next-auth/react";
+import { T_cart, getCartContent } from "@/app/action";
 
-  let cart: T_cart = [];
-  let totalPrice = 0;
+export default function CartItems() {
+  // let session = await getServerSession(authOptions);
+  const [cart, setCart] = useState<T_cart>([]);
+  const [totalPrice, setTotalPrice] = useState(0);
 
-  if (userId) {
-    cart = await prisma.cart.findMany({
-      where: {
-        [userType]: userId,
-      },
-      include: {
-        cartItem: {
-          include: {
-            customGift: {
-              include: {
-                includes: {
-                  include: {
-                    item: true,
-                  },
-                },
-              },
-            },
-            premade: {
-              include: {
-                includes: {
-                  include: {
-                    item: true,
-                  },
-                },
-              },
-            },
-            item: true,
-            variant: true,
-          },
-        },
-      },
+  useEffect(() => {
+    getCartContent().then((res) => {
+      if (res.success) {
+        setTotalPrice(res.totalPrice);
+        setCart(res.cart);
+      }
     });
-    let cartItems = cart.map((cart) => cart.cartItem);
-    totalPrice = cartItems.reduce((acc, cartItem) => {
-      let { premade, customGift, item } = cartItem;
-      let product = premade || customGift || item;
-      let price = product?.price as number;
-      return (acc += price * cartItem.quantity);
-    }, 0);
-  }
-
+  }, []);
   return (
     <>
       <div className='cart_items  overflow-y-auto h-[calc(100%_-_100px)] custom-scroll-bar overscroll-contain'>

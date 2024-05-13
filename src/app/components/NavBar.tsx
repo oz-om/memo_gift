@@ -1,10 +1,12 @@
-import { authOptions } from "@/utils/nextAuthOptions";
-import { getServerSession } from "next-auth";
+"use client";
+// import { authOptions } from "@/utils/nextAuthOptions";
+// import { getServerSession,  } from "next-auth";
 import Image from "next/image";
 import Link from "next/link";
 import BuiltNewCustomGift from "../home/components/client/BuiltNewCustomGift";
 import Cart_wrapper from "./cart/Cart_wrapper";
 import { AccountIcon, Close_menu, LogOut, Open_cart, Open_menu } from "./client/Navbar";
+import { SessionProvider, useSession } from "next-auth/react";
 
 type NavigateLinkProps = {
   className?: string;
@@ -23,8 +25,9 @@ function Navigate_link({ className, to, icon, name }: NavigateLinkProps) {
   );
 }
 
-export default async function Navbar() {
-  let login = await getServerSession(authOptions);
+export default function Navbar() {
+  // let login = await getServerSession(authOptions);
+  const { data: login } = useSession();
 
   return (
     <nav className='relative'>
