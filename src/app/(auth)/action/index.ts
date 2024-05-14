@@ -4,12 +4,7 @@ import { zodFields } from "@/utils";
 import { hash } from "bcrypt";
 import { z } from "zod";
 
-export default async function createNewUser(formData: FormData): Promise<
-  | {
-      create: true;
-    }
-  | { create: false; error: string }
-> {
+export default async function createNewUser(formData: FormData): Promise<{ create: true } | { create: false; error: string }> {
   let fields = Object.fromEntries(formData.entries());
   let fieldsSchema = z.object({
     ...zodFields,
@@ -22,20 +17,19 @@ export default async function createNewUser(formData: FormData): Promise<
     };
   }
 
-  let isExist = await prisma.user.findUnique({
-    where: { email: validation.data.email },
-    select: { id: true },
-  });
-
-  if (isExist) {
-    return {
-      create: false,
-      error: "user already exists",
-    };
-  }
-
   let hashedPass = await hash(validation.data.password, 10);
   try {
+    let isExist = await prisma.user.findUnique({
+      where: { email: validation.data.email },
+      select: { id: true },
+    });
+
+    if (isExist) {
+      return {
+        create: false,
+        error: "user already exists",
+      };
+    }
     await prisma.user.create({
       data: {
         first_name: validation.data.firstname,
@@ -46,13 +40,13 @@ export default async function createNewUser(formData: FormData): Promise<
         password: hashedPass,
       },
     });
+    return {
+      create: true,
+    };
   } catch (error) {
     return {
       create: false,
       error: "something went wrong please try again",
     };
   }
-  return {
-    create: true,
-  };
 }

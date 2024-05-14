@@ -1,5 +1,3 @@
-"use client";
-
 import getErrorMessage from "@/utils/getErrorMessage";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
@@ -7,11 +5,12 @@ import React, { useState } from "react";
 type formProps = {
   children: React.ReactNode;
   className?: string;
-  action: (formData: FormData) => Promise<any>;
+  action: (formData: FormData) => Promise<void>;
   type: "sign-up" | "sign-in";
 };
 
-export default function FormWrapper({ children, className, action, type }: formProps) {
+export default function FormWrapper(fromProps: formProps) {
+  const { children, className, action, type } = fromProps;
   const [errorMessage, setErrorMessage] = useState<string>();
   const router = useRouter();
   async function handelSubmit(formData: FormData) {
@@ -20,7 +19,7 @@ export default function FormWrapper({ children, className, action, type }: formP
       router.push("/");
       router.refresh();
     } catch (error) {
-      console.log("form warpper => ", error);
+      console.log("form wrapper => ", error);
 
       setErrorMessage(getErrorMessage(error));
     }

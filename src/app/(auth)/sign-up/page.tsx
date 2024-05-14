@@ -1,22 +1,29 @@
+"use client";
 import { Patrick_Hand } from "next/font/google";
 import Image from "next/image";
-import Auth_provider from "../components/Auth_provider";
+import Auth_provider, { signupHandler } from "../components/Auth_provider";
 import { Input, Submit } from "../components/Input";
 import Link from "next/link";
 import FormWrapper from "../components/FormWrapper";
-import signupAction from "./signupAction";
-import { Metadata } from "next";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 const PatrickHand = Patrick_Hand({
   weight: ["400"],
   subsets: ["latin"],
 });
-export const metadata: Metadata = {
-  title: "sign-in",
-  description: "sign-in and start sharing love with your nearest peoples, te be together for ever",
-};
 
 export default function Sign_up() {
+  const router = useRouter();
+  const { data: session } = useSession();
+
+  useEffect(() => {
+    if (session) {
+      router.push("/");
+      return;
+    }
+  }, [session]);
   return (
     <>
       <div className="signup_wrapper  bg-[url('/images/auth_bg_01.png')] bg-center bg-cover max-w-3xl lg:max-w-4xl w-full mx-auto rounded-md shadow-md overflow-hidden">
@@ -48,7 +55,7 @@ export default function Sign_up() {
             <div className='or_line px-4 mt-4'>
               <p className="text-center text-slate-400 relative before:content-[''] before:absolute before:w-[45%] before:h-[1px] before:bg-slate-400 before:-translate-y-1/2 before:top-1/2 before:left-0 after:content-[''] after:absolute after:w-[45%] after:h-[1px] after:bg-slate-400 after:-translate-y-1/2 after:top-1/2 after:right-0">OR</p>
             </div>
-            <FormWrapper action={signupAction} type='sign-up'>
+            <FormWrapper action={signupHandler} type='sign-up'>
               <div className='username flex gap-x-4'>
                 <Input name={"firstname"} checkable={true} className='basis-1/2' type={"text"} placeholder={"first Name"} />
                 <Input name={"lastname"} checkable={true} className='basis-1/2' type={"text"} placeholder={"last Name"} />
