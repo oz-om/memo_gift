@@ -4,7 +4,7 @@ import { Patrick_Hand } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 import Auth_provider, { loginHandler } from "../components/Auth_provider";
-import { Input } from "../components/Input";
+import { Input, Submit } from "../components/Input";
 import FormWrapper from "../components/FormWrapper";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -61,14 +61,12 @@ export default function Login() {
               <div className='reset_password mt-2'>
                 <p className='text-end text-xs text-slate-700'>
                   Forget Password{" "}
-                  <Link href={"/"} className='text-teal-500'>
+                  <Link href={"/help/forget-password"} className='text-teal-500'>
                     Reset?
                   </Link>
                 </p>
               </div>
-              <button type='submit' className='block w-40 text-center mx-auto mt-5 py-2 rounded-md bg-teal-500 text-white hover:bg-teal-400'>
-                login
-              </button>
+              <Submit name='login' verify={false} />
             </FormWrapper>
             <div className='sign-up_redirect my-5'>
               <p className='text-center'>

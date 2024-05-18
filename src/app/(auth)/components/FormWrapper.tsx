@@ -19,8 +19,6 @@ export default function FormWrapper(fromProps: formProps) {
       router.push("/");
       router.refresh();
     } catch (error) {
-      console.log("form wrapper => ", error);
-
       setErrorMessage(getErrorMessage(error));
     }
   }

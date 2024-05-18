@@ -4,6 +4,7 @@ import React from "react";
 import { z } from "zod";
 import { zodFields } from "@/utils";
 import { toast } from "react-hot-toast";
+import { useFormStatus } from "react-dom";
 
 let fieldsSchema = z.object({
   ...zodFields,
@@ -51,8 +52,10 @@ export function Input({ type, placeholder, name, className, checkable = false }:
   );
 }
 
-export function Submit({ name }: { name: string }) {
+export function Submit({ name, verify = true }: { name: string; verify?: boolean }) {
+  const { pending } = useFormStatus();
   function checkAllInputs(e: React.MouseEvent) {
+    if (!verify) return;
     let allValid = fieldsSchema.safeParse(fields.value);
 
     if (!allValid.success) {
@@ -70,7 +73,7 @@ export function Submit({ name }: { name: string }) {
   }
 
   return (
-    <button onClick={checkAllInputs} type='submit' className='block w-40 text-center mx-auto mt-5 py-2 rounded-md bg-teal-500 text-white hover:bg-teal-400'>
+    <button disabled={pending} onClick={checkAllInputs} type='submit' className={"block w-40 text-center mx-auto mt-5 py-2 rounded-md text-white " + (pending ? "bg-teal-100 " : "bg-teal-500 hover:bg-teal-400")}>
       {name}
     </button>
   );

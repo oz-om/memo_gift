@@ -45,7 +45,7 @@ export default async function Profile_Page() {
           <User_Pic userId={user.id} user_pic={user.profile_pic} />
           <User_Addresses session={userSession} addresses={address} />
         </div>
-        <User_ResetPass />
+        <User_ResetPass userId={user.id} />
       </section>
     </section>
   );
