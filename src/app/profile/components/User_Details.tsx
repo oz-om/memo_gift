@@ -35,18 +35,16 @@ const oldUserInfo = signal<T_userDetails>({
 });
 
 export default function User_Details({ userDetails }: { userDetails: T_userDetails }) {
-  const { email, username, first_name, last_name, id } = userDetails;
-  const [user, updateUserInfo] = useState<T_userDetails>({
-    email,
-    first_name,
-    last_name,
-    id,
-    username,
-  });
+  const [user, updateUserInfo] = useState<T_userDetails>(userDetails);
   const router = useRouter();
+  const [pending, setPending] = useState(false);
+  const [isChanged, setIsChanged] = useState(false);
 
   function handleInputs({ currentTarget: input }: React.ChangeEvent<HTMLInputElement>) {
     const filedName = input.name as keyof T_userDetails;
+    if (!isChanged) {
+      setIsChanged(true);
+    }
     updateUserInfo((prev) => ({
       ...prev,
       [filedName]: input.value,
@@ -55,18 +53,28 @@ export default function User_Details({ userDetails }: { userDetails: T_userDetai
 
   async function updatedUserInfo() {
     const alert = toast;
-    const changedUserInfo: T_changedField = {};
+    let changedUserInfo: T_changedField = {};
     let userInfoFiled: keyof T_userDetails;
     for (userInfoFiled in user) {
       if (user[userInfoFiled] !== oldUserInfo.value[userInfoFiled]) {
         changedUserInfo[userInfoFiled] = user[userInfoFiled];
       }
     }
+    // if there is no changed field
+    if (Object.keys(changedUserInfo).length == 0) return;
+    setPending(true);
     alert.loading("saving...", { style: toastStyles });
     const updateRes = await changeUserDetailsAction(userDetails.id, changedUserInfo);
     alert.remove();
+    setPending(false);
     if (!updateRes.success) alert.error(updateRes.error, { style: toastStyles });
     alert.success("saved successfully", { style: toastStyles });
+    // update Old use Info with new Info to convert new info to old
+    let newUserInfoFiled: keyof T_userDetails;
+    for (newUserInfoFiled in changedUserInfo) {
+      oldUserInfo.value[newUserInfoFiled] = changedUserInfo[newUserInfoFiled] as string;
+    }
+    setIsChanged(false);
     router.refresh();
   }
 
@@ -125,7 +133,7 @@ export default function User_Details({ userDetails }: { userDetails: T_userDetai
         </div>
       </div>
       <div className='save_changes flex justify-center mt-5'>
-        <button onClick={updatedUserInfo} className='text-slate-400 bg-slate-50 border border-teal-600 rounded px-2'>
+        <button disabled={pending} onClick={updatedUserInfo} className={"border border-teal-600 rounded px-2 " + (isChanged ? "text-teal-300 bg-slate-500 " : " text-teal-200 bg-slate-400 pointer-events-none ") + (pending && " text-teal-200 bg-slate-400 pointer-events-none ")}>
           save
         </button>
       </div>

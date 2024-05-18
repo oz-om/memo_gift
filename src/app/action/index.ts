@@ -6,14 +6,13 @@ import { getServerSession } from "next-auth";
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 import React from "react";
-import nodemailer from "nodemailer";
 import { render } from "@react-email/components";
 import ResetPasswordTemplate from "../help/forget-password/components/ResetPasswordEmailTemplate";
 import { randomUUID } from "crypto";
 import { compare, hash } from "bcrypt";
 import { z } from "zod";
-const sgMail = require("@sendgrid/mail");
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+import sgMail from "@sendgrid/mail";
+sgMail.setApiKey(process.env.SENDGRID_API_KEY as string);
 
 // get cart content
 export type T_cart = Prisma.CartGetPayload<{
@@ -261,17 +260,6 @@ export async function senEmail(formData: FormData): Promise<{ success: true } | 
     // extra check for token
     if (!TOKEN) return { success: false, error: "something went wrong, please try again!" };
 
-    // send email with nodemailer
-    // const transport = nodemailer.createTransport({
-    //   host: "smtp.sendgrid.net",
-    //   port: 465,
-    //   secure: true,
-    //   auth: {
-    //     user: process.env.SENDGRID_AUTH_USER,
-    //     pass: process.env.SENDGRID_AUTH_PASSWORD,
-    //   },
-    // });
-
     const htmlEmail = render(React.createElement(ResetPasswordTemplate, { confirmURL: `${process.env.NEXT_PUBLIC_APP_URL}/help/new-password?token=${TOKEN}` }));
 
     // send mail with defined transport object
@@ -281,7 +269,7 @@ export async function senEmail(formData: FormData): Promise<{ success: true } | 
       subject: "Reset Password",
       html: htmlEmail,
     };
-    // await transport.sendMail(emailDetails);
+
     await sgMail.send(emailDetails);
 
     return {

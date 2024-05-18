@@ -1,7 +1,7 @@
 "use client";
-
-import Add_items_dialog from "../components/premade/Add_items_dialog";
-import { OpenDialog } from "../components/client/Buttons";
+import dynamic from "next/dynamic";
+// import Add_items_dialog from "../components/premade/Add_items_dialog";
+import { OpenAddPremadeIncludesDialog } from "../components/client/Buttons";
 import Custom_Checkbox from "../components/premade/Custom_Checkbox";
 import { signal } from "signals-react-safe";
 import type { T_PremadeData, T_PremadeVariant, T_setInputsValue } from "@/types/types";
@@ -14,6 +14,10 @@ import Price from "../components/premade/Price";
 import { toast } from "react-hot-toast";
 import { confirmUploadImages, toastStyles } from "@/utils";
 import PremadeChosedImages from "../components/premade/PremadeChosedImages";
+import Lazy_Loading_Spin from "@/app/components/Lazy_Loading_Spin";
+const Add_items_dialog = dynamic(() => import("../components/premade/Add_items_dialog"), {
+  loading: () => <Lazy_Loading_Spin />,
+});
 
 export const premade = signal<T_PremadeData>({
   name: "",
@@ -34,9 +38,10 @@ export const setPremadeInput: T_setInputsValue = (field, value) => {
 type T_PremadeGiftProps = { action: (data: T_PremadeData) => Promise<{ creation: true } | { creation: false; error: string }>; variants: T_PremadeVariant[] };
 
 export default function Premade_gift(props: T_PremadeGiftProps) {
-  const { action, variants } = props;
   console.log("render premade wrapper");
+  const { action, variants } = props;
   let [reset, setReset] = useState(false);
+  let [openAddIncludesDialog, setOpenAddIncludesDialog] = useState(false);
 
   async function createPremade() {
     let alert = toast;
@@ -100,7 +105,7 @@ export default function Premade_gift(props: T_PremadeGiftProps) {
         <div className='includes_wrapper py-4 px-2 bg-white  shadow-md rounded'>
           <h4 className='capitalize text-sm flex justify-between items-center'>
             <p>includes:</p>
-            <OpenDialog />
+            <OpenAddPremadeIncludesDialog importDialog={setOpenAddIncludesDialog} isImported={openAddIncludesDialog} />
           </h4>
           <Includes />
         </div>
@@ -112,7 +117,7 @@ export default function Premade_gift(props: T_PremadeGiftProps) {
           <SubmitButton publish={createPremade} />
         </div>
       </div>
-      <Add_items_dialog reset={reset} />
+      {openAddIncludesDialog && <Add_items_dialog reset={reset} />}
     </section>
   );
 }

@@ -10,6 +10,7 @@ export default function User_Pic({ userId, user_pic }: { userId: string; user_pi
     file: undefined,
     url: user_pic,
   });
+  const [pending, setPending] = useState(false);
   const [imageUploadSession, setImageUploadSession] = useState<string | null>(null);
   const [isUpdated, setIsUpdated] = useState(false);
   function pickPreview({ currentTarget: fileInput }: React.ChangeEvent<HTMLInputElement>) {
@@ -20,37 +21,44 @@ export default function User_Pic({ userId, user_pic }: { userId: string; user_pi
       file: Image,
     });
     if (!imageUploadSession) {
-      fetch(UPLOAD_URL).then(async (res) => {
-        const uploadSession: { init: boolean; sessionID: string } | undefined = await res.json();
-        if (!uploadSession?.init) return;
-        console.log(uploadSession.sessionID);
-
-        setImageUploadSession(uploadSession.sessionID);
-        setIsUpdated(true);
-      });
+      const alert = toast;
+      alert.loading("just a second...", { style: toastStyles });
+      fetch(UPLOAD_URL)
+        .then(async (res) => {
+          const uploadSession: { init: boolean; sessionID: string } | undefined = await res.json();
+          alert.remove();
+          if (!uploadSession?.init) return;
+          setImageUploadSession(uploadSession.sessionID);
+          setIsUpdated(true);
+        })
+        .catch(() => alert.remove());
+    } else {
+      setIsUpdated(true);
     }
   }
   async function updateProfilePick() {
     const alert = toast;
     if (!insertedImage.file || !imageUploadSession) return alert.error("please chose an image to upload!", { style: toastStyles });
     alert.loading("uploading...", { style: toastStyles });
+    setPending(true);
     const imageId = new Date().getTime();
     const imageName = insertedImage.file.name;
     await uploadImage(insertedImage.file, `${imageId}`, imageUploadSession, "user", async (err, res) => {
-      alert.remove();
       if (err || !res.upload) {
         console.log(err);
         return alert.error("something went wrong during uploading!, please try again");
       }
-      console.log(res);
       const confirmUploadRes = await confirmUploadImages([{ name: `upat_${res.id}_${imageName}` }], "user");
       if (!confirmUploadRes.confirmation) {
         return alert.error(confirmUploadRes.error, { style: toastStyles });
       }
 
       const updatePic = await updateUserPick(userId, `${UPLOAD_URL}/images/${confirmUploadRes.uploads[0]}`);
+      alert.remove();
       if (!updatePic.success) return alert.error(updatePic.error, { style: toastStyles });
       alert.success("done", { style: toastStyles });
+      setPending(false);
+      setIsUpdated(false);
     });
   }
 
@@ -65,7 +73,7 @@ export default function User_Pic({ userId, user_pic }: { userId: string; user_pi
           change pick
         </label>
         {isUpdated && (
-          <button onClick={updateProfilePick} className='text-teal-400 border border-teal-400 bg-slate-300 rounded px-2'>
+          <button disabled={pending} onClick={updateProfilePick} className={"text-teal-300 border border-teal-400 rounded px-2 " + (pending ? "bg-slate-300" : "bg-slate-500")}>
             save
           </button>
         )}

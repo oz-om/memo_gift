@@ -113,6 +113,15 @@ export function stringToBoolean(booleanString: "true" | "false" | undefined) {
 export const UPLOAD_URL = process.env.NEXT_PUBLIC_UPLOAD_URL as string;
 
 // upload images
+export async function getUploadSession() {
+  try {
+    const uploadSessionReq = await fetch(UPLOAD_URL);
+    const uploadSessionRes: { sessionID: string } = await uploadSessionReq.json();
+    return uploadSessionRes.sessionID;
+  } catch (error) {
+    return null;
+  }
+}
 export async function uploadImage(image: File, id: string, sessionId: string, folder: string, callback: (err: string | null, res: resCallbackType) => void) {
   let formDate = new FormData();
   formDate.append("image", image);

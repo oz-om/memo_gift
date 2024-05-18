@@ -1,24 +1,24 @@
 "use client";
 import Pagination from "@/app/components/Pagination";
-import React, { Suspense, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Chosed_item from "./Chosed_Item";
-import { CloseDialog } from "../client/Buttons";
+import { CloseAddPremadeIncludesDialog } from "../client/Buttons";
 import Item from "../Item";
 import { premade, setPremadeInput } from "../../type/Premade_gift";
 import { useSignalEffect } from "signals-react-safe";
 import { includeItemType } from "@/types/types";
+import { toggleDialog } from "@/utils";
 
 export default function Add_items_dialog({ reset }: { reset: boolean }) {
   console.log("rerender dialog");
   let [items, getItems] = useState<includeItemType[]>([]);
   useEffect(() => {
-    fetch("/api/items")
-      .then((response) => response.json())
-      .then((res) => {
-        if (res.getItems) {
-          getItems(res.items);
-        }
-      });
+    fetch("/api/items").then(async (response) => {
+      const itemsRes: { getItems: boolean; items: [] } = await response.json();
+      if (itemsRes.getItems) {
+        getItems(itemsRes.items);
+      }
+    });
   }, []);
   let [chosedItems, setChosedItems] = useState<includeItemType[]>([]);
 
@@ -33,10 +33,11 @@ export default function Add_items_dialog({ reset }: { reset: boolean }) {
       setPremadeInput("includes", []);
     }
   }, [reset]);
+
   return (
-    <dialog className='items_dialog_wrapper fixed left-0 right-0 top-0 bottom-0 border w-[95%] h-[95%] z-10 max-w-4xl m-auto bg-slate-50 shadow-md rounded-md overflow-auto custom-scroll-bar overscroll-contain'>
+    <dialog open className='items_dialog_wrapper fixed left-0 right-0 top-0 bottom-0 border w-[95%] h-[95%] z-10 max-w-4xl m-auto bg-slate-50 shadow-md rounded-md overflow-auto custom-scroll-bar overscroll-contain'>
       <div className='close_dialog text-end'>
-        <CloseDialog />
+        <CloseAddPremadeIncludesDialog />
       </div>
       <div className='chosed_items_wrapper'>
         <div className='chosed_items container'>
@@ -47,7 +48,9 @@ export default function Add_items_dialog({ reset }: { reset: boolean }) {
             })}
           </div>
           {chosedItems.length == 0 && <p className='text-slate-400 text-center text-xs py-2 border rounded-md mb-2'>there is no chosed items yet</p>}
-          <button className='block w-20 text-teal-50 bg-teal-500 uppercase ml-auto mb-2 rounded hover:bg-teal-600'>done</button>
+          <button onClick={() => toggleDialog("items_dialog_wrapper")} className='block w-20 text-teal-50 bg-teal-500 uppercase ml-auto mb-2 rounded hover:bg-teal-600'>
+            done
+          </button>
         </div>
       </div>
       <div className='available_items_list'>

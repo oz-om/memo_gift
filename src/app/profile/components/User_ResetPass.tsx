@@ -2,7 +2,7 @@
 import { updateUserPassword } from "@/app/action";
 import { toastStyles } from "@/utils";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import toast from "react-hot-toast";
 
 export default function User_ResetPass({ userId }: { userId: string }) {
@@ -11,7 +11,9 @@ export default function User_ResetPass({ userId }: { userId: string }) {
     new_password: "",
     confirm_new_password: "",
   });
+  const inputsForm = useRef<HTMLFormElement | null>(null);
   const [pending, setPending] = useState(false);
+
   function handelInputs({ currentTarget }: React.FormEvent<HTMLInputElement>) {
     const fieldName = currentTarget.name;
     setInputs((prev) => ({
@@ -19,6 +21,7 @@ export default function User_ResetPass({ userId }: { userId: string }) {
       [fieldName]: currentTarget.value,
     }));
   }
+
   async function updatePasswordRequest() {
     const alert = toast;
     if (inputs.new_password.trim().length == 0 || inputs.confirm_new_password.trim().length == 0 || inputs.old_password.trim().length == 0) {
@@ -36,12 +39,17 @@ export default function User_ResetPass({ userId }: { userId: string }) {
       return alert.error(updatePassReq.error, { style: toastStyles });
     }
     alert.success("done", { style: toastStyles });
+    // reset inputs
+    if (inputsForm.current) {
+      inputsForm.current.reset();
+    }
   }
+
   return (
     <div className='sm:mt-5 md:mt-0'>
       <div className='container'>
         <h4 className='font-medium uppercase text-slate-700'>change password:</h4>
-        <div className='inputs'>
+        <form ref={inputsForm} className='inputs'>
           <div className='old_password flex flex-col'>
             <label className='text-teal-700 text-sm font-light'>old password</label>
             <div className='input'>
@@ -60,7 +68,7 @@ export default function User_ResetPass({ userId }: { userId: string }) {
               <input onInput={handelInputs} className='rounded outline-slate-200 pl-2' name='confirm_new_password' id='confirmPass' type='password' placeholder='confirm password' />
             </div>
           </div>
-        </div>
+        </form>
         <div className='update_pass flex justify-end mt-5'>
           <Link href={"/help/forget-password"} className='mr-auto text-xs text-blue-400'>
             forget password?

@@ -1,6 +1,7 @@
-import { UPLOAD_URL, uploadImage } from "@/utils";
+import { UPLOAD_URL, getUploadSession, toastStyles, uploadImage } from "@/utils";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import toast from "react-hot-toast";
 
 type uploadInputType = {
   setUploads: (image: { id: string; name: string; src: string }) => void;
@@ -18,24 +19,19 @@ export function UploadInput({ setUploads, folder }: uploadInputType) {
   let [uploadingImages, addUploadingImage] = useState<T_uploadingImageItem[]>([]);
   let [sessionId, setSessionId] = useState<string | null>(null);
 
-  // init new session
-  useEffect(() => {
-    fetch(UPLOAD_URL)
-      .then((response) => response.json())
-      .then((res) => {
-        if (res.init) {
-          setSessionId(res.sessionID);
-        } else {
-          console.error("something went wrong!");
-        }
-      });
-  }, []);
-
-  function dropHandler(ev: React.DragEvent<HTMLLabelElement>) {
+  async function dropHandler(ev: React.DragEvent<HTMLLabelElement>) {
     ev.preventDefault();
     if (!sessionId) {
-      alert("pleas wait! upload zone doesn't ready yet.");
-      return;
+      const alert = toast;
+      alert.loading("upload initialization...", { style: toastStyles });
+      const uploadSession = await getUploadSession();
+      alert.remove();
+      if (uploadSession) {
+        setSessionId(uploadSession);
+      } else {
+        alert("pleas wait! upload zone doesn't ready yet.");
+        return;
+      }
     }
 
     if (ev.dataTransfer.items) {
@@ -80,10 +76,18 @@ export function UploadInput({ setUploads, folder }: uploadInputType) {
     ev.preventDefault();
   }
 
-  function setNewFile({ target: input }: React.ChangeEvent<HTMLInputElement>) {
+  async function setNewFile({ target: input }: React.ChangeEvent<HTMLInputElement>) {
     if (!sessionId) {
-      alert("please wait! upload zone doesn't ready yet.");
-      return;
+      const alert = toast;
+      alert.loading("upload initialization...", { style: toastStyles });
+      const uploadSession = await getUploadSession();
+      alert.remove();
+      if (uploadSession) {
+        setSessionId(uploadSession);
+      } else {
+        alert("pleas wait! upload zone doesn't ready yet.");
+        return;
+      }
     }
     if (!input.files) {
       alert("pleas wait");
@@ -122,7 +126,7 @@ export function UploadInput({ setUploads, folder }: uploadInputType) {
   }
 
   return (
-    <div className={"uploads " + (sessionId == null ? "animate-pulse pointer-events-none" : "animate-none")}>
+    <div className={"uploads "}>
       <label onDrop={dropHandler} onDragOver={dragOverHandler} draggable='true' htmlFor='file' className='cursor-pointer flex flex-col border-2 border-slate-400 border-dashed rounded-md'>
         <svg className='h-28' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'>
           <g id='SVGRepo_bgCarrier' strokeWidth='0'></g>
