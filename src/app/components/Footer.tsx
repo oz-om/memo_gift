@@ -32,13 +32,7 @@ export default function Footer() {
                 <Link href={"/"}>CONTACT</Link>
               </li>
               <li className='py-1 hover:border-b hover:border-teal-300 w-fit h-6'>
-                <Link href={"/"}>BLOG</Link>
-              </li>
-              <li className='py-1 hover:border-b hover:border-teal-300 w-fit h-6'>
-                <Link href={"/"}>THE FOX FLEET</Link>
-              </li>
-              <li className='py-1 hover:border-b hover:border-teal-300 w-fit h-6'>
-                <Link href={"/"}>ACCESSIBILITY</Link>
+                <Link href={"/blogs"}>BLOG</Link>
               </li>
             </ul>
           </div>
@@ -49,22 +43,13 @@ export default function Footer() {
             </h4>
             <ul className='text-sm ml-4'>
               <li className='py-1 hover:border-b hover:border-teal-300 w-fit h-6'>
-                <Link href={"/"}>HOLIDAY 2023</Link>
+                <Link href={"/build-a-memori_gift?step=one"}>Build a Memory_gift</Link>
               </li>
               <li className='py-1 hover:border-b hover:border-teal-300 w-fit h-6'>
-                <Link href={"/"}>Build a Memory_gift</Link>
-              </li>
-              <li className='py-1 hover:border-b hover:border-teal-300 w-fit h-6'>
-                <Link href={"/"}>SHOP</Link>
+                <Link href={"/collections/premade"}>SHOP</Link>
               </li>
               <li className='py-1 hover:border-b hover:border-teal-300 w-fit h-6'>
                 <Link href={"/"}>ABOUT</Link>
-              </li>
-              <li className='py-1 hover:border-b hover:border-teal-300 w-fit h-6'>
-                <Link href={"/"}>CORPORATE</Link>
-              </li>
-              <li className='py-1 hover:border-b hover:border-teal-300 w-fit h-6'>
-                <Link href={"/"}>GIFTING</Link>
               </li>
             </ul>
           </div>
@@ -79,7 +64,7 @@ export default function Footer() {
             </div>
             <div className='email py-2'>
               <i className='bx bxs-envelope mr-3'></i>
-              <a href='mailto:mail'>help@knackshops.com</a>
+              <a href='mailto:mail'>memory-g@omzid.serv00.net</a>
             </div>
           </div>
         </div>

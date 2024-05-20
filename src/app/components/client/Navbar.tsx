@@ -88,7 +88,7 @@ export function AccountIcon({ user }: { user: authUser }) {
             </Link>
           </li>
           <li>
-            <Link href={"/orders"} className='flex gap-x-2 items-center p-1 mb-1 border rounded capitalize hover:bg-slate-200'>
+            <Link href={"/profile/orders"} className='flex gap-x-2 items-center p-1 mb-1 border rounded capitalize hover:bg-slate-200'>
               <i className='bx bx-store'></i>
               <span>orders</span>
             </Link>

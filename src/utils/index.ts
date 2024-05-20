@@ -93,7 +93,7 @@ export function formatDate(inputDateStr: string) {
 
   const options: {} = {
     year: "numeric",
-    month: "long",
+    month: "short",
     day: "numeric",
   };
 
