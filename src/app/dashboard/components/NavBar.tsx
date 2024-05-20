@@ -10,13 +10,13 @@ export default function NavBar({ adminInfo }: { adminInfo: authUser }) {
         <div className='nav-row flex justify-between items-center px-2 mb-2'>
           <div className='navigation '>
             <Open_menu />
-            <ul className='nave_menu flex flex-col bg-teal-50 fixed z-10 bg-sky-300/10 overflow-hidden w-0 max-w-[13rem] left-0 top-0 h-full sm:w-10 sm:pt-10 md:w-40 transition-[width]'>
+            <ul className='nave_menu flex flex-col bg-teal-50 fixed z-10 bg-sky-300/10 w-0 max-w-[13rem] left-0 top-0 h-full overflow-hidden sm:overflow-visible sm:w-10 sm:pt-10 md:w-40 transition-[width]'>
               <Close_menu />
               <Navigate_link name={"Dashboard"} to='/dashboard' icon={"bx-home-circle"} />
               <Navigate_link name={"Orders"} to='/dashboard/orders' icon={"bxs-store"} />
               <Navigate_link name={"Products"} to='/dashboard/products' icon={"bxs-package"} />
-              <Navigate_link name={"Add new"} to='/dashboard/add' icon={"bx-customize"} />
-              <Navigate_link name={"blogs"} to='/dashboard/blogs' icon={"bx-text"} />
+              <Navigate_link name={"Add"} to='/dashboard/add' icon={"bx-customize"} />
+              <Navigate_link name={"Blogs"} to='/dashboard/blogs' icon={"bx-text"} />
             </ul>
           </div>
           <div className='logo'>
