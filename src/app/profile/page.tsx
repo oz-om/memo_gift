@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/db/prisma";
 import { authOptions } from "@/utils/nextAuthOptions";
 import { getServerSession } from "next-auth";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import React from "react";
 import User_Addresses from "./components/User_Addresses";
 import User_Details from "./components/User_Details";
@@ -10,7 +10,7 @@ import User_ResetPass from "./components/User_ResetPass";
 
 export default async function Profile_Page() {
   const userSession = await getServerSession(authOptions);
-  if (!userSession?.user) return notFound();
+  if (!userSession) return;
   const user = await prisma.user.findUnique({
     where: {
       id: userSession.user.id,
@@ -32,7 +32,8 @@ export default async function Profile_Page() {
       },
     },
   });
-  if (!user) return notFound();
+  if (!user) redirect("/sign-in");
+
   const { address, profile_pic, ...userDetails } = user;
 
   return (

@@ -2,14 +2,18 @@ import React from "react";
 import Order from "../components/Order";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/utils/nextAuthOptions";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { prisma } from "@/lib/db/prisma";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Orders | Memory Gifts",
+  description: "here you can find all orders you made.",
+};
 
 export default async function OrdersPage() {
   const session = await getServerSession(authOptions);
-  if (!session) {
-    return notFound();
-  }
+  if (!session) return;
   const orders = await prisma.order.findMany({
     where: {
       user_id: session.user.id,
@@ -21,8 +25,24 @@ export default async function OrdersPage() {
             include: {
               product: {
                 include: {
-                  customGift: true,
-                  premade: true,
+                  customGift: {
+                    include: {
+                      includes: {
+                        include: {
+                          item: true,
+                        },
+                      },
+                    },
+                  },
+                  premade: {
+                    include: {
+                      includes: {
+                        include: {
+                          item: true,
+                        },
+                      },
+                    },
+                  },
                   item: true,
                   variant: true,
                 },
