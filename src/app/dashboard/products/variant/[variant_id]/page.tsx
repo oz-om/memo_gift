@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/db/prisma";
-import { redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import React, { cache } from "react";
 import { Prisma } from "@prisma/client";
 import { Metadata } from "next";
@@ -16,7 +16,7 @@ const getVariant = cache(async (id: string) => {
       id,
     },
   });
-  if (!product) return redirect("/not-found");
+  if (!product) return notFound();
   return product;
 });
 

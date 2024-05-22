@@ -6,7 +6,7 @@ import { signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { toast } from "react-hot-toast";
 
 function toggleMenu() {
@@ -35,8 +35,13 @@ function toggleCart() {
   document.querySelector(".basket .cart_content")?.classList.toggle("-right-[100vw]");
   document.querySelector(".basket .cart_content")?.classList.toggle("right-0");
 }
-export function Open_cart() {
-  return <i onClick={toggleCart} className='bx bxs-cart-alt text-teal-400 text-3xl font-extrabold cursor-pointer'></i>;
+export function Open_cart(props: { setCartContent: () => Promise<void> }) {
+  const { setCartContent } = props;
+  function handelOpenCart() {
+    toggleCart();
+    setCartContent();
+  }
+  return <i onClick={handelOpenCart} className='bx bxs-cart-alt text-teal-400 text-3xl font-extrabold cursor-pointer'></i>;
 }
 
 export function Close_cart() {
@@ -116,8 +121,7 @@ export function LogOut({ className, iconStyle }: { className?: string; iconStyle
         redirect: true,
         callbackUrl: "/sign-in",
       });
-      // router.push("/");
-      // router.refresh();
+      router.refresh();
     } catch (error) {
       toast.error("something went wrong", {
         position: "top-right",

@@ -1,12 +1,12 @@
 "use client";
-// import { authOptions } from "@/utils/nextAuthOptions";
-// import { getServerSession,  } from "next-auth";
 import Image from "next/image";
 import Link from "next/link";
 import BuiltNewCustomGift from "../home/components/client/BuiltNewCustomGift";
 import Cart_wrapper from "./cart/Cart_wrapper";
 import { AccountIcon, Close_menu, LogOut, Open_cart, Open_menu } from "./client/Navbar";
-import { SessionProvider, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
+import { useState } from "react";
+import { T_cart, getCartContent } from "../action";
 
 type NavigateLinkProps = {
   className?: string;
@@ -26,16 +26,32 @@ function Navigate_link({ className, to, icon, name }: NavigateLinkProps) {
 }
 
 export default function Navbar() {
-  // let login = await getServerSession(authOptions);
   const { data: login } = useSession();
+  const [cart, setCart] = useState<T_cart>([]);
+  const [totalPrice, setTotalPrice] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
 
+  async function setCartContent() {
+    if (!cart.length) {
+      setIsLoading(true);
+      getCartContent()
+        .then((res) => {
+          setIsLoading(false);
+          if (res.success) {
+            setCart(res.cart);
+            setTotalPrice(res.totalPrice);
+          }
+        })
+        .catch(() => setIsLoading(false));
+    }
+  }
   return (
     <nav className='relative'>
       <div className='pt-4 pb-5 md:relative'>
         <div className='nav-row flex justify-between px-2 mb-2'>
           <div className='navigation md:hidden'>
             <Open_menu />
-            <ul className='nave_menu flex flex-col bg-white fixed z-10 bg-sky-300/10 overflow-hidden w-0 max-w-md left-0 top-0 h-full  transition-[width]'>
+            <ul className='nave_menu flex flex-col bg-white fixed z-10 bg-sky-300/10 overflow-hidden w-0 max-w-xs left-0 top-0 h-full  transition-[width]'>
               <li className='flex justify-between'>
                 {!!login && (
                   <Link href={"/profile"}>
@@ -77,8 +93,8 @@ export default function Navbar() {
           </div>
           <div className='basket_wrapper flex gap-x-2'>
             <div className='basket'>
-              <Open_cart />
-              <Cart_wrapper />
+              <Open_cart setCartContent={setCartContent} />
+              <Cart_wrapper cartContent={cart} totalPrice={totalPrice} loading={isLoading} />
             </div>
             {!!login && (
               <div className='user'>

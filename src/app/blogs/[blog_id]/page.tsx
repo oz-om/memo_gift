@@ -1,11 +1,11 @@
+import "../styles/style.css";
 import { prisma } from "@/lib/db/prisma";
 import { formatDate } from "@/utils";
-import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import React, { cache } from "react";
-import "../styles/style.css";
+import { notFound } from "next/navigation";
+import { Metadata } from "next";
 
 const blogPost = cache(async (blog_id: string) => {
   const blog = await prisma.blog.findUnique({
@@ -20,7 +20,8 @@ const blogPost = cache(async (blog_id: string) => {
       },
     },
   });
-  if (!blog) return redirect("/not-found");
+  if (!blog) return notFound();
+
   return blog;
 });
 

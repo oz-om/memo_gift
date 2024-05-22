@@ -1,3 +1,10 @@
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Not Found 404",
+  description: "404 Not Found, can't find this page, or my be its redirected to another path or removed.",
+};
+
 export default function notFoundPage() {
   return (
     <div className='h-[70vh] grid place-content-center'>

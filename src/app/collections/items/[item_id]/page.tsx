@@ -1,28 +1,25 @@
 import Carousel from "@/app/components/Carousel";
-import { prisma } from "@/lib/db/prisma";
-import { Item as ItemType } from "@prisma/client";
-import { redirect } from "next/navigation";
-import { cache, Suspense } from "react";
-import { Metadata } from "next";
+import { Suspense, cache } from "react";
 import Item from "../../components/Item";
 import OpenCardsDialog from "../../components/client/OpenCardsDialog";
 import ChoseCardDialog from "../../components/ChoseCardDialog";
+import { prisma } from "@/lib/db/prisma";
+import { notFound } from "next/navigation";
+import { Metadata } from "next";
 
-type productType = ItemType | null;
-const getProduct = cache(async (id: string) => {
-  let product: productType = null;
-  product = await prisma.item.findUnique({
+const getItem = cache(async (id: string) => {
+  const product = await prisma.item.findUnique({
     where: {
       id,
     },
   });
 
-  if (!product) return redirect("/not-found");
+  if (!product) return notFound();
   return product;
 });
 
 export async function generateMetadata({ params: { item_id } }: { params: { item_id: string } }): Promise<Metadata> {
-  const product = await getProduct(item_id);
+  const product = await getItem(item_id);
   return {
     title: product.name,
     description: product.desc,
@@ -38,8 +35,9 @@ export async function generateMetadata({ params: { item_id } }: { params: { item
     },
   };
 }
+
 export default async function ItemPage({ params: { item_id } }: { params: { item_id: string } }) {
-  const product = await getProduct(item_id);
+  const product = await getItem(item_id);
   return (
     <>
       <section className='product_wrapper'>
@@ -74,7 +72,7 @@ export default async function ItemPage({ params: { item_id } }: { params: { item
             </div>
           </div>
           <div className='product_desc'>
-            <h4 className='section_title relative rounded-md text-2xl capitalize font-bolde  pl-8 py-2 mt-10 mb-5'>
+            <h4 className='section_title relative rounded-md text-2xl capitalize font-bold  pl-8 py-2 mt-10 mb-5'>
               <span>description</span>
               <i className='bx bx-link-alt absolute -left-3 -top-3 text-[40px] text-slate-600/50'></i>
             </h4>
@@ -84,7 +82,7 @@ export default async function ItemPage({ params: { item_id } }: { params: { item
       </section>
       <section className='similar_products mt-8'>
         <div className='container px-4 sm:px-0'>
-          <h4 className='section_title relative rounded-md text-2xl capitalize font-bolde  pl-8 py-2 mt-10 mb-5'>
+          <h4 className='section_title relative rounded-md text-2xl capitalize font-bold  pl-8 py-2 mt-10 mb-5'>
             <span>similar products</span>
             <i className='bx bx-link-alt absolute -left-3 -top-3 text-[40px] text-slate-600/50'></i>
           </h4>
