@@ -1,9 +1,9 @@
-import { authUser } from "@/types/nextAuthTypes";
 import Image from "next/image";
 import Link from "next/link";
 import { Navigate_link, Close_menu, Open_menu } from "./client/Navbar";
+import { Session } from "next-auth";
 
-export default function NavBar({ adminInfo }: { adminInfo: authUser }) {
+export default function NavBar({ session }: { session: Session }) {
   return (
     <nav className='relative'>
       <div className='pt-4 pb-5 md:relative'>
@@ -29,7 +29,7 @@ export default function NavBar({ adminInfo }: { adminInfo: authUser }) {
           <div className='account'>
             <div className='account_toggle flex items-center justify-center cursor-pointer'>
               <figure className='w-6 h-6 rounded-full overflow-hidden'>
-                <Image src={`${adminInfo.profile_pic}`} alt={"profile picture"} width={50} height={50} />
+                <Image src={`${session?.user.profile_pic ?? ""}`} alt={"profile picture"} width={50} height={50} />
               </figure>
               <i className='bx bx-chevron-down'></i>
             </div>

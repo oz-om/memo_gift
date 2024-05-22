@@ -23,7 +23,6 @@ export default function Dashboard() {
         <div className='orders_today px-2 pb-4 bg-white rounded shadow'>
           <p className='mb-2'>today</p>
           <Suspense fallback={<StatisticLoading />}>
-            {/* @ts-ignore async component */}
             <StatisticsList />
           </Suspense>
         </div>
@@ -34,8 +33,6 @@ export default function Dashboard() {
             <span>last orders</span> <span className='w-12 text-sm text-blue-600'>vew all</span>
           </Link>
           <Suspense fallback={<LastOrdersLoading />}>
-            {/* @ts-ignore async component */}
-
             <LastOrdersList />
           </Suspense>
         </div>
@@ -44,7 +41,6 @@ export default function Dashboard() {
         <div className='last_added_wrapper px-2 bg-white rounded shadow'>
           <p>last added</p>
           <Suspense fallback={<LastAddedLoading />}>
-            {/* @ts-ignore async component */}
             <LastAdded />
           </Suspense>
         </div>

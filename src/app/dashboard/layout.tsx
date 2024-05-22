@@ -12,7 +12,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <>
       <header>
-        <NavBar adminInfo={session.user} />
+        <NavBar session={session} />
       </header>
       <main className='dashboard relative sm:ml-10 md:ml-40 px-2   '>{children}</main>
     </>

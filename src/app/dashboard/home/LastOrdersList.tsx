@@ -37,10 +37,6 @@ export default async function LastOrdersList() {
       {allOrders.map((order) => {
         return <LastOrder key={order.id} order={order} />;
       })}
-      {/* <LastOrder name='thanks for thanks' type='premade' time='today at 14:34' includeCount={3} price={22} image='/images/step-one-pack-one.png' />
-      <LastOrder name='thanks for thanks' type='item' time='today at 13:40' includeCount={0} price={12} image='/images/items_05.png' />
-      <LastOrder name='thanks for thanks' type='custom' time='today at 07:04' includeCount={3} price={32} image='/images/step-one-pack-one.png' />
-      <LastOrder name='thanks for thanks' type='premade' time='today at 06:12' includeCount={2} price={11} image='/images/step-one-pack-two.png' /> */}
     </div>
   );
 }
