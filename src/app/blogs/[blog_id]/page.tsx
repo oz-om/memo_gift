@@ -3,7 +3,7 @@ import { formatDate } from "@/utils";
 import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { redirect } from "next/navigation";
 import React, { cache } from "react";
 import "../styles/style.css";
 
@@ -20,7 +20,7 @@ const blogPost = cache(async (blog_id: string) => {
       },
     },
   });
-  if (!blog) notFound();
+  if (!blog) return redirect("/not-found");
   return blog;
 });
 

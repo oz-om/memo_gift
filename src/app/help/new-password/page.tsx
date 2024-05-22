@@ -1,7 +1,7 @@
 "use client";
 import { isTokenValid, updateUserPassword } from "@/app/action";
 import { toastStyles } from "@/utils";
-import { notFound, useRouter, useSearchParams } from "next/navigation";
+import { redirect, useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
@@ -47,7 +47,7 @@ export default function NewPasswordPage() {
 
   useEffect(() => {
     if (!token) {
-      return notFound();
+      return redirect("/not-found");
     }
     isTokenValid(token)
       .then((response) => {

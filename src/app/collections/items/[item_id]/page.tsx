@@ -1,7 +1,7 @@
 import Carousel from "@/app/components/Carousel";
 import { prisma } from "@/lib/db/prisma";
-import { Item as ItemType, PremadeGift, Variant } from "@prisma/client";
-import { notFound } from "next/navigation";
+import { Item as ItemType } from "@prisma/client";
+import { redirect } from "next/navigation";
 import { cache, Suspense } from "react";
 import { Metadata } from "next";
 import Item from "../../components/Item";
@@ -17,7 +17,7 @@ const getProduct = cache(async (id: string) => {
     },
   });
 
-  if (!product) notFound();
+  if (!product) return redirect("/not-found");
   return product;
 });
 

@@ -1,6 +1,6 @@
 import React, { cache } from "react";
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db/prisma";
 import { Prisma } from "@prisma/client";
 import { timeDetails } from "@/utils";
@@ -81,7 +81,7 @@ const getOrder = cache(async (id: number) => {
       },
     },
   });
-  if (!order) notFound();
+  if (!order) return redirect("/not-found");
   return order;
 });
 

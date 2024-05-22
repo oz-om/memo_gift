@@ -112,9 +112,12 @@ export function LogOut({ className, iconStyle }: { className?: string; iconStyle
   const router = useRouter();
   async function handelSignOut() {
     try {
-      await signOut();
-      router.push("/");
-      router.refresh();
+      await signOut({
+        redirect: true,
+        callbackUrl: "/sign-in",
+      });
+      // router.push("/");
+      // router.refresh();
     } catch (error) {
       toast.error("something went wrong", {
         position: "top-right",
