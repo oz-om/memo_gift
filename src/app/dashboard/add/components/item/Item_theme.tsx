@@ -3,7 +3,8 @@
 import { T_setInputsValue } from "@/types/types";
 import { useRef } from "react";
 
-export default function Item_theme({ setTheme, reset }: { setTheme: T_setInputsValue; reset: boolean }) {
+export default function Item_theme({ reset, ...props }: { setTheme: T_setInputsValue; reset: boolean }) {
+  const { setTheme } = props;
   let defaultSelected = useRef<HTMLOptionElement | null>(null);
   if (reset) {
     setTheme("theme", "white-to-black");
@@ -13,7 +14,7 @@ export default function Item_theme({ setTheme, reset }: { setTheme: T_setInputsV
   }
   function getTheme({ target: selectElement }: React.ChangeEvent) {
     let select = selectElement as HTMLSelectElement;
-    setTheme("theme", select.value);
+    setTheme("theme", select.value.toLocaleLowerCase());
   }
   return (
     <div className='select theme_wrapper flex items-center relative max-w-sm'>

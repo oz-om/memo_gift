@@ -35,7 +35,7 @@ export default function Item({ id, images, name, price, includes, setPremade }: 
         <Image src={images} alt={name} width={720} height={720} />
       </figure>
       <div className='item_details px-2 pb-2'>
-        <h4 className='line-clamp-3 text-sm'>{name}</h4>
+        <h4 className='line-clamp-2 text-sm'>{name}</h4>
         <span className='font-sans'>{price}$</span>
       </div>
     </div>

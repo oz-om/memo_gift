@@ -24,7 +24,7 @@ export default function Item(props: T_itemProps) {
           <Image src={image} alt={name} width={720} height={720} />
         </figure>
         <div className='item_details px-2 pb-2'>
-          <h4 className='line-clamp-3'>{name}</h4>
+          <h4 className='line-clamp-2'>{name}</h4>
           <span className='font-sans'>{price}$</span>
         </div>
       </Link>

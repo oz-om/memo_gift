@@ -24,24 +24,30 @@ export type T_ItemProductType = Prisma.ItemGetPayload<{
 
 const getItem = cache(async (id: string) => {
   let product: T_ItemProductType | null = null;
-  product = await prisma.item.findUnique({
-    where: {
-      id,
-    },
-    include: {
-      categories: {
-        include: {
-          cat: true,
+  try {
+    product = await prisma.item.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        categories: {
+          include: {
+            cat: true,
+          },
         },
       },
-    },
-  });
-  if (!product) return notFound();
-  return product;
+    });
+    if (!product) return notFound();
+    return product;
+  } catch (error) {
+    console.log(error);
+    return product;
+  }
 });
 
 export async function generateMetadata({ params: { item_id } }: { params: { item_id: string } }): Promise<Metadata> {
   const product = await getItem(item_id);
+  if (!product) return {};
   return {
     title: product.name + " - dashboard ",
     description: product.desc,
@@ -60,23 +66,23 @@ export async function generateMetadata({ params: { item_id } }: { params: { item
 
 export default async function itemPage({ params: { item_id } }: { params: { item_id: string } }) {
   const item = await getItem(item_id);
-
-  return (
-    <div className='premade_page_wrapper'>
-      <div className='premade min-[860px]:grid grid-cols-2'>
-        <section className='product-details bg-white rounded mt-2 mb-4 shadow px-2 py-4'>
-          <ItemDetails item={item} />
-          <section>
-            <ItemCategories categories={item.categories} />
+  if (item)
+    return (
+      <div className='premade_page_wrapper'>
+        <div className='premade min-[860px]:grid grid-cols-2'>
+          <section className='product-details bg-white rounded mt-2 mb-4 shadow px-2 py-4'>
+            <ItemDetails item={item} />
+            <section>
+              <ItemCategories categories={item.categories} />
+            </section>
           </section>
-        </section>
-        <section className='premade_images bg-white rounded mt-2 mb-4 shadow px-2 py-4'>
-          <ItemImages itemImages={item.images} />
-        </section>
+          <section className='premade_images bg-white rounded mt-2 mb-4 shadow px-2 py-4'>
+            <ItemImages itemImages={item.images} />
+          </section>
+        </div>
+        <div className='update_premade mt-5 mb-3'>
+          <UpdateItemDetails item={item} />
+        </div>
       </div>
-      <div className='update_premade mt-5 mb-3'>
-        <UpdateItemDetails item={item} />
-      </div>
-    </div>
-  );
+    );
 }

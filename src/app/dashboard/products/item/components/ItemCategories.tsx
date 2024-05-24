@@ -11,15 +11,13 @@ export default function ItemCategories({ categories }: { categories: { cat: { na
   }
   function addNewCategory() {
     if (categoryInput.current && categoryInput.current.value.trim().length > 0) {
-      itemUpdateDetails.value.categories.push(categoryInput.current.value);
-      console.log(itemUpdateDetails.value.categories);
-
+      itemUpdateDetails.value.categories.push(categoryInput.current.value.toLocaleLowerCase());
       setItemCategories([...itemUpdateDetails.value.categories]);
       categoryInput.current.value = "";
     }
   }
   function deleteCategory(cat: string) {
-    const kippedCategories = itemCategories.filter((c) => c !== cat);
+    const kippedCategories = itemCategories.filter((c) => c.toLocaleLowerCase() !== cat.toLocaleLowerCase());
     itemUpdateDetails.value.categories = kippedCategories;
     setItemCategories(kippedCategories);
   }

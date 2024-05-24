@@ -65,17 +65,17 @@ export async function updatePremadeDetailsAction(premadeId: string, premadeData:
           if (!existInPrev) {
             await tx.category.upsert({
               where: {
-                name: premadeRelatedData.categories?.[i],
+                name: premadeRelatedData.categories?.[i].toLocaleLowerCase(),
               },
               create: {
-                name: premadeRelatedData.categories?.[i],
+                name: premadeRelatedData.categories?.[i].toLocaleLowerCase(),
               },
               update: {},
             });
             await tx.boxCategory.create({
               data: {
                 premade_id: premadeId,
-                cat_name: premadeRelatedData.categories?.[i],
+                cat_name: premadeRelatedData.categories?.[i].toLocaleLowerCase(),
               },
             });
           }
@@ -87,7 +87,7 @@ export async function updatePremadeDetailsAction(premadeId: string, premadeData:
             await tx.boxCategory.delete({
               where: {
                 premade_id_cat_name: {
-                  cat_name: prevCategories[i].cat.name,
+                  cat_name: prevCategories[i].cat.name.toLocaleLowerCase(),
                   premade_id: premadeId,
                 },
               },
@@ -177,17 +177,17 @@ export async function updateItemDetailsAction(itemId: string, itemData: T_Update
           if (!existInPrev) {
             await tx.category.upsert({
               where: {
-                name: itemRelatedData.categories?.[i],
+                name: itemRelatedData.categories?.[i].toLocaleLowerCase(),
               },
               create: {
-                name: itemRelatedData.categories?.[i],
+                name: itemRelatedData.categories?.[i].toLocaleLowerCase(),
               },
               update: {},
             });
             await tx.itemCategory.create({
               data: {
                 item_id: itemId,
-                cat_name: itemRelatedData.categories?.[i],
+                cat_name: itemRelatedData.categories?.[i].toLocaleLowerCase(),
               },
             });
           }
@@ -199,7 +199,7 @@ export async function updateItemDetailsAction(itemId: string, itemData: T_Update
             await tx.itemCategory.delete({
               where: {
                 item_id_cat_name: {
-                  cat_name: prevCategories[i].cat.name,
+                  cat_name: prevCategories[i].cat.name.toLocaleLowerCase(),
                   item_id: itemId,
                 },
               },

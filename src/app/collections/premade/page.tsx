@@ -1,9 +1,12 @@
-import LoadingSpin from "@/app/components/LoadingSpin";
 import Pagination from "@/app/components/Pagination";
 import { Metadata } from "next";
-import { Suspense } from "react";
 import CollectionsHeader from "../components/CollectionsHeader";
 import PremadeProducts from "../components/PremadeProducts";
+import FilteredDataProvider from "../context/Filter_Context";
+import { getPremades } from "../actions";
+import { Suspense } from "react";
+import LoadingSpin from "@/app/components/LoadingSpin";
+import QueryCtProvider from "../context/QueryCtProvider";
 
 export const metadata: Metadata = {
   title: "premade",
@@ -13,16 +16,15 @@ export const metadata: Metadata = {
 export default async function Premade() {
   return (
     <main>
-      <CollectionsHeader />
-      <div className='collection_content_wrapper mt-5 relative'>
-        <div className='container'>
-          <Suspense fallback={<LoadingSpin />}>
-            {/* @ts-ignore  async component*/}
+      <FilteredDataProvider getData={getPremades} queryKey={"getPremades"}>
+        <CollectionsHeader />
+        <div className='collection_content_wrapper mt-5 relative'>
+          <div className='container'>
             <PremadeProducts />
-          </Suspense>
+          </div>
         </div>
-      </div>
-      <Pagination />
+        <Pagination />
+      </FilteredDataProvider>
     </main>
   );
 }

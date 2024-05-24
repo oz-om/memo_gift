@@ -11,8 +11,7 @@ export default function PremadeCategories({ categories }: { categories: { cat: {
   }
   function addNewCategory() {
     if (categoryInput.current && categoryInput.current.value.trim().length > 0) {
-      premadeUpdateDetails.value.categories.push(categoryInput.current.value);
-      console.log(premadeUpdateDetails.value.categories);
+      premadeUpdateDetails.value.categories.push(categoryInput.current.value.toLowerCase());
 
       setPremadeCategories([...premadeUpdateDetails.value.categories]);
       categoryInput.current.value = "";

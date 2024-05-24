@@ -15,6 +15,7 @@ import { toast } from "react-hot-toast";
 import { confirmUploadImages, toastStyles } from "@/utils";
 import PremadeChosedImages from "../components/premade/PremadeChosedImages";
 import Lazy_Loading_Spin from "@/app/components/Lazy_Loading_Spin";
+import FilterContextProvider from "../context/Filter_Context";
 const Add_items_dialog = dynamic(() => import("../components/premade/Add_items_dialog"), {
   loading: () => <Lazy_Loading_Spin />,
 });
@@ -117,7 +118,11 @@ export default function Premade_gift(props: T_PremadeGiftProps) {
           <SubmitButton publish={createPremade} />
         </div>
       </div>
-      {openAddIncludesDialog && <Add_items_dialog reset={reset} />}
+      {openAddIncludesDialog && (
+        <FilterContextProvider>
+          <Add_items_dialog reset={reset} />
+        </FilterContextProvider>
+      )}
     </section>
   );
 }

@@ -1,7 +1,5 @@
-"use client";
-
 import React from "react";
-import { useFilteredData } from "../collections/context/Filter_Context";
+import { useFilteredData } from "../../context/Filter_Context";
 
 export default function Pagination() {
   const { fullFilteredData, pagination, setPagination, setFilteredData } = useFilteredData();

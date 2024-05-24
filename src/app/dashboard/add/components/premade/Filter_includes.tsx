@@ -1,7 +1,5 @@
-"use client";
 import React, { useEffect, useState } from "react";
-import { useFilteredData } from "../collections/context/Filter_Context";
-import { usePathname } from "next/navigation";
+import { useFilteredData } from "../../context/Filter_Context";
 type T_filterQueries = {
   searchQuery: string | null;
   min_price: number;
@@ -9,8 +7,7 @@ type T_filterQueries = {
   category: string | null;
   color: string | null;
 };
-export default function Filter() {
-  const path = usePathname().split("/").pop();
+export default function Filter_includes() {
   const { fullData, setFullFilteredData, setFilteredData, setPagination, pagination } = useFilteredData();
   const [filterOptions, setFilterOptions] = useState<T_filterQueries>({
     searchQuery: null,
@@ -93,19 +90,17 @@ export default function Filter() {
                 <option value='Books We Love'>Books We Love</option>
               </select>
             </li>
-            {path == "items" && (
-              <li className='select filter_by_color'>
-                <span className='text-teal-700'>Color:</span>
-                <select onChange={handelFilterQueries} name='color' className='filter-by px-2'>
-                  <option value=''>All</option>
-                  <option value='white-to-black'>White-to-Black</option>
-                  <option value='red-to-violet'>Red-to-Violet</option>
-                  <option value='blue-to-teal'>Blue-to-teal</option>
-                  <option value='green-to-yellow'>Green-to-Yellow</option>
-                  <option value='amber-to-vermilion'>Amber-to-Vermilion</option>
-                </select>
-              </li>
-            )}
+            <li className='select filter_by_color'>
+              <span className='text-teal-700'>Color:</span>
+              <select onChange={handelFilterQueries} name='color' className='filter-by px-2'>
+                <option value=''>All</option>
+                <option value='white-to-black'>White-to-Black</option>
+                <option value='red-to-violet'>Red-to-Violet</option>
+                <option value='blue-to-teal'>Blue-to-teal</option>
+                <option value='green-to-yellow'>Green-to-Yellow</option>
+                <option value='amber-to-vermilion'>Amber-to-Vermilion</option>
+              </select>
+            </li>
           </ul>
           <div className='filter_by_search'>
             <div className='search_wrap max-w-2xl mx-auto flex relative overflow-hidden rounded-md p-1'>

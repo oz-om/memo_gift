@@ -4,6 +4,12 @@ export async function GET(req: Request) {
   try {
     let items = await prisma.item.findMany({
       orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        name: true,
+        price: true,
+        images: true,
+      },
     });
 
     return new Response(

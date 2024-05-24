@@ -41,34 +41,40 @@ export type T_PremadeProductType = Prisma.PremadeGiftGetPayload<{
 
 const getPremade = cache(async (id: string) => {
   let product: T_PremadeProductType | null = null;
-  product = await prisma.premadeGift.findUnique({
-    where: {
-      id,
-    },
-    include: {
-      includes: {
-        include: {
-          item: true,
+  try {
+    product = await prisma.premadeGift.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        includes: {
+          include: {
+            item: true,
+          },
+        },
+        variants: {
+          include: {
+            variant: true,
+          },
+        },
+        categories: {
+          include: {
+            cat: true,
+          },
         },
       },
-      variants: {
-        include: {
-          variant: true,
-        },
-      },
-      categories: {
-        include: {
-          cat: true,
-        },
-      },
-    },
-  });
-  if (!product) return notFound();
-  return product;
+    });
+    if (!product) return notFound();
+    return product;
+  } catch (error) {
+    console.log(error);
+    return product;
+  }
 });
 
 export async function generateMetadata({ params: { premade_id } }: { params: { premade_id: string } }): Promise<Metadata> {
   const product = await getPremade(premade_id);
+  if (!product) return {};
   return {
     title: product.name + " - dashboard ",
     description: product.desc,
@@ -87,6 +93,9 @@ export async function generateMetadata({ params: { premade_id } }: { params: { p
 
 export default async function premadePage({ params: { premade_id } }: { params: { premade_id: string } }) {
   const premade = await getPremade(premade_id);
+  if (!premade) {
+    return;
+  }
   async function getAllVariants() {
     "use server";
     let variants = await prisma.variant.findMany({

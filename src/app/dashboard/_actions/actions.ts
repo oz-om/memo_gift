@@ -2,12 +2,21 @@
 import { prisma } from "@/lib/db/prisma";
 import type { itemDataType, T_PostCard, T_PremadeData } from "@/types/types";
 import { authOptions } from "@/utils/nextAuthOptions";
+import { Prisma } from "@prisma/client";
 import { getServerSession } from "next-auth";
-
+type item = Prisma.ItemGetPayload<{
+  include: {
+    categories: {
+      select: {
+        cat_name: true;
+      };
+    };
+  };
+}>;
 function createCategories(categories: string[]) {
   return prisma.category.createMany({
     data: categories.map((category) => ({
-      name: category,
+      name: category.toLocaleLowerCase(),
     })),
     skipDuplicates: true, // This will skip creating categories if they already exist
   });
@@ -21,7 +30,32 @@ function reSortedAndGetImagesAsURL(images: { id: string; name: string }[], folde
   });
   return imagesNames;
 }
-
+// get items
+export async function getItems(): Promise<{ success: true; items: item[] } | { success: false; error: string }> {
+  try {
+    const items = await prisma.item.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+      include: {
+        categories: {
+          select: {
+            cat_name: true,
+          },
+        },
+      },
+    });
+    return {
+      success: true,
+      items,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: "something went wrong, please try again",
+    };
+  }
+}
 // create new item
 export async function createNewItem(data: itemDataType) {
   // sort uploads as the user sorted insert
@@ -42,11 +76,11 @@ export async function createNewItem(data: itemDataType) {
               where: {
                 item_id_cat_name: {
                   item_id: "",
-                  cat_name: category,
+                  cat_name: category.toLocaleLowerCase(),
                 },
               },
               create: {
-                cat_name: category,
+                cat_name: category.toLocaleLowerCase(),
               },
             })),
           },
@@ -90,9 +124,9 @@ export async function createNewPremade(data: T_PremadeData): Promise<{ creation:
           images: JSON.stringify(imagesURLs),
           categories: {
             connectOrCreate: data.categories.map((cat) => ({
-              where: { premade_id_cat_name: { premade_id: "", cat_name: cat } },
+              where: { premade_id_cat_name: { premade_id: "", cat_name: cat.toLocaleLowerCase() } },
               create: {
-                cat_name: cat,
+                cat_name: cat.toLocaleLowerCase(),
               },
             })),
           },
@@ -211,7 +245,7 @@ type blogInfo_T = {
 };
 function createBlogTags(blogTags: string[]) {
   return prisma.tag.createMany({
-    data: blogTags.map((tag) => ({ tag: tag })),
+    data: blogTags.map((tag) => ({ tag: tag.toLocaleLowerCase() })),
     skipDuplicates: true,
   });
 }
@@ -239,12 +273,12 @@ export async function createNewBlog(blogContent: string, blogInfo: blogInfo_T): 
             connectOrCreate: blogInfo.tags.map((tag) => ({
               where: {
                 blog_id_tag: {
-                  tag: tag,
+                  tag: tag.toLocaleLowerCase(),
                   blog_id: "",
                 },
               },
               create: {
-                tag: tag,
+                tag: tag.toLocaleLowerCase(),
               },
             })),
           },
