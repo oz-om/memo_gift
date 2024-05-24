@@ -2,9 +2,58 @@
 
 import { prisma } from "@/lib/db/prisma";
 import { authOptions } from "@/utils/nextAuthOptions";
+import { Prisma } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
+
+export type item = Prisma.ItemGetPayload<{
+  select: {
+    id: true;
+    name: true;
+    price: true;
+    images: true;
+    theme: true;
+    desc: true;
+    categories: {
+      select: {
+        cat_name: true;
+      };
+    };
+  };
+}>;
+// get items
+export async function getItems(): Promise<{ success: true; data: item[] } | { success: false; error: string }> {
+  try {
+    const items = await prisma.item.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+      select: {
+        id: true,
+        name: true,
+        price: true,
+        images: true,
+        theme: true,
+        desc: true,
+        categories: {
+          select: {
+            cat_name: true,
+          },
+        },
+      },
+    });
+    return {
+      success: true,
+      data: items,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      error: "something went wrong, please try again",
+    };
+  }
+}
 
 async function getCustomGift(customGiftId: string) {
   let builtBox = await prisma.customGift.findUnique({
@@ -440,14 +489,8 @@ type T_setFriendlyMessageToCartItemParams = {
   productId: string | null;
   variantId: string | null;
 };
-type T_setFriendlyMessageToCartItemResponse =
-  | {
-      success: true;
-    }
-  | {
-      success: false;
-      error: string;
-    };
+type T_setFriendlyMessageToCartItemResponse = { success: true } | { success: false; error: string };
+
 export async function setFriendlyMessageToCartItem(params: T_setFriendlyMessageToCartItemParams): Promise<T_setFriendlyMessageToCartItemResponse> {
   let { emptyCard, withNote, data, called, productId, variantId } = params;
 

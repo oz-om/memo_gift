@@ -1,9 +1,9 @@
 import Carousel from "@/app/components/Carousel";
-import { Item } from "@prisma/client";
 import AddToCustomGift from "./client/AddToCustomGift";
 import { ClosePreview } from "./client/Buttons";
+import { item } from "../actions";
 
-export default function Quick_view({ item }: { item: Item }) {
+export default function Quick_view({ item }: { item: item }) {
   return (
     <dialog className={`dialog-${item.id}` + " dialog_quick_view fixed left-0 top-0 w-full h-full bg-slate-100/50 backdrop-blur-2xl overflow-x-hidden overflow-y-auto z-10 rounded shadow custom-scroll-bar overscroll-contain"}>
       <div className='container'>

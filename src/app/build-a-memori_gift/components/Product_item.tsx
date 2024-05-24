@@ -1,15 +1,15 @@
-import { Item } from "@prisma/client";
 import Image from "next/image";
 import React from "react";
 import AddToCustomGift from "./client/AddToCustomGift";
 import { OpenPreview } from "./client/Buttons";
 import Quick_view from "./Quick_view";
+import { item } from "../actions";
 
-export default function Product_item({ item }: { item: Item }) {
+export default function Product_item({ item }: { item: item }) {
   let { id, name, images, price } = item;
   let firstImage = JSON.parse(images)[0];
   return (
-    <div className='item shadow-sm relative group/prodItem'>
+    <div className='item shadow-sm max-w-xs relative group/prodItem'>
       <figure className='relative overflow-hidden'>
         <Image src={firstImage} alt='FELLOW CARTER MOVE MUG 12OZ | CORDUROY RED' width={616} height={616} />
         <div className='on_hover_options absolute -bottom-6 w-full bg-teal-500/10 flex justify-evenly py-1  group-hover/prodItem:bottom-0 transition-[bottom]'>
