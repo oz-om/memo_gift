@@ -2,11 +2,10 @@ import "./assets/tailwind/globals.css";
 import type { Metadata } from "next";
 import { REM } from "next/font/google";
 import Header from "./components/Header";
-import Navbar from "./components/NavBar";
-import NavBar_lg_sc from "./components/NavBar_lg_sc";
 import Footer from "./components/Footer";
 import { Toaster } from "react-hot-toast";
 import NextAuthProvider from "./components/client/NextAuthProvider";
+import Cart_wrapper from "./components/cart/Cart_wrapper";
 const rem = REM({
   weight: ["200", "300", "400", "500", "600", "700", "800", "900"],
   subsets: ["latin"],
@@ -56,8 +55,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={"custom-scroll-bar sm:overflow-auto " + rem.className}>
         <NextAuthProvider>
           <Header>
-            <Navbar />
-            <NavBar_lg_sc />
+            <Cart_wrapper />
           </Header>
           {children}
           <Footer />
