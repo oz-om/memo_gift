@@ -113,6 +113,20 @@ export async function getCartContent(): Promise<{ success: true; cart: T_cart; t
 
 export async function controlCartItemQuantity(cartItemId: string, action: "increment" | "decrement") {
   try {
+    const targetCartItem = await prisma.cartItem.findUnique({
+      where: {
+        id: cartItemId,
+      },
+      select: {
+        quantity: true,
+      },
+    });
+    if (targetCartItem && action == "decrement" && targetCartItem.quantity <= 1) {
+      return {
+        success: false,
+        error: "something went wrong during " + action + " item quantity",
+      };
+    }
     await prisma.cartItem.update({
       where: {
         id: cartItemId,
