@@ -31,7 +31,7 @@ const initFilteredData: T_FilteredData = {
   filteredData: [],
   pagination: {
     page: 1,
-    limit: 2,
+    limit: 24,
     total: 2,
   },
   dispatch: () => {},

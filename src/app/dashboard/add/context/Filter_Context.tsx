@@ -34,7 +34,7 @@ const initialFilteredData: T_FilteredData = {
   filteredData: [],
   pagination: {
     page: 1,
-    limit: 2,
+    limit: 24,
     total: 1,
   },
   isPending: true,

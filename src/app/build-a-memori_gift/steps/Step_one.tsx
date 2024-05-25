@@ -60,7 +60,6 @@ export default async function Step_one({ searchParams }: { searchParams: { cgid:
             </div>
             <div className='chosed_items_wrapper h-[calc(100%_-_33px)] flex flex-col'>
               <Suspense fallback={<LoadingSpin />}>
-                {/* @ts-ignore async components */}
                 <ChosedItems customGiftId={cgid} />
               </Suspense>
             </div>

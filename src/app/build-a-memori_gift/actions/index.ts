@@ -645,6 +645,7 @@ export async function setVariantAndAddCartItemToCart(cartItemId: string, variant
       cookies().delete("customGiftId");
       cookies().delete("cartItemId");
       cookies().set("anonymousUserId", userId);
+      revalidatePath("");
       return {
         success: true,
         userId: userId,
@@ -659,6 +660,7 @@ export async function setVariantAndAddCartItemToCart(cartItemId: string, variant
     });
     cookies().delete("customGiftId");
     cookies().delete("cartItemId");
+    revalidatePath("");
     return {
       success: true,
       userId: userId,

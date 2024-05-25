@@ -35,11 +35,9 @@ function toggleCart() {
   document.querySelector(".basket .cart_content")?.classList.toggle("-right-[100vw]");
   document.querySelector(".basket .cart_content")?.classList.toggle("right-0");
 }
-export function Open_cart(props: { setCartContent: () => Promise<void> }) {
-  const { setCartContent } = props;
+export function Open_cart() {
   function handelOpenCart() {
     toggleCart();
-    setCartContent();
   }
   return <i onClick={handelOpenCart} className='bx bxs-cart-alt text-teal-400 text-3xl font-extrabold cursor-pointer'></i>;
 }
