@@ -94,7 +94,7 @@ export async function getCartContent(): Promise<{ success: true; cart: T_cart; t
         let { premade, customGift, item } = cartItem;
         let product = premade || customGift || item;
         let price = product?.price as number;
-        return (acc += price * cartItem.quantity);
+        return +(acc += price * cartItem.quantity).toFixed(2);
       }, 0);
     }
 

@@ -51,7 +51,7 @@ export default function Cart_item({ cartItem }: { cartItem: cartItem }) {
       <div className='box_name flex justify-between px-4'>
         <h4 className='line-clamp-2'>{customGift ? "custom gift" : premade ? premade.name : item?.name}</h4>
         <div className='price'>
-          <span className='font-sans'>{customGift ? customGift.price * quantity : premade ? premade.price * quantity : (item?.price as number) * quantity}$</span>
+          <span className='font-sans'>{customGift ? (customGift.price * quantity).toFixed(2) : premade ? (premade.price * quantity).toFixed(2) : (Number(item?.price) * quantity).toFixed(2)}$</span>
         </div>
       </div>
       <div className='includes_items whitespace-nowrap overflow-x-auto my-2 custom-scroll-bar'>

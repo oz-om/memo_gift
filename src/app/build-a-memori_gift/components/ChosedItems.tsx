@@ -24,7 +24,7 @@ export default async function ChosedItems({ customGiftId }: { customGiftId: stri
 
   let totalPrice = customGift.includes.reduce((acc, include) => {
     acc += include.item.price * include.quantity;
-    return acc;
+    return +acc.toFixed(2);
   }, 0);
 
   return (
@@ -32,7 +32,7 @@ export default async function ChosedItems({ customGiftId }: { customGiftId: stri
       <div className='chosed_items custom-scroll-bar pb-20 sm:pb-0 sm:overflow-auto sm:mb-0'>
         {customGift?.includes.map(({ item, quantity, customGift_id }) => {
           let firstImage = JSON.parse(item.images)[0];
-          let TotalPrice = item.price * quantity;
+          let TotalPrice = +(item.price * quantity).toFixed(2);
           return <Chosed_Item key={item.id} id={item.id} customGiftId={customGift_id} image={`${firstImage}`} name={item.name} quantity={quantity} totalPrice={TotalPrice} />;
         })}
       </div>

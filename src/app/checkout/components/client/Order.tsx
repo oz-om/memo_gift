@@ -58,10 +58,11 @@ export default function Order({ cartItem, addresses, openAddressForm }: { cartIt
   const [addressesListState, setAddressesListState] = useState(false);
   let order = customGift ?? premade ?? item;
   let withIncludes = customGift ?? premade;
-  let totalPrice = Number(order?.price) * quantity;
-  let [updatedTo, setUpdatedTo] = useState(empty_card ? "" : (to as string));
-  let [updatedFrom, setUpdatedFrom] = useState(empty_card ? "" : (from as string));
-  let [updatedNote, setUpdatedNote] = useState(with_note ? (note as string) : "");
+  let totalPrice = (Number(order?.price) * quantity).toFixed(2);
+
+  let [updatedTo, setUpdatedTo] = useState(empty_card ? "" : `${to}`);
+  let [updatedFrom, setUpdatedFrom] = useState(empty_card ? "" : `${from}`);
+  let [updatedNote, setUpdatedNote] = useState(with_note ? `${note}` : "");
   let [changed, setChanged] = useState(false);
   let alert = toast;
   let [availableAddresses, setAvailableAddresses] = useState<T_Address[]>(addresses);

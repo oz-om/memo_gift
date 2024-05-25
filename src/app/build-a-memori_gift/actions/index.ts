@@ -346,7 +346,32 @@ export async function setCustomGiftIntoCartItem(
   }
 
   try {
-    if (customGiftPrice <= 0) {
+    let customGift = await prisma.customGift.findUnique({
+      where: {
+        id: customGiftId,
+      },
+      include: {
+        includes: {
+          include: {
+            item: true,
+          },
+        },
+      },
+    });
+
+    if (!customGift) {
+      return {
+        success: false,
+        error: "",
+      };
+    }
+
+    let totalPrice = customGift.includes.reduce((acc, include) => {
+      acc += include.item.price * include.quantity;
+      return +acc.toFixed(2);
+    }, 0);
+
+    if (totalPrice <= 0) {
       return {
         success: false,
         error: "please chose one item at least",
