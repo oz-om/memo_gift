@@ -2,12 +2,10 @@
 
 import { prisma } from "@/lib/db/prisma";
 import { T_data } from "../context/Filter_Context";
-import delay from "@/utils/delay";
 type T_getDataReturn = { success: true; data: T_data[] } | { success: false; error: string };
 export type T_getData = () => Promise<T_getDataReturn>;
 
 export async function getPremades(): Promise<T_getDataReturn> {
-  await delay(2000);
   try {
     const premades = await prisma.premadeGift.findMany({
       orderBy: {
@@ -43,7 +41,6 @@ export async function getPremades(): Promise<T_getDataReturn> {
 }
 
 export async function getItems(): Promise<T_getDataReturn> {
-  await delay(2000);
   try {
     const items = await prisma.item.findMany({
       orderBy: {
