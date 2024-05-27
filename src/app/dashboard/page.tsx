@@ -7,6 +7,9 @@ import LastOrdersList from "./home/LastOrdersList";
 import StatisticsList from "./home/StatisticsList";
 import StatisticLoading from "./components/loading/StatisticLoading";
 import LastAddedLoading from "./components/loading/LastAddedLoading";
+// import { getServerSession } from "next-auth";
+// import { authOptions } from "@/utils/nextAuthOptions";
+// import { notFound } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "Dashboard",
@@ -16,7 +19,12 @@ export const metadata: Metadata = {
   },
 };
 
-export default function Dashboard() {
+export default async function Dashboard() {
+  // const session = await getServerSession(authOptions);
+
+  // if (!session || session.user.role !== "admin") {
+  //   return notFound();
+  // }
   return (
     <>
       <section className='orders_progress_section mb-3'>

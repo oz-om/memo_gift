@@ -4,9 +4,11 @@ import { redirect } from "next/navigation";
 import { useTransition } from "react";
 import { toast } from "react-hot-toast";
 import { controlCartItemQuantity, deleteAction, editAction } from "../cart/actions";
+import { useCartContent } from "../cart/context/CartCtProvider";
 
 export function IncrementCartItemQuantity({ cartItemId }: { cartItemId: string }) {
   const [pending, startTransition] = useTransition();
+  const { increment } = useCartContent();
   async function startIncrement() {
     let alert = toast;
     let res = await controlCartItemQuantity(cartItemId, "increment");
@@ -14,6 +16,8 @@ export function IncrementCartItemQuantity({ cartItemId }: { cartItemId: string }
       alert.error(`${res.error}`, {
         style: toastStyles,
       });
+    } else {
+      increment(cartItemId);
     }
   }
   return <>{pending ? <i className='bx bx-loader bx-spin'></i> : <i onClick={() => startTransition(startIncrement)} className='bx bx-plus border grid place-content-center h-5 rounded-md font-bold cursor-pointer  hover:border-slate-700'></i>}</>;
@@ -21,6 +25,7 @@ export function IncrementCartItemQuantity({ cartItemId }: { cartItemId: string }
 
 export function DecrementCartItemQuantity({ cartItemId }: { cartItemId: string }) {
   const [pending, startTransition] = useTransition();
+  const { decrement } = useCartContent();
   async function startDecrement() {
     let alert = toast;
     let res = await controlCartItemQuantity(cartItemId, "decrement");
@@ -28,16 +33,18 @@ export function DecrementCartItemQuantity({ cartItemId }: { cartItemId: string }
       alert.error(`${res.error}`, {
         style: toastStyles,
       });
+    } else {
+      decrement(cartItemId);
     }
   }
   return <>{pending ? <i className='bx bx-loader bx-spin'></i> : <i onClick={() => startTransition(startDecrement)} className='bx bx-minus border grid place-content-center h-5 rounded-md font-bold cursor-pointer hover:border-slate-700'></i>}</>;
 }
 
-export function DeleteCartItem({ cartItemId, cartItemType }: { cartItemId: string; cartItemType: "customGift" | "product" }) {
+export function DeleteCartItem({ cartItemId }: { cartItemId: string }) {
   const [pending, startTransition] = useTransition();
   async function deleteCartItem() {
     let alert = toast;
-    let res = await deleteAction(cartItemId, cartItemType);
+    let res = await deleteAction(cartItemId);
     if (!res.delete) {
       alert.error("something went wrong during deleting this item", {
         style: toastStyles,

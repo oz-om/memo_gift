@@ -17,7 +17,7 @@ export type T_FilterReducerAction =
 export function Filter_Reducer(state: T_FilteredData, action: T_FilterReducerAction): T_FilteredData {
   const { type, payload } = action;
   switch (type) {
-    case type == "fullData" ? "fullData" : type == "fullFilteredData" ? "fullFilteredData" : type == "filteredData" ? "filteredData" : type:
+    case type == "fullData" ? "fullData" : type == "fullFilteredData" ? "fullFilteredData" : "filteredData":
       return { ...state, [type as keyof T_FilteredData]: payload };
     case "pagination":
       return { ...state, pagination: payload };

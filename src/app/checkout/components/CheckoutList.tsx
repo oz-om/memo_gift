@@ -6,7 +6,6 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import React from "react";
 import SetupOrder from "./client/SetupOrder";
-import Order from "./client/Order";
 import OrdersList from "./client/OrdersList";
 export type T_Orders = Prisma.CartGetPayload<{
   include: {
@@ -69,6 +68,7 @@ export default async function CheckoutList({ cartItemId }: { cartItemId: string 
   }
 
   let Orders: T_Orders = [];
+  // for checkout one item in cart
   if (cartItemId && cartItemId.trim().length !== 0) {
     let singleCartItem = await prisma.cart.findUnique({
       where: {
@@ -118,6 +118,7 @@ export default async function CheckoutList({ cartItemId }: { cartItemId: string 
     }
     Orders.push(singleCartItem);
   } else {
+    // for checkout all cart
     let allCartItems = await prisma.cart.findMany({
       where: {
         [userType]: userId,

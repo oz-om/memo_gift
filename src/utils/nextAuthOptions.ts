@@ -104,8 +104,6 @@ export const authOptions: NextAuthOptions = {
     },
 
     jwt: ({ token, user }) => {
-      // console.log("user => ", user);
-      // console.log("token => ", token);
       if (user) {
         return {
           id: user.id,
@@ -118,9 +116,6 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     session: ({ session, token }) => {
-      // console.log("session token => ", token);
-      // console.log("session => ", session);
-
       return {
         ...session,
         user: {
@@ -144,7 +139,8 @@ export const authOptions: NextAuthOptions = {
   pages: {
     signIn: "/sign-in",
     newUser: "/sign-up",
-    error: "/sign-in",
+    error: "/not-found",
+    signOut: "/",
   },
 };
 

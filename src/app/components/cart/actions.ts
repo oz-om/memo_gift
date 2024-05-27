@@ -3,7 +3,7 @@
 import { prisma } from "@/lib/db/prisma";
 import { authOptions } from "@/utils/nextAuthOptions";
 import { Prisma } from "@prisma/client";
-import { getServerSession } from "next-auth";
+import { Session, getServerSession } from "next-auth";
 
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
@@ -39,8 +39,8 @@ export type T_cart = Prisma.CartGetPayload<{
       };
     };
   };
-}>[];
-export async function getCartContent(): Promise<{ success: true; cart: T_cart; totalPrice: number } | { success: false; error: string }> {
+}>;
+export async function getCartContent(): Promise<{ success: true; cart: T_cart[] } | { success: false; error: string }> {
   try {
     const session = await getServerSession(authOptions);
     let userId: string | undefined;
@@ -53,9 +53,7 @@ export async function getCartContent(): Promise<{ success: true; cart: T_cart; t
       userType = "user_id";
     }
 
-    let cart: T_cart = [];
-    let totalPrice = 0;
-
+    let cart: T_cart[] = [];
     if (userId) {
       cart = await prisma.cart.findMany({
         where: {
@@ -88,19 +86,10 @@ export async function getCartContent(): Promise<{ success: true; cart: T_cart; t
           },
         },
       });
-
-      let cartItems = cart.map((cart) => cart.cartItem);
-      totalPrice = cartItems.reduce((acc, cartItem) => {
-        let { premade, customGift, item } = cartItem;
-        let product = premade || customGift || item;
-        let price = product?.price as number;
-        return +(acc += price * cartItem.quantity).toFixed(2);
-      }, 0);
     }
 
     return {
       success: true,
-      totalPrice,
       cart,
     };
   } catch (error) {
@@ -149,19 +138,21 @@ export async function controlCartItemQuantity(cartItemId: string, action: "incre
   }
 }
 
-export async function deleteAction(cartItemId: string, cartItemType: "customGift" | "product"): Promise<{ delete: true } | { delete: false; error: string }> {
+export async function deleteAction(cartItemId: string): Promise<{ delete: true } | { delete: false; error: string }> {
   try {
-    if (cartItemType === "customGift") {
-      await prisma.customGift.delete({
-        where: {
-          id: cartItemId,
-        },
-      });
-      revalidatePath("");
-      return {
-        delete: true,
-      };
-    }
+    // if (cartItemType === "customGift") {
+    //   console.log(cartItemId);
+    //   await prisma.customGift.delete({
+    //     where: {
+    //       id: cartItemId,
+    //     },
+    //   });
+    //   revalidatePath("");
+    //   return {
+    //     delete: true,
+    //   };
+    // }
+
     await prisma.cartItem.delete({
       where: {
         id: cartItemId,
@@ -172,6 +163,8 @@ export async function deleteAction(cartItemId: string, cartItemType: "customGift
       delete: true,
     };
   } catch (error) {
+    // console.log(error);
+
     return {
       delete: false,
       error: "ops! Something went wrong, please try again",

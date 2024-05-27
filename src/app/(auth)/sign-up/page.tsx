@@ -1,13 +1,9 @@
-"use client";
 import { Patrick_Hand } from "next/font/google";
 import Image from "next/image";
 import Auth_provider, { signupHandler } from "../components/Auth_provider";
 import { Input, Submit } from "../components/Input";
 import Link from "next/link";
 import FormWrapper from "../components/FormWrapper";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 
 const PatrickHand = Patrick_Hand({
   weight: ["400"],
@@ -15,15 +11,6 @@ const PatrickHand = Patrick_Hand({
 });
 
 export default function Sign_up() {
-  const router = useRouter();
-  const { data: session } = useSession();
-
-  useEffect(() => {
-    if (session) {
-      router.push("/");
-      return;
-    }
-  }, [session]);
   return (
     <>
       <div className="signup_wrapper  bg-[url('/images/auth_bg_01.png')] bg-center bg-cover max-w-3xl lg:max-w-4xl w-full mx-auto rounded-md shadow-md overflow-hidden">

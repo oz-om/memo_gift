@@ -2,12 +2,15 @@
 
 import { useUrlChanged } from "@/hooks/useUrlChanged";
 import { authUser } from "@/types/nextAuthTypes";
+import { toastStyles } from "@/utils";
 import { signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useRef } from "react";
+import { Dispatch, SetStateAction, useRef } from "react";
 import { toast } from "react-hot-toast";
+import { useCartContent } from "../cart/context/CartCtProvider";
+import { getCartContent } from "../cart/actions";
 
 function toggleMenu() {
   document.querySelector(".nave_menu")?.classList.toggle("w-0");
@@ -31,13 +34,20 @@ export function Close_menu() {
   );
 }
 
-function toggleCart() {
-  document.querySelector(".basket .cart_content")?.classList.toggle("-right-[100vw]");
-  document.querySelector(".basket .cart_content")?.classList.toggle("right-0");
+function toggleCart(open: string, close: string) {
+  document.querySelector(".basket .cart_content")?.classList.add(open);
+  document.querySelector(".basket .cart_content")?.classList.remove(close);
 }
 export function Open_cart() {
-  function handelOpenCart() {
-    toggleCart();
+  const { cart, setCartContent } = useCartContent();
+  async function handelOpenCart() {
+    if (cart.length == 0) {
+      const cartContent = await getCartContent();
+      if (cartContent.success) {
+        setCartContent(cartContent.cart);
+      }
+    }
+    toggleCart("right-0", "-right-[100vw]");
   }
   return <i onClick={handelOpenCart} className='bx bxs-cart-alt text-teal-400 text-3xl font-extrabold cursor-pointer'></i>;
 }
@@ -46,10 +56,14 @@ export function Close_cart() {
   useUrlChanged({
     eleClass: ".basket .cart_content",
     openClass: "right-0",
-    resetFn: toggleCart,
+    resetFn: handelToggle,
   });
+
+  function handelToggle() {
+    toggleCart("-right-[100vw]", "right-0");
+  }
   return (
-    <div onClick={toggleCart} className='close_icon flex items-center text-red-600'>
+    <div onClick={handelToggle} className='close_icon flex items-center text-red-600'>
       <i className='bx bx-x text-3xl cursor-pointer bg-red-50'></i>
     </div>
   );

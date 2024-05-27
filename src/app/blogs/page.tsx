@@ -1,22 +1,20 @@
-import { prisma } from "@/lib/db/prisma";
-import { formatDate } from "@/utils";
+import { APP_API_URL, formatDate } from "@/utils";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+import { T_getBlogsRes } from "../api/blogs/route";
+
+async function getBlogs() {
+  const req = await fetch(`${APP_API_URL}/blogs`, { next: { revalidate: 86400 } });
+  const res: T_getBlogsRes = await req.json();
+  if (!res.success) {
+    return [];
+  }
+  return res.blogs;
+}
 
 export default async function Blogs() {
-  const blogs = await prisma.blog.findMany({
-    include: {
-      tags: {
-        select: {
-          tag: true,
-        },
-      },
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
+  const blogs = await getBlogs();
 
   return (
     <>

@@ -16,14 +16,14 @@ export default function Steps_progressbar({}) {
   const params = useSearchParams();
   const path = usePathname();
   const currentStep = params.get("step") as LimitListKeys;
-  function handleSearchParams(e: React.MouseEvent) {
+  function handleSearchParams({ currentTarget: stepElement }: React.MouseEvent<HTMLElement>) {
     const limitList: limitListType = {
       one: ["two", "three", "four"],
       two: ["three", "four"],
       three: ["four"],
       four: [],
     };
-    let stepElement = e.currentTarget as HTMLElement;
+
     let step_level = stepElement.dataset.redirectTo as LimitListKeys;
     if (!limitList[currentStep].includes(step_level as never)) {
       limitList[step_level].forEach((step: string) => {
@@ -47,6 +47,8 @@ export default function Steps_progressbar({}) {
       three: ["one", "two", "three"],
       four: ["one", "two", "three", "four"],
     };
+    console.log(beforeCurrentStep[currentStep]);
+
     beforeCurrentStep[currentStep].map((step) => {
       let currentStation = document.querySelectorAll(`li[data-redirect-to="${step}"]`);
       currentStation.forEach((station) => {
@@ -54,6 +56,7 @@ export default function Steps_progressbar({}) {
       });
     });
   }
+
   useEffect(() => {
     styleCurrentStep();
     document.body.classList.remove("overflow-hidden");

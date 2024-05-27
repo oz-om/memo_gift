@@ -2,12 +2,14 @@
 import { usePathname } from "next/navigation";
 import Header_hero from "../home/components/Header_hero";
 import { useSession } from "next-auth/react";
-import { AccountIcon, Close_menu, LogOut, Open_cart, Open_menu } from "./client/Navbar";
+import { AccountIcon, Close_menu, LogOut, Open_menu } from "./client/Navbar";
 import Link from "next/link";
 import Image from "next/image";
 import BuiltNewCustomGift from "../home/components/client/BuiltNewCustomGift";
+import Cart_wrapper from "./cart/Cart_wrapper";
+import CartCtProvider from "./cart/context/CartCtProvider";
 
-export default function Header({ children }: { children: React.ReactNode }) {
+export default function Header() {
   const path = usePathname();
   const { data: login } = useSession();
   if (/^\/dashboard(?:[\/?].*)?$/.test(path)) return <></>;
@@ -64,10 +66,9 @@ export default function Header({ children }: { children: React.ReactNode }) {
               </div>
               <div className='basket_wrapper flex gap-x-2'>
                 <div className='basket'>
-                  <Open_cart />
-                  {/* // the childe is cart component which is  a server component*/}
-                  {children}
-                  {/* <Cart_wrapper cartContent={cart} totalPrice={totalPrice} loading={isLoading} /> */}
+                  <CartCtProvider>
+                    <Cart_wrapper />
+                  </CartCtProvider>
                 </div>
                 {!!login && (
                   <div className='user'>
@@ -120,6 +121,7 @@ type NavigateLinkProps = {
   icon: string;
   name: string;
 };
+
 function Navigate_link({ className, to, icon, name }: NavigateLinkProps) {
   return (
     <li>

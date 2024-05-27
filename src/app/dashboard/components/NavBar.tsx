@@ -1,9 +1,12 @@
+"use client";
 import Image from "next/image";
 import Link from "next/link";
 import { Navigate_link, Close_menu, Open_menu } from "./client/Navbar";
-import { Session } from "next-auth";
+import { useSession } from "next-auth/react";
 
-export default function NavBar({ session }: { session: Session }) {
+export default function NavBar() {
+  const { data: session } = useSession();
+
   return (
     <nav className='relative'>
       <div className='pt-4 pb-5 md:relative'>

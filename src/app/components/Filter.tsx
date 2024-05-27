@@ -28,33 +28,35 @@ export default function Filter() {
   }
 
   useEffect(() => {
-    const filteredResult = fullData.filter((data) => {
-      const { searchQuery, max_price, min_price, category, color } = filterOptions;
-      if (searchQuery && !data.name.toLocaleLowerCase().includes(searchQuery.toLocaleLowerCase())) {
-        return false;
-      }
+    if (fullData.length) {
+      const filteredResult = fullData.filter((data) => {
+        const { searchQuery, max_price, min_price, category, color } = filterOptions;
+        if (searchQuery && !data.name.toLocaleLowerCase().includes(searchQuery.toLocaleLowerCase())) {
+          return false;
+        }
 
-      if (min_price && !(data.price >= +min_price)) {
-        return false;
-      }
+        if (min_price && !(data.price >= +min_price)) {
+          return false;
+        }
 
-      if (max_price && !(data.price <= +max_price)) {
-        return false;
-      }
+        if (max_price && !(data.price <= +max_price)) {
+          return false;
+        }
 
-      if (color && data.theme && data.theme.toLocaleLowerCase() !== color.toLocaleLowerCase()) {
-        return false;
-      }
+        if (color && data.theme && data.theme.toLocaleLowerCase() !== color.toLocaleLowerCase()) {
+          return false;
+        }
 
-      if (category && !data.categories.some((c) => c.cat_name.toLocaleLowerCase() === category.toLocaleLowerCase())) {
-        return false;
-      }
-      return true;
-    });
-    const paginatedData = filteredResult.slice(0, pagination.limit);
-    setFullFilteredData(filteredResult);
-    setFilteredData(paginatedData);
-    setPagination({ ...pagination, page: 1, total: Math.ceil(filteredResult.length / pagination.limit) });
+        if (category && !data.categories.some((c) => c.cat_name.toLocaleLowerCase() === category.toLocaleLowerCase())) {
+          return false;
+        }
+        return true;
+      });
+      const paginatedData = filteredResult.slice(0, pagination.limit);
+      setFullFilteredData(filteredResult);
+      setFilteredData(paginatedData);
+      setPagination({ ...pagination, page: 1, total: Math.ceil(filteredResult.length / pagination.limit) });
+    }
   }, [filterOptions.searchQuery, filterOptions.min_price, filterOptions.max_price, filterOptions.category, filterOptions.color]);
 
   return (

@@ -1,6 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/db/prisma";
+import delay from "@/utils/delay";
 import { authOptions } from "@/utils/nextAuthOptions";
 import { Prisma } from "@prisma/client";
 import { getServerSession } from "next-auth";
@@ -70,16 +71,6 @@ async function getCustomGift(customGiftId: string) {
   });
   return builtBox;
 }
-async function customGiftUpdatePrice(customGiftId: string, price: number) {
-  await prisma.customGift.update({
-    where: {
-      id: customGiftId,
-    },
-    data: {
-      price: price,
-    },
-  });
-}
 
 // create new custom gift
 async function createNewCustomGift() {
@@ -89,11 +80,8 @@ async function createNewCustomGift() {
   cookies().set("customGiftId", customGift.id);
   return customGift.id;
 }
-export async function createCustomGift(): Promise<{
-  create: boolean;
-  customGiftId: string | null;
-  error?: string;
-}> {
+export async function createCustomGift(): Promise<{ create: boolean; customGiftId: string | null; error?: string }> {
+  await delay(2000);
   let existingCustomGiftId = cookies().get("customGiftId")?.value;
   try {
     if (!existingCustomGiftId) {
@@ -325,19 +313,7 @@ async function setCustomGiftAsCartItem(customGiftId: string) {
   cookies().set("cartItemId", newCartItemId.id);
   return newCartItemId.id;
 }
-export async function setCustomGiftIntoCartItem(
-  customGiftId: string,
-  customGiftPrice: number,
-): Promise<
-  | {
-      success: true;
-      cartItemId: string;
-    }
-  | {
-      success: false;
-      error: string;
-    }
-> {
+export async function setCustomGiftIntoCartItem(customGiftId: string): Promise<{ success: true; cartItemId: string } | { success: false; error: string }> {
   if (!customGiftId) {
     return {
       success: false,
@@ -383,7 +359,7 @@ export async function setCustomGiftIntoCartItem(
         id: customGiftId,
       },
       data: {
-        price: customGiftPrice,
+        price: totalPrice,
       },
     });
 

@@ -19,8 +19,8 @@ function toggleBuiltBox(action: "o" | "x") {
 }
 export function OpenBuiltBoxButton() {
   return (
-    <div onClick={() => toggleBuiltBox("o")} className='built_box_show fixed right-0 bottom-0 grid py-1 px-2 rounded-l-lg bg-teal-900 cursor-pointer sm:hidden'>
-      <span className='text-teal-400 inline-flex items-center'>
+    <div onClick={() => toggleBuiltBox("o")} className='built_box_show sticky bottom-0 grid py-1 px-2 rounded  bg-teal-900 cursor-pointer sm:hidden'>
+      <span className='text-teal-400 inline-flex items-center justify-center text-lg'>
         <lord-icon src='https://cdn.lordicon.com/pgmktfgp.json' style={{ width: "30px", height: "30px" }} trigger='hover' colors='primary:#9cf4df,secondary:#848484'></lord-icon>
         <span>YourBox</span>
       </span>

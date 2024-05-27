@@ -1,3 +1,4 @@
+"use client";
 import getErrorMessage from "@/utils/getErrorMessage";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
@@ -10,7 +11,7 @@ type formProps = {
 };
 
 export default function FormWrapper(fromProps: formProps) {
-  const { children, className, action, type } = fromProps;
+  const { children, className, action } = fromProps;
   const [errorMessage, setErrorMessage] = useState<string>();
   const router = useRouter();
   async function handelSubmit(formData: FormData) {

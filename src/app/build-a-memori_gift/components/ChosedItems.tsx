@@ -47,7 +47,7 @@ export default async function ChosedItems({ customGiftId }: { customGiftId: stri
           <span className='text-sm ml-2'>${totalPrice}</span>
         </div>
         <div className='next_step'>
-          <GoToStepTwo customGiftId={customGift.id} customGiftPrice={totalPrice} className='bg-teal-400 text-white text-center px-4 py-2 rounded-md mx-auto min-w-max w-2/5 block' />
+          <GoToStepTwo customGiftId={customGift.id} className='bg-teal-400 text-white text-center px-4 py-2 rounded-md mx-auto min-w-max w-2/5 block' />
         </div>
       </div>
     </>

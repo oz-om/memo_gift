@@ -1,13 +1,10 @@
-"use client";
-import React, { useEffect } from "react";
+import React from "react";
 import { Patrick_Hand } from "next/font/google";
 import Image from "next/image";
 import Link from "next/link";
 import Auth_provider, { loginHandler } from "../components/Auth_provider";
 import { Input, Submit } from "../components/Input";
 import FormWrapper from "../components/FormWrapper";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 
 const PatrickHand = Patrick_Hand({
   weight: ["400"],
@@ -15,15 +12,6 @@ const PatrickHand = Patrick_Hand({
 });
 
 export default function Login() {
-  const router = useRouter();
-  const { data: session } = useSession();
-
-  useEffect(() => {
-    if (session) {
-      router.push("/");
-      return;
-    }
-  }, [session]);
   return (
     <>
       <div className="login_wrapper  bg-[url('/images/auth_bg_01.png')] bg-center bg-cover max-w-3xl lg:max-w-4xl w-full mx-auto rounded-md shadow-md overflow-hidden">

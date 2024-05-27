@@ -119,7 +119,7 @@ export default function Order({ cartItem, addresses, openAddressForm }: { cartIt
   }
   async function deleteCartItem() {
     alert.loading("just a second...", { style: toastStyles });
-    let res = await deleteAction(id, customGift ? "customGift" : "product");
+    let res = await deleteAction(id);
     alert.remove();
     if (!res.delete) {
       alert.error(res.error, { style: toastStyles });

@@ -1,14 +1,20 @@
 import Cart_item from "./Cart_item";
 import Link from "next/link";
-import { Close_cart } from "../client/Navbar";
-import { getCartContent } from "./actions";
+import { Close_cart, Open_cart } from "../client/Navbar";
+import { useCartContent } from "./context/CartCtProvider";
 
-export default async function Cart_wrapper() {
-  const cartReq = await getCartContent();
-
-  if (cartReq.success)
-    return (
-      <div className='cart_content fixed top-0 bottom-0 z-10 bg-slate-50 text-black max-w-sm w-full -right-[100vw] transition-[right]'>
+export default function Cart_wrapper() {
+  const { cart } = useCartContent();
+  const totalPrice = cart.reduce((acc, { cartItem }) => {
+    let { premade, customGift, item } = cartItem;
+    let product = premade || customGift || item;
+    let price = product?.price as number;
+    return +(acc += price * cartItem.quantity).toFixed(2);
+  }, 0);
+  return (
+    <>
+      <Open_cart />
+      <div className='cart_content fixed top-0 bottom-0 z-10 bg-slate-50 text-black max-w-sm w-full transition-[right] -right-[100vw]'>
         <div className='cart_head flex items-center border-b '>
           <Close_cart />
           <h4 className='tracking-widest text-3xl text-slate-600 text-center mx-auto'>
@@ -21,10 +27,10 @@ export default async function Cart_wrapper() {
         <div className='cart_content_wrapper'>
           {/* @ts-ignore */}
           <div className='cart_items  overflow-y-auto h-[calc(100%_-_100px)] custom-scroll-bar overscroll-contain'>
-            {cartReq.cart.map(({ cartItem }) => {
+            {cart.map(({ cartItem }) => {
               return <Cart_item key={cartItem.id} cartItem={cartItem} />;
             })}
-            {!cartReq.cart.length && (
+            {!cart.length && (
               <div className='h-[50vh] grid place-content-center'>
                 <p className='text-center text-slate-500'>empty</p>
               </div>
@@ -33,7 +39,7 @@ export default async function Cart_wrapper() {
           <div className='total_price_checkout absolute bottom-0 bg-sky-100 w-full flex justify-between p-2'>
             <div className='price'>
               <span className='text-xl'>Total Price:</span>
-              <span className='text-xl ml-2'>${cartReq.totalPrice}</span>
+              <span className='text-xl ml-2'>${totalPrice}</span>
             </div>
             <div className='checkout'>
               <Link href={"/checkout"} className='text-xl text-slate-600 text-center border border-sky-500 py-1 px-2 rounded-md'>
@@ -43,5 +49,6 @@ export default async function Cart_wrapper() {
           </div>
         </div>
       </div>
-    );
+    </>
+  );
 }

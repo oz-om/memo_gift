@@ -1,6 +1,11 @@
 import { z } from "zod";
 type resCallbackType = { upload: true; id: string } | { upload: false };
 
+// urls
+export const APP_API_URL = process.env.NEXT_PUBLIC_APP_API_URL as string;
+// uploadUrl
+export const UPLOAD_URL = process.env.NEXT_PUBLIC_UPLOAD_URL as string;
+
 export function toggleDialog(dialogClass: string) {
   let dialog = document.querySelector(`dialog.${dialogClass}`);
   let d = dialog as HTMLDialogElement;
@@ -109,8 +114,6 @@ export function stringToBoolean(booleanString: "true" | "false" | undefined) {
   }
   return false;
 }
-// uploadUrl
-export const UPLOAD_URL = process.env.NEXT_PUBLIC_UPLOAD_URL as string;
 
 // upload images
 export async function getUploadSession() {

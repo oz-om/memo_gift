@@ -5,7 +5,7 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import { Toaster } from "react-hot-toast";
 import NextAuthProvider from "./components/client/NextAuthProvider";
-import Cart_wrapper from "./components/cart/Cart_wrapper";
+
 const rem = REM({
   weight: ["200", "300", "400", "500", "600", "700", "800", "900"],
   subsets: ["latin"],
@@ -54,9 +54,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className={"custom-scroll-bar sm:overflow-auto " + rem.className}>
         <NextAuthProvider>
-          <Header>
-            <Cart_wrapper />
-          </Header>
+          <Header />
           {children}
           <Footer />
           <Toaster />
