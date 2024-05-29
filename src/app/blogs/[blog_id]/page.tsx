@@ -9,14 +9,21 @@ import { Metadata } from "next";
 import { T_getBlogsRes } from "@/app/api/blogs/route";
 
 export async function generateStaticParams() {
-  const getBlogs = await fetch(`${APP_API_URL}/blogs`, { next: { revalidate: 86400 } });
-  const blogsRes: T_getBlogsRes = await getBlogs.json();
-  if (!blogsRes.success) {
+  try {
+    const getBlogs = await fetch(`${APP_API_URL}/blogs`, { next: { revalidate: 86400 } });
+    const blogsRes: T_getBlogsRes = await getBlogs.json();
+    if (!blogsRes.success) {
+      return [];
+    }
+    return blogsRes.blogs.map((blog) => ({
+      blog_id: blog.id,
+    }));
+  } catch (error) {
+    console.log("/blogs/blog_id there is an error duringi fetch");
+    console.log(error);
+
     return [];
   }
-  return blogsRes.blogs.map((blog) => ({
-    blog_id: blog.id,
-  }));
 }
 
 const blogPost = cache(async (blog_id: string) => {

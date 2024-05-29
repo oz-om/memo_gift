@@ -2,7 +2,8 @@ import { z } from "zod";
 type resCallbackType = { upload: true; id: string } | { upload: false };
 
 // urls
-export const APP_API_URL = process.env.NEXT_PUBLIC_APP_API_URL as string;
+export const APP_API_URL = process.env.APP_API_URL as string;
+export const CLIENT_APP_API_URL = process.env.NEXT_PUBLIC_APP_API_URL as string;
 // uploadUrl
 export const UPLOAD_URL = process.env.NEXT_PUBLIC_UPLOAD_URL as string;
 

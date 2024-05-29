@@ -5,12 +5,21 @@ import React from "react";
 import { T_getBlogsRes } from "../api/blogs/route";
 
 async function getBlogs() {
-  const req = await fetch(`${APP_API_URL}/blogs`, { next: { revalidate: 86400 } });
-  const res: T_getBlogsRes = await req.json();
-  if (!res.success) {
+  try {
+    const req = await fetch(`${APP_API_URL}/blogs`, { next: { revalidate: 86400 } });
+    const res: T_getBlogsRes = await req.json();
+    if (!res.success) {
+      return [];
+    }
+    return res.blogs;
+  } catch (error) {
+    console.log(APP_API_URL);
+
+    console.log("/blogs error");
+    console.log(error);
+
     return [];
   }
-  return res.blogs;
 }
 
 export default async function Blogs() {
