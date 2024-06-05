@@ -206,13 +206,15 @@ export async function editAction(cartItemId: string, targetProductType: "premade
 
   try {
     // check if there a user
-    const userId = await isUser();
-    if (!userId) {
+    const session = await getServerSession(authOptions);
+
+    if (!session) {
       return {
         success: false,
-        error: "can't edit the target item",
+        error: "you should have an account to be able to edit your cart items",
       };
     }
+    const userId = session.user.id;
     // get the target product
     if (targetProductType == "premade") {
       targetCartItem = await prisma.cartItem.findUnique({
