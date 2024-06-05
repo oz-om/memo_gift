@@ -39,22 +39,24 @@ function toggleCart(open: string, close: string) {
   document.querySelector(".basket .cart_content")?.classList.remove(close);
 }
 export function Open_cart() {
-  const { cart, setCartContent } = useCartContent();
+  const { cart, setCartContent, setLoading } = useCartContent();
   async function handelOpenCart() {
     if (cart.length == 0) {
       const alert = toast;
-      try {
-        alert.loading("just a second", { style: toastStyles });
-        const cartContent = await getCartContent();
-        alert.remove();
-        if (!cartContent.success) {
-          alert.error(cartContent.error, { style: toastStyles });
-          return;
-        }
-        setCartContent(cartContent.cart);
-      } catch (error) {
-        alert.remove();
-      }
+      setLoading(true);
+      getCartContent()
+        .then((cartContent) => {
+          setLoading(false);
+          if (cartContent.success) {
+            setCartContent(cartContent.cart);
+          } else {
+            alert.error(cartContent.error, { style: toastStyles });
+          }
+        })
+        .catch(() => {
+          alert.error("ops something went wrong, please try again!", { style: toastStyles });
+          setLoading(false);
+        });
     }
     toggleCart("right-0", "-right-[100vw]");
   }

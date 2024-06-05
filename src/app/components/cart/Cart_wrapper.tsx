@@ -2,9 +2,10 @@ import Cart_item from "./Cart_item";
 import Link from "next/link";
 import { Close_cart, Open_cart } from "../client/Navbar";
 import { useCartContent } from "./context/CartCtProvider";
+import LoadingSpin from "../LoadingSpin";
 
 export default function Cart_wrapper() {
-  const { cart } = useCartContent();
+  const { cart, loading } = useCartContent();
   const totalPrice = cart.reduce((acc, { cartItem }) => {
     let { premade, customGift, item } = cartItem;
     let product = premade || customGift || item;
@@ -26,14 +27,16 @@ export default function Cart_wrapper() {
         </div>
         <div className='cart_content_wrapper h-full'>
           <div className='cart_items  overflow-y-auto h-[calc(100%_-_100px)] custom-scroll-bar overscroll-contain'>
-            {cart.map(({ cartItem, cart_item }) => {
-              return <Cart_item key={cartItem.id} cartItemId={cart_item} cartItem={cartItem} />;
-            })}
-            {!cart.length && (
+            {!loading &&
+              cart.map(({ cartItem, cart_item }) => {
+                return <Cart_item key={cartItem.id} cartItemId={cart_item} cartItem={cartItem} />;
+              })}
+            {!loading && !cart.length && (
               <div className='h-[50vh] grid place-content-center'>
                 <p className='text-center text-slate-500 '>empty</p>
               </div>
             )}
+            {loading && <LoadingSpin />}
           </div>
           <div className='total_price_checkout absolute bottom-0 bg-sky-100 w-full flex justify-between p-2'>
             <div className='price'>

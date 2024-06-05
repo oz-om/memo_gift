@@ -1,7 +1,7 @@
 import { T_cart } from "../actions";
 import { T_cartContent } from "./CartCtProvider";
 
-export type T_cartReducerAction = { type: "setCartContent"; payload: T_cart[] } | { type: "increment" | "decrement"; payload: string } | { type: "deleteCartItem"; payload: string } | { type: "duplicate"; payload: T_cart };
+export type T_cartReducerAction = { type: "setCartContent"; payload: T_cart[] } | { type: "increment" | "decrement"; payload: string } | { type: "deleteCartItem"; payload: string } | { type: "duplicate"; payload: T_cart } | { type: "loading"; payload: boolean };
 
 export function cartReducer(state: T_cartContent, action: T_cartReducerAction): T_cartContent {
   const { type, payload } = action;
@@ -18,6 +18,8 @@ export function cartReducer(state: T_cartContent, action: T_cartReducerAction): 
       return { ...state, cart: updatedAfterDelete };
     case "duplicate":
       return { ...state, cart: [payload, ...state.cart] };
+    case "loading":
+      return { ...state, loading: payload };
     default:
       throw new Error(`Action ${type} not supported`);
   }

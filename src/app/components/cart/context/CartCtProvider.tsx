@@ -6,10 +6,12 @@ import { T_cart } from "../actions";
 
 export type T_cartContent = {
   cart: T_cart[];
+  loading: boolean;
   dispatch: Dispatch<T_cartReducerAction>;
 };
 const cart: T_cartContent = {
   cart: [],
+  loading: true,
   dispatch: () => {},
 };
 
@@ -27,5 +29,6 @@ export function useCartContent() {
   const decrement = (targetItemId: string) => dispatch({ type: "decrement", payload: targetItemId });
   const deleteCartItem = (targetCartItemId: string) => dispatch({ type: "deleteCartItem", payload: targetCartItemId });
   const duplicateCartItem = (cartItem: T_cart) => dispatch({ type: "duplicate", payload: cartItem });
-  return { ...context, setCartContent, increment, decrement, deleteCartItem, duplicateCartItem };
+  const setLoading = (isLoading: boolean) => dispatch({ type: "loading", payload: isLoading });
+  return { ...context, setCartContent, increment, decrement, deleteCartItem, duplicateCartItem, setLoading };
 }
