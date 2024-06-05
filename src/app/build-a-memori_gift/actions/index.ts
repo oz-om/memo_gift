@@ -105,6 +105,8 @@ export async function isCustomGiftExist(customGift_id: string) {
   }
 }
 async function createNewCustomGift(userId: string) {
+  console.log(userId);
+
   let customGift = await prisma.customGift.create({
     data: {
       owner: userId,
@@ -113,19 +115,17 @@ async function createNewCustomGift(userId: string) {
   cookies().set("customGiftId", customGift.id);
   return customGift.id;
 }
-export async function createCustomGift(): Promise<{ create: boolean; customGiftId: string | null; error?: string }> {
+export async function createCustomGift(): Promise<{ create: true; customGiftId: string } | { create: false; error: string }> {
   try {
-    const userId = await isUser();
-    const existingCustomGiftId = cookies().get("customGiftId")?.value;
-    if (!userId) {
-      const newAnonymUserId = crypto.randomUUID();
-      cookies().set("anonymousUserId", newAnonymUserId);
-      let newCustomGiftId = await createNewCustomGift(newAnonymUserId);
+    const session = await getServerSession(authOptions);
+    if (!session) {
       return {
-        create: true,
-        customGiftId: newCustomGiftId,
+        create: false,
+        error: "you should have an account to be able to create your own custom box gift ",
       };
     }
+    const userId = session.user.id;
+    const existingCustomGiftId = cookies().get("customGiftId")?.value;
 
     if (!existingCustomGiftId && userId) {
       let newCustomGiftId = await createNewCustomGift(userId);
@@ -159,9 +159,10 @@ export async function createCustomGift(): Promise<{ create: boolean; customGiftI
       customGiftId: customGift.id,
     };
   } catch (error) {
+    console.log(error);
+
     return {
       create: false,
-      customGiftId: null,
       error: "something went wrong during start creating new custom gift, please try again",
     };
   }
