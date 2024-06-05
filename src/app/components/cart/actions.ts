@@ -214,6 +214,7 @@ export async function editAction(cartItemId: string, targetProductType: "premade
         error: "you should have an account to be able to edit your cart items",
       };
     }
+
     const userId = session.user.id;
     // get the target product
     if (targetProductType == "premade") {
@@ -281,13 +282,21 @@ export async function editAction(cartItemId: string, targetProductType: "premade
       },
     });
     //  extract target product includes to the new created custom gift
-    targetProduct.includes.forEach(async (include) => {
+    const createdIncludes = targetProduct.includes.map(async (include) => {
       let data = {
         customGift_id: newCustomGift.id,
         item_id: include.item.id,
         quantity: include.quantity,
       };
-      await prisma.customGiftIncudes.create({ data });
+      return prisma.customGiftIncudes.create({ data });
+    });
+    await Promise.all(createdIncludes).catch((error) => {
+      console.log("there is an error during creating");
+      console.log(error);
+      return {
+        success: false,
+        error: "there is a problem during extracting includes",
+      };
     });
 
     cookies().set("customGiftId", newCustomGift.id);

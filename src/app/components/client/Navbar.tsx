@@ -44,19 +44,24 @@ export function Open_cart() {
     if (cart.length == 0) {
       const alert = toast;
       setLoading(true);
-      getCartContent()
-        .then((cartContent) => {
-          setLoading(false);
-          if (cartContent.success) {
-            setCartContent(cartContent.cart);
-          } else {
-            alert.error(cartContent.error, { style: toastStyles });
-          }
-        })
-        .catch(() => {
-          alert.error("ops something went wrong, please try again!", { style: toastStyles });
-          setLoading(false);
-        });
+      try {
+        getCartContent()
+          .then((cartContent) => {
+            setLoading(false);
+            if (cartContent.success) {
+              setCartContent(cartContent.cart);
+            } else {
+              alert.error(cartContent.error, { style: toastStyles });
+            }
+          })
+          .catch(() => {
+            alert.error("ops something went wrong, please try again!", { style: toastStyles });
+            setLoading(false);
+          });
+      } catch (error) {
+        alert.error("ops something went wrong, please try again!", { style: toastStyles });
+        setLoading(false);
+      }
     }
     toggleCart("right-0", "-right-[100vw]");
   }
