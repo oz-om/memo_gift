@@ -3,7 +3,7 @@ import { toastStyles } from "@/utils";
 import { redirect } from "next/navigation";
 import { useTransition } from "react";
 import { toast } from "react-hot-toast";
-import { controlCartItemQuantity, deleteAction, editAction } from "../cart/actions";
+import { controlCartItemQuantity, deleteAction, duplicate, editAction } from "../cart/actions";
 import { useCartContent } from "../cart/context/CartCtProvider";
 
 export function IncrementCartItemQuantity({ cartItemId }: { cartItemId: string }) {
@@ -42,7 +42,9 @@ export function DecrementCartItemQuantity({ cartItemId }: { cartItemId: string }
 
 export function DeleteCartItem({ cartItemId }: { cartItemId: string }) {
   const [pending, startTransition] = useTransition();
-  async function deleteCartItem() {
+  const { deleteCartItem } = useCartContent();
+  async function deleteCartItemAction() {
+    deleteCartItem(cartItemId);
     let alert = toast;
     let res = await deleteAction(cartItemId);
     if (!res.delete) {
@@ -52,16 +54,16 @@ export function DeleteCartItem({ cartItemId }: { cartItemId: string }) {
     }
   }
   return (
-    <button onClick={() => startTransition(deleteCartItem)} disabled={pending} className='delete px-4 grid place-content-center rounded-md text-red-400 cursor-pointer hover:bg-red-50 disabled:bg-red-100/25 disabled:text-red-800/25'>
+    <button onClick={() => startTransition(deleteCartItemAction)} disabled={pending} className='delete px-4 grid place-content-center rounded-md text-red-400 cursor-pointer hover:bg-red-50 disabled:bg-red-100/25 disabled:text-red-800/25'>
       {pending ? <i className='bx bx-loader bx-spin w-11 text-center'></i> : <span>delete</span>}
     </button>
   );
 }
 
-export function EditCartItem({ productId, targetProductType }: { productId: string; targetProductType: "premade" | "customGift" }) {
+export function EditCartItem({ cartItemId, targetProductType }: { cartItemId: string; targetProductType: "premade" | "customGift" }) {
   const [pending, startTransition] = useTransition();
   async function editCartItem() {
-    let res = await editAction(productId, targetProductType);
+    let res = await editAction(cartItemId, targetProductType);
     if (!res.success) {
       toast.error(res.error, {
         style: toastStyles,
@@ -73,6 +75,32 @@ export function EditCartItem({ productId, targetProductType }: { productId: stri
   return (
     <div onClick={() => startTransition(editCartItem)} className='edit px-4 grid place-content-center rounded-md border border-teal-400 text-teal-400 cursor-pointer hover:bg-teal-50'>
       {pending ? <i className='bx bx-loader bx-spin'></i> : <span>edit</span>}
+    </div>
+  );
+}
+
+export default function Duplicate({ cartItemId }: { cartItemId: string }) {
+  const [pending, startTransition] = useTransition();
+  const { duplicateCartItem } = useCartContent();
+  async function duplicateAction() {
+    let alert = toast;
+    alert.loading("just a second...", {
+      style: toastStyles,
+    });
+    let res = await duplicate(cartItemId);
+    alert.remove();
+    if (!res.success) {
+      alert.error(res.error, {
+        style: toastStyles,
+      });
+      return;
+    }
+    duplicateCartItem(res.cartItem);
+  }
+
+  return (
+    <div onClick={() => startTransition(duplicateAction)} className='duplicate px-4 grid place-content-center rounded-md border border-blue-400 text-blue-400 cursor-pointer hover:bg-blue-50'>
+      {pending ? <i className='bx bx-loader bx-spin'></i> : <span>duplicate</span>}
     </div>
   );
 }

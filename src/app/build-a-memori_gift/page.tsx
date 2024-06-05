@@ -2,8 +2,12 @@ import { Step_one, Step_two, Step_three, Step_four } from "./steps";
 import Steps_progressbar from "./components/client/Steps_progressbar";
 import { Suspense } from "react";
 import LoadingSpin from "../components/LoadingSpin";
+import { redirect } from "next/navigation";
 
 export default function Build_memori_gift_page({ searchParams }: { searchParams: { step: string; cgid: string; catitmid: string } }) {
+  if (!searchParams.step || (searchParams.step !== "one" && searchParams.step !== "two" && searchParams.step !== "three" && searchParams.step !== "four")) {
+    redirect("/");
+  }
   return (
     <>
       <Steps_progressbar />

@@ -19,9 +19,6 @@ export async function generateStaticParams() {
       blog_id: blog.id,
     }));
   } catch (error) {
-    console.log("/blogs/blog_id there is an error duringi fetch");
-    console.log(error);
-
     return [];
   }
 }

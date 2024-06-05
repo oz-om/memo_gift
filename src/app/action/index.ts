@@ -14,6 +14,19 @@ import { z } from "zod";
 import sgMail from "@sendgrid/mail";
 sgMail.setApiKey(process.env.SENDGRID_API_KEY as string);
 
+// is user
+export async function isUser() {
+  const session = await getServerSession(authOptions);
+  const anonymousUserId = cookies().get("anonymousUserId")?.value;
+  let userId: string | undefined = undefined;
+  if (session && session.user) {
+    userId = session.user.id;
+  } else if (anonymousUserId) {
+    userId = anonymousUserId;
+  }
+  return userId;
+}
+
 export type T_Address = Prisma.AddressGetPayload<{
   select: {
     user_id: true;

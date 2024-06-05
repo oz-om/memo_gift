@@ -17,7 +17,7 @@ export default function BuiltNewCustomGift({ className }: { className?: string }
       },
     });
     let res = await createCustomGift();
-    alert.dismiss();
+    alert.remove();
     if (!res.create) {
       alert.error(`${res.error}`, {
         style: toastStyles,

@@ -16,6 +16,7 @@ export default function Steps_progressbar({}) {
   const params = useSearchParams();
   const path = usePathname();
   const currentStep = params.get("step") as LimitListKeys;
+
   function handleSearchParams({ currentTarget: stepElement }: React.MouseEvent<HTMLElement>) {
     const limitList: limitListType = {
       one: ["two", "three", "four"],
@@ -47,7 +48,6 @@ export default function Steps_progressbar({}) {
       three: ["one", "two", "three"],
       four: ["one", "two", "three", "four"],
     };
-    console.log(beforeCurrentStep[currentStep]);
 
     beforeCurrentStep[currentStep].map((step) => {
       let currentStation = document.querySelectorAll(`li[data-redirect-to="${step}"]`);

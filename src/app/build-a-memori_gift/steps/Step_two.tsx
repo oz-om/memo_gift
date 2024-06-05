@@ -8,25 +8,20 @@ import FriendlyMessageForm from "../../components/client/FriendlyMessageForm";
 import Step_intro from "../components/Step_intro";
 import PostCardsList from "../components/PostCardsList";
 import LoadingSpin from "@/app/components/LoadingSpin";
+import { scanStep } from "../actions";
 
 export default async function Step_two({ searchParams }: { searchParams: { cgid: string; catitmid: string } }) {
   let { cgid, catitmid } = searchParams;
 
-  if (!catitmid || catitmid.trim().length == 0) {
+  if (!catitmid || catitmid.trim().length == 0 || !cgid || cgid.trim().length == 0) {
     redirect("/build-a-memori_gift?step=one&cgid=" + cgid);
   }
-  let cartItem = await prisma.cartItem.findUnique({
-    where: {
-      id: catitmid,
-    },
-    include: {
-      postcard: true,
-    },
-  });
+  const scanningStep = await scanStep({ step: "two", cartItemId: catitmid, customGiftId: cgid });
+  if (!scanningStep.scanned || scanningStep.step !== "two") {
+    redirect("/build-a-memori_gift?step=one&cgid=" + cgid);
+  }
 
-  if (!cartItem) {
-    redirect("/build-a-memori_gift?step=one&cgid=" + cgid);
-  }
+  const formFields = scanningStep.formFields;
 
   return (
     <section className='step_three_section'>
@@ -36,18 +31,18 @@ export default async function Step_two({ searchParams }: { searchParams: { cgid:
       <section className='step_two_content'>
         <div className='container friendly_massage_wrapper px-3 mt-3 md:flex md:justify-center md:gap-x-5'>
           <figure className='max-w-xs mx-auto md:mx-0'>
-            {cartItem?.postcard == null ? (
+            {!formFields.postCard ? (
               <div className='w-60 h-full min-h-60 mx-auto grid place-content-center border rounded'>
                 <p className='text-center'>no chosed card</p>
               </div>
             ) : (
-              <Image src={`${cartItem?.postcard?.image}`} alt={`${cartItem?.postcard?.name}`} width={400} height={350} />
+              <Image src={`${formFields.postCard}`} alt={`post card preview`} width={400} height={350} />
             )}
             <div className='change_post_card'>
               <ChoseCardButton />
             </div>
           </figure>
-          <FriendlyMessageForm called='customGift' productId={null} />
+          <FriendlyMessageForm called='customGift' formFields={formFields} />
         </div>
 
         <dialog className='PostCardsModal fixed overflow-auto left-0 top-0 w-full h-full py-5 custom-scroll-bar overscroll-contain'>

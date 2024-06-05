@@ -13,11 +13,6 @@ async function getBlogs() {
     }
     return res.blogs;
   } catch (error) {
-    console.log(APP_API_URL);
-
-    console.log("/blogs error");
-    console.log(error);
-
     return [];
   }
 }

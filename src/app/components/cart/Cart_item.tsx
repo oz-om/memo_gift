@@ -1,7 +1,6 @@
 import { Prisma } from "@prisma/client";
 import Image from "next/image";
-import { DecrementCartItemQuantity, DeleteCartItem, EditCartItem, IncrementCartItemQuantity } from "../client/cartItemOperations";
-import Duplicate from "../client/Duplicate";
+import Duplicate, { DecrementCartItemQuantity, DeleteCartItem, EditCartItem, IncrementCartItemQuantity } from "../client/cartItemOperations";
 
 export type cartItem = Prisma.cartItemGetPayload<{
   select: {
@@ -41,7 +40,7 @@ export type cartItem = Prisma.cartItemGetPayload<{
   };
 }>;
 
-export default function Cart_item({ cartItem }: { cartItem: cartItem }) {
+export default function Cart_item({ cartItem, cartItemId }: { cartItem: cartItem; cartItemId: string }) {
   let { customGift, premade, item, quantity, variant } = cartItem;
   let withIncludes = !!customGift || !!premade;
 
@@ -90,7 +89,7 @@ export default function Cart_item({ cartItem }: { cartItem: cartItem }) {
         </div>
         <div className='edit_box flex gap-x-2 text-sm'>
           <Duplicate cartItemId={cartItem.id} />
-          {withIncludes && <EditCartItem productId={`${customGift ? customGift.id : premade?.id}`} targetProductType={customGift ? "customGift" : "premade"} />}
+          {withIncludes && <EditCartItem cartItemId={cartItemId} targetProductType={customGift ? "customGift" : "premade"} />}
           <DeleteCartItem cartItemId={cartItem.id} />
         </div>
       </div>

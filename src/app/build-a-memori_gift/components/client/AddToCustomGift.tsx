@@ -4,11 +4,14 @@ import { toastStyles } from "@/utils";
 import React, { useTransition } from "react";
 import { toast } from "react-hot-toast";
 import { addItemToCustomGift } from "../../actions";
+import { useSearchParams } from "next/navigation";
 
 export default function AddToCustomGift({ className, itemId }: { className?: string; itemId: string }) {
+  const params = useSearchParams();
+  const customGiftId = params.get("cgid");
   const [pending, startTransition] = useTransition();
   async function addToCustomGift() {
-    let res = await addItemToCustomGift(itemId);
+    let res = await addItemToCustomGift(itemId, customGiftId);
     if (!res.add) {
       toast.error(`${res.error}`, {
         style: toastStyles,

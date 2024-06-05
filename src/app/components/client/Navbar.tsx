@@ -7,7 +7,7 @@ import { signOut } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Dispatch, SetStateAction, useRef } from "react";
+import { useRef } from "react";
 import { toast } from "react-hot-toast";
 import { useCartContent } from "../cart/context/CartCtProvider";
 import { getCartContent } from "../cart/actions";
@@ -42,9 +42,18 @@ export function Open_cart() {
   const { cart, setCartContent } = useCartContent();
   async function handelOpenCart() {
     if (cart.length == 0) {
-      const cartContent = await getCartContent();
-      if (cartContent.success) {
+      const alert = toast;
+      try {
+        alert.loading("just a second", { style: toastStyles });
+        const cartContent = await getCartContent();
+        alert.remove();
+        if (!cartContent.success) {
+          alert.error(cartContent.error, { style: toastStyles });
+          return;
+        }
         setCartContent(cartContent.cart);
+      } catch (error) {
+        alert.remove();
       }
     }
     toggleCart("right-0", "-right-[100vw]");

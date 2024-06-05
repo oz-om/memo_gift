@@ -64,6 +64,7 @@ model PremadeGift {
 model includes {
   premade_id String
   item_id    String
+  quantity   Int         @default(1)
   item       Item        @relation(fields: [item_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
   premade    PremadeGift @relation(fields: [premade_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
@@ -108,12 +109,14 @@ model boxCategory {
 
 model customGift {
   id        String              @id @default(uuid())
-  name      String?
+  name      String?             @default("custom-gift")
   price     Float               @default(0)
+  owner     String
   createdAt DateTime            @default(now())
   updatedAt DateTime            @updatedAt
   includes  customGiftIncudes[]
   cartItem  cartItem[]
+  user      User                @relation(fields: [owner], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@map("cosutom_gifts")
 }
@@ -150,7 +153,7 @@ model cartItem {
   from           String?
   to             String?
   note           String?
-  with_note      Boolean      @default(true)
+  without_note   Boolean      @default(false)
   empty_card     Boolean      @default(false)
   post_card      String?
   quantity       Int          @default(1)
@@ -241,6 +244,7 @@ model User {
   cart               Cart[]
   order              Order[]
   ResetPasswordToken ResetPasswordToken[]
+  customGift         customGift[]
 
   @@index([id], map: "users_id_fkey")
   @@map("users")

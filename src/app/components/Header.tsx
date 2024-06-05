@@ -7,7 +7,6 @@ import Link from "next/link";
 import Image from "next/image";
 import BuiltNewCustomGift from "../home/components/client/BuiltNewCustomGift";
 import Cart_wrapper from "./cart/Cart_wrapper";
-import CartCtProvider from "./cart/context/CartCtProvider";
 
 export default function Header() {
   const path = usePathname();
@@ -66,9 +65,7 @@ export default function Header() {
               </div>
               <div className='basket_wrapper flex gap-x-2'>
                 <div className='basket'>
-                  <CartCtProvider>
-                    <Cart_wrapper />
-                  </CartCtProvider>
+                  <Cart_wrapper />
                 </div>
                 {!!login && (
                   <div className='user'>

@@ -2,19 +2,17 @@ import { prisma } from "@/lib/db/prisma";
 import { redirect } from "next/navigation";
 import Variant from "../components/client/Variant";
 import Step_intro from "../components/Step_intro";
+import { scanStep } from "../actions";
 
 export default async function Step_three({ searchParams }: { searchParams: { cgid: string; catitmid: string } }) {
   let { cgid, catitmid } = searchParams;
-  if (!catitmid || !catitmid.trim().length) {
+  if (!catitmid || !catitmid.trim().length || !cgid || !cgid.trim().length) {
     redirect("/build-a-memori_gift?step=one&cgid=" + cgid);
   }
-  let cartItem = await prisma.cartItem.findUnique({
-    where: {
-      id: catitmid,
-    },
-  });
+  // scanning prev steps
+  const stepScanning = await scanStep({ step: "three", cartItemId: catitmid, customGiftId: cgid });
 
-  if (!cartItem) {
+  if (!stepScanning.scanned) {
     redirect("/build-a-memori_gift?step=one&cgid=" + cgid);
   }
 
@@ -31,7 +29,7 @@ export default async function Step_three({ searchParams }: { searchParams: { cgi
         <div className='step_one_content max-w-5xl mx-auto'>
           <div className='available_variants flex flex-col sm:flex-row justify-center'>
             {variants.map((variant) => {
-              return <Variant key={variant.id} variant={variant} cartItemId={catitmid} />;
+              return <Variant key={variant.id} variant={variant} cartItemId={catitmid} customGiftId={cgid} />;
             })}
           </div>
         </div>

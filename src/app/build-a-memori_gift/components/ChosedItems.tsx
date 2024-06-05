@@ -3,20 +3,10 @@ import { redirect } from "next/navigation";
 import React from "react";
 import Chosed_Item from "./Chosed_Item";
 import GoToStepTwo from "./client/GoToStepTwo";
+import { getCustomGift } from "../actions";
 
 export default async function ChosedItems({ customGiftId }: { customGiftId: string }) {
-  let customGift = await prisma.customGift.findUnique({
-    where: {
-      id: customGiftId,
-    },
-    include: {
-      includes: {
-        include: {
-          item: true,
-        },
-      },
-    },
-  });
+  let customGift = await getCustomGift(customGiftId);
 
   if (!customGift) {
     redirect("/");

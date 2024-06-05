@@ -1,5 +1,6 @@
 "use server";
 
+import { isUser } from "@/app/action";
 import { prisma } from "@/lib/db/prisma";
 import { authOptions } from "@/utils/nextAuthOptions";
 import { Prisma } from "@prisma/client";
@@ -140,31 +141,30 @@ export async function controlCartItemQuantity(cartItemId: string, action: "incre
 
 export async function deleteAction(cartItemId: string): Promise<{ delete: true } | { delete: false; error: string }> {
   try {
-    // if (cartItemType === "customGift") {
-    //   console.log(cartItemId);
-    //   await prisma.customGift.delete({
-    //     where: {
-    //       id: cartItemId,
-    //     },
-    //   });
-    //   revalidatePath("");
-    //   return {
-    //     delete: true,
-    //   };
-    // }
-
-    await prisma.cartItem.delete({
+    const deletedCartItem = await prisma.cartItem.delete({
       where: {
         id: cartItemId,
       },
+      select: {
+        customGift: {
+          select: {
+            id: true,
+          },
+        },
+      },
     });
+    if (deletedCartItem.customGift) {
+      await prisma.customGift.delete({
+        where: {
+          id: deletedCartItem.customGift.id,
+        },
+      });
+    }
     revalidatePath("");
     return {
       delete: true,
     };
   } catch (error) {
-    // console.log(error);
-
     return {
       delete: false,
       error: "ops! Something went wrong, please try again",
@@ -173,58 +173,92 @@ export async function deleteAction(cartItemId: string): Promise<{ delete: true }
 }
 
 // extract the cartItem to a new cartItem to set it as premade/customGift editable
-type PremadeGift = Prisma.PremadeGiftGetPayload<{
+type T_PremadeGift = Prisma.cartItemGetPayload<{
   include: {
-    includes: {
+    premade: {
       include: {
-        item: true;
+        includes: {
+          include: {
+            item: true;
+          };
+        };
       };
     };
   };
 }>;
-type CustomGift = Prisma.customGiftGetPayload<{
+type T_CustomGift = Prisma.cartItemGetPayload<{
   include: {
-    includes: {
+    customGift: {
       include: {
-        item: true;
+        includes: {
+          include: {
+            item: true;
+          };
+        };
       };
     };
   };
 }>;
-type T_targetProductType = PremadeGift | CustomGift | null;
+type T_targetCartItem = T_PremadeGift | T_CustomGift | null;
 
-export async function editAction(productId: string, targetProductType: "premade" | "customGift"): Promise<{ success: true; cgid: string } | { success: false; error: string }> {
-  let targetProduct: T_targetProductType = null;
+export async function editAction(cartItemId: string, targetProductType: "premade" | "customGift"): Promise<{ success: true; cgid: string } | { success: false; error: string }> {
+  let targetCartItem: T_targetCartItem = null;
+
   try {
+    // check if there a user
+    const userId = await isUser();
+    if (!userId) {
+      return {
+        success: false,
+        error: "can't edit the target item",
+      };
+    }
     // get the target product
     if (targetProductType == "premade") {
-      targetProduct = await prisma.premadeGift.findUnique({
+      targetCartItem = await prisma.cartItem.findUnique({
         where: {
-          id: productId,
+          id: cartItemId,
         },
         include: {
-          includes: {
+          premade: {
             include: {
-              item: true,
-            },
-          },
-        },
-      });
-    } else {
-      targetProduct = await prisma.customGift.findUnique({
-        where: {
-          id: productId,
-        },
-        include: {
-          includes: {
-            include: {
-              item: true,
+              includes: {
+                include: {
+                  item: true,
+                },
+              },
             },
           },
         },
       });
     }
-    // if can't fine the target product for any reason
+    if (targetProductType === "customGift") {
+      targetCartItem = await prisma.cartItem.findUnique({
+        where: {
+          id: cartItemId,
+        },
+        include: {
+          customGift: {
+            include: {
+              includes: {
+                include: {
+                  item: true,
+                },
+              },
+            },
+          },
+        },
+      });
+    }
+    // if can't find the target product for any reason
+    if (!targetCartItem) {
+      return {
+        success: false,
+        error: "can't edit the target item",
+      };
+    }
+    const targetProduct = "customGift" in targetCartItem ? targetCartItem.customGift : "premade" in targetCartItem ? targetCartItem.premade : null;
+
     if (!targetProduct) {
       return {
         success: false,
@@ -232,11 +266,16 @@ export async function editAction(productId: string, targetProductType: "premade"
       };
     }
 
+    const targetProductTotalPrice = targetProduct.includes.reduce((price, { item, quantity }) => {
+      return (price += item.price * quantity);
+    }, 0);
+
     // create new custom gift
     let newCustomGift = await prisma.customGift.create({
       data: {
-        price: targetProduct.price,
+        price: targetProductTotalPrice,
         name: "custom gift",
+        owner: userId,
       },
     });
     //  extract target product includes to the new created custom gift
@@ -244,11 +283,8 @@ export async function editAction(productId: string, targetProductType: "premade"
       let data = {
         customGift_id: newCustomGift.id,
         item_id: include.item.id,
-        quantity: 1,
+        quantity: include.quantity,
       };
-      if (targetProductType == "customGift" && "customGift_id" in include) {
-        data.quantity = include.quantity;
-      }
       await prisma.customGiftIncudes.create({ data });
     });
 
@@ -265,25 +301,16 @@ export async function editAction(productId: string, targetProductType: "premade"
   }
 }
 
-export async function duplicate(cartItemId: string): Promise<{ success: true } | { success: false; error: string }> {
+export async function duplicate(cartItemId: string): Promise<{ success: true; cartItem: T_cart } | { success: false; error: string }> {
   if (!cartItemId) {
     return {
       success: false,
-      error: "Something went wrong, please try again",
+      error: "there is no cart item to duplicate",
     };
   }
+
   try {
-    let targetCartItem = await prisma.cartItem.findUnique({
-      where: {
-        id: cartItemId,
-      },
-    });
-    if (!targetCartItem) {
-      return {
-        success: false,
-        error: "Couldn't find cart item",
-      };
-    }
+    // check if there a user
     let userType: "user_id" | "anonymous_user" = "anonymous_user";
     let userId: string | undefined = undefined;
     let session = await getServerSession(authOptions);
@@ -294,10 +321,24 @@ export async function duplicate(cartItemId: string): Promise<{ success: true } |
       let anonymousUser = cookies().get("anonymousUserId")?.value;
       userId = anonymousUser;
     }
-
     if (!userId) {
-      userId = crypto.randomUUID();
-      cookies().set("anonymousUserId", userId);
+      return {
+        success: false,
+        error: "not authenticated",
+      };
+    }
+
+    let targetCartItem = await prisma.cartItem.findUnique({
+      where: {
+        id: cartItemId,
+      },
+    });
+
+    if (!targetCartItem) {
+      return {
+        success: false,
+        error: "Couldn't find cart item",
+      };
     }
 
     let { createdAt, updatedAt, id, ...copyCartItem } = targetCartItem;
@@ -315,6 +356,7 @@ export async function duplicate(cartItemId: string): Promise<{ success: true } |
         data: {
           name: customGift?.name,
           price: customGift?.price,
+          owner: userId,
         },
       });
       customGift?.includes.map(async (include) => {
@@ -335,17 +377,47 @@ export async function duplicate(cartItemId: string): Promise<{ success: true } |
         custom_gift_id: isCustomGift,
       },
     });
-    await prisma.cart.create({
+    const cart = await prisma.cart.create({
       data: {
         [userType]: userId,
         cart_item: duplicatedCartItem.id,
+      },
+      include: {
+        cartItem: {
+          include: {
+            customGift: {
+              include: {
+                includes: {
+                  select: {
+                    quantity: true,
+                    item: true,
+                  },
+                },
+              },
+            },
+            premade: {
+              include: {
+                includes: {
+                  include: {
+                    item: true,
+                  },
+                },
+              },
+            },
+            item: true,
+            variant: true,
+          },
+        },
       },
     });
     revalidatePath("");
     return {
       success: true,
+      cartItem: cart,
     };
   } catch (error) {
+    console.log(error);
+
     return {
       success: false,
       error: "something went wrong, please try again",

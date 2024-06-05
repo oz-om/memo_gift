@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { setAddressToCartItem, updateItemCartAction } from "../../actions/action";
+import { useCartContent } from "@/app/components/cart/context/CartCtProvider";
 
 type cartItem = Prisma.cartItemGetPayload<{
   select: {
@@ -54,7 +55,7 @@ export type T_Address = Prisma.AddressGetPayload<{
 }>;
 
 export default function Order({ cartItem, addresses, openAddressForm }: { cartItem: cartItem; addresses: T_Address[]; openAddressForm: React.Dispatch<React.SetStateAction<boolean>> }) {
-  const { id, customGift, premade, item, quantity, variant, postcard, empty_card, with_note, to, from, note } = cartItem;
+  const { id, customGift, premade, item, quantity, variant, postcard, empty_card, without_note, to, from, note } = cartItem;
   const [addressesListState, setAddressesListState] = useState(false);
   let order = customGift ?? premade ?? item;
   let withIncludes = customGift ?? premade;
@@ -62,12 +63,12 @@ export default function Order({ cartItem, addresses, openAddressForm }: { cartIt
 
   let [updatedTo, setUpdatedTo] = useState(empty_card ? "" : `${to}`);
   let [updatedFrom, setUpdatedFrom] = useState(empty_card ? "" : `${from}`);
-  let [updatedNote, setUpdatedNote] = useState(with_note ? `${note}` : "");
+  let [updatedNote, setUpdatedNote] = useState(without_note ? `${note}` : "");
   let [changed, setChanged] = useState(false);
   let alert = toast;
   let [availableAddresses, setAvailableAddresses] = useState<T_Address[]>(addresses);
   let [chosedAddress, setChosedAddress] = useState<string | null>(null);
-
+  const { deleteCartItem } = useCartContent();
   // when opening addresses list update available Addresses from cookies if there any new address .
   function toggleAddressesList() {
     // get local addresses
@@ -90,7 +91,7 @@ export default function Order({ cartItem, addresses, openAddressForm }: { cartIt
   }
 
   async function updateCartItem() {
-    if ((!empty_card && (!updatedTo.trim().length || !updatedFrom.trim().length)) || (with_note && !updatedNote.trim().length)) {
+    if ((!empty_card && (!updatedTo.trim().length || !updatedFrom.trim().length)) || (without_note && !updatedNote.trim().length)) {
       alert.error("make sue your sender, receiver and note is not empty ", { style: toastStyles });
       return;
     }
@@ -117,7 +118,8 @@ export default function Order({ cartItem, addresses, openAddressForm }: { cartIt
     }
     alert.success("done", { style: toastStyles });
   }
-  async function deleteCartItem() {
+  async function deleteCartItemAction() {
+    deleteCartItem(id);
     alert.loading("just a second...", { style: toastStyles });
     let res = await deleteAction(id);
     alert.remove();
@@ -194,7 +196,7 @@ export default function Order({ cartItem, addresses, openAddressForm }: { cartIt
               </button>
             </div>
             <div className='delete_order px-4 grid place-content-center rounded-md text-red-400 cursor-pointer hover:bg-red-50'>
-              <button onClick={deleteCartItem}>delete</button>
+              <button onClick={deleteCartItemAction}>delete</button>
             </div>
           </div>
           <div className='order_address_wrapper mt-4'>
@@ -262,10 +264,10 @@ export default function Order({ cartItem, addresses, openAddressForm }: { cartIt
             </div>
             <div className='massage col-span-2 md:mt-3'>
               <textarea
-                disabled={!with_note}
+                disabled={!without_note}
                 value={updatedNote}
                 onInput={(e) => {
-                  if (with_note) {
+                  if (without_note) {
                     setUpdatedNote(e.currentTarget.value);
                     setChanged(true);
                   }

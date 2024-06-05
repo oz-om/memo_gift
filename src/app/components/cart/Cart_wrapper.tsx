@@ -24,15 +24,14 @@ export default function Cart_wrapper() {
             </span>
           </h4>
         </div>
-        <div className='cart_content_wrapper'>
-          {/* @ts-ignore */}
+        <div className='cart_content_wrapper h-full'>
           <div className='cart_items  overflow-y-auto h-[calc(100%_-_100px)] custom-scroll-bar overscroll-contain'>
-            {cart.map(({ cartItem }) => {
-              return <Cart_item key={cartItem.id} cartItem={cartItem} />;
+            {cart.map(({ cartItem, cart_item }) => {
+              return <Cart_item key={cartItem.id} cartItemId={cart_item} cartItem={cartItem} />;
             })}
             {!cart.length && (
               <div className='h-[50vh] grid place-content-center'>
-                <p className='text-center text-slate-500'>empty</p>
+                <p className='text-center text-slate-500 '>empty</p>
               </div>
             )}
           </div>

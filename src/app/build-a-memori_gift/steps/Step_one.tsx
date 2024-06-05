@@ -9,12 +9,21 @@ import ChosedItems from "../components/ChosedItems";
 import Filter_Items from "../components/client/Filter_Items";
 import Pagination from "../components/client/Pagination";
 import FilteredDataProvider from "../context/Filter_Context";
+import { scanStep } from "../actions";
 
 export default async function Step_one({ searchParams }: { searchParams: { cgid: string } }) {
   let { cgid } = searchParams;
   if (!cgid || cgid.trim().length == 0) {
     let storedCustomGiftId = cookies().get("customGiftId")?.value;
     if (!storedCustomGiftId) {
+      redirect("/");
+    }
+    try {
+      const scanningStep = await scanStep({ step: "one", customGiftId: storedCustomGiftId });
+      if (!scanningStep.scanned) {
+        redirect("/");
+      }
+    } catch (error) {
       redirect("/");
     }
     redirect("/build-a-memori_gift?step=one&cgid=" + storedCustomGiftId);

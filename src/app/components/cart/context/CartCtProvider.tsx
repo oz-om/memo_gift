@@ -1,8 +1,8 @@
 "use client";
 
-import { Dispatch, createContext, useContext, useEffect, useReducer } from "react";
+import { Dispatch, createContext, useContext, useReducer } from "react";
 import { T_cartReducerAction, cartReducer } from "./cartReducer";
-import { T_cart, getCartContent } from "../actions";
+import { T_cart } from "../actions";
 
 export type T_cartContent = {
   cart: T_cart[];
@@ -25,5 +25,7 @@ export function useCartContent() {
   const setCartContent = (cartContent: T_cart[]) => dispatch({ type: "setCartContent", payload: cartContent });
   const increment = (targetItemId: string) => dispatch({ type: "increment", payload: targetItemId });
   const decrement = (targetItemId: string) => dispatch({ type: "decrement", payload: targetItemId });
-  return { ...context, setCartContent, increment, decrement };
+  const deleteCartItem = (targetCartItemId: string) => dispatch({ type: "deleteCartItem", payload: targetCartItemId });
+  const duplicateCartItem = (cartItem: T_cart) => dispatch({ type: "duplicate", payload: cartItem });
+  return { ...context, setCartContent, increment, decrement, deleteCartItem, duplicateCartItem };
 }
