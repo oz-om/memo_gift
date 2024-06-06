@@ -1,6 +1,21 @@
 "use client";
+import { T_blog, T_getBlogsRes } from "@/app/api/blogs/route";
+import { CLIENT_APP_API_URL, formatDate } from "@/utils";
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+
+async function getBlogs() {
+  try {
+    const req = await fetch(`${CLIENT_APP_API_URL}/blogs`, { next: { revalidate: 86400 } });
+    const res: T_getBlogsRes = await req.json();
+    if (!res.success) {
+      return [];
+    }
+    return res.blogs;
+  } catch (error) {
+    return [];
+  }
+}
 
 export default function Recent_blogs() {
   const blogsCarousel = useRef<HTMLDivElement>(null);
@@ -10,6 +25,7 @@ export default function Recent_blogs() {
   const prevPageX = useRef(0);
   const prevScrollLeft = useRef(0);
   const positionDiff = useRef(0);
+  const [blogs, setBlogs] = useState<T_blog[]>([]);
 
   function dragStart(e: React.MouseEvent<HTMLDivElement, MouseEvent> | React.TouchEvent<HTMLDivElement>) {
     const PageX = "touches" in e ? e.touches[0].pageX : e.pageX;
@@ -50,15 +66,19 @@ export default function Recent_blogs() {
     blogsCarousel.current!.scrollLeft += e.currentTarget.id == "left" ? -firstBlogWidth : firstBlogWidth;
   };
 
+  useEffect(() => {
+    getBlogs().then((blogsRes) => {
+      setBlogs(blogsRes);
+    });
+  }, []);
+
   return (
     <>
       <i id='left' onClick={nextSlideHandel} className='bx bxs-chevron-left bg-teal-200/30 p-2 rounded-full absolute -top-10 cursor-pointer'></i>
       <div ref={blogsCarousel} onMouseMove={dragging} onMouseDown={dragStart} onMouseUp={dragStop} onMouseLeave={dragStop} onTouchStart={dragStart} onTouchMove={dragging} onTouchEnd={dragStop} className='recent_blogs custom-scroll-bar whitespace-nowrap overflow-x-auto scroll-smooth'>
-        <Blog image={"/images/blog_01.jpg"} title={"2023 Holiday Shipping Deadlines"} publishedAT={"October 16,2023"} publishedBy={"Anime Slayer"} />
-        <Blog image={"/images/blog_02.jpg"} title={"The 5 Ways BOXFOX Makes Holiday Shopping Easier"} publishedAT={"October 16,2023"} publishedBy={"Anime Slayer"} />
-        <Blog image={"/images/blog_03.jpg"} title={"Shop Now, Ship Later with HOLD FOR HOLIDAY"} publishedAT={"October 16,2023"} publishedBy={"Anime Slayer"} />
-        <Blog image={"/images/blog_04.jpg"} title={"How to Build the Perfect Gift Box"} publishedAT={"October 16,2023"} publishedBy={"Anime Slayer"} />
-        <Blog image={"/images/blog_05.jpg"} title={"The Best Holiday Corporate Gifting Solution 2023"} publishedAT={"October 16,2023"} publishedBy={"Anime Slayer"} />
+        {blogs.map((blog) => {
+          return <Blog key={blog.id} image={blog.cover} title={blog.title} publishedAT={formatDate(`${blog.createdAt}`)} publishedBy={blog.author} />;
+        })}
       </div>
       <i id='right' onClick={nextSlideHandel} className='bx bxs-chevron-right bg-teal-200/30 p-2 rounded-full absolute -top-10 cursor-pointer right-0'></i>
     </>

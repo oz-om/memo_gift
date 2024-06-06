@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/db/prisma";
 import { Prisma } from "@prisma/client";
-type T_item = Prisma.ItemGetPayload<{
+type T_Premade = Prisma.PremadeGiftGetPayload<{
   select: {
     id: true;
     name: true;
@@ -8,18 +8,19 @@ type T_item = Prisma.ItemGetPayload<{
     price: true;
   };
 }>;
-export type T_getItemsRes =
+export type T_getPremadesRes =
   | {
       success: true;
-      items: T_item[];
+      premades: T_Premade[];
     }
   | {
       success: false;
       error: string;
     };
+
 export async function GET(req: Request) {
   try {
-    let items: T_item[] = await prisma.item.findMany({
+    let premades: T_Premade[] = await prisma.premadeGift.findMany({
       orderBy: { createdAt: "desc" },
       select: {
         id: true,
@@ -27,13 +28,13 @@ export async function GET(req: Request) {
         price: true,
         images: true,
       },
-      take: 8,
+      take: 4,
     });
 
     return new Response(
       JSON.stringify({
         success: true,
-        items,
+        premades,
       }),
     );
   } catch (error) {

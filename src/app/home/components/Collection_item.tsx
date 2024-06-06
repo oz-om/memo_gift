@@ -11,7 +11,7 @@ export default function Collection_item({ image, name, price }: collectionItemPr
         <Image src={image} width={700} height={700} alt={name} />
       </div>
       <div className='collection_details pt-2 px-3'>
-        <h4 className='font-light'>{name}</h4>
+        <h4 className='font-light line-clamp-2'>{name}</h4>
         <span className='price font-sans text-slate-600'>{price}$</span>
       </div>
     </div>
