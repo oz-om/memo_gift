@@ -48,7 +48,12 @@ export default function Steps_progressbar({}) {
       three: ["one", "two", "three"],
       four: ["one", "two", "three", "four"],
     };
-
+    if (window) {
+      const allSteps = document.querySelectorAll(".steps_bar .steps ul > li");
+      allSteps.forEach((step) => {
+        step.classList.remove("active_step");
+      });
+    }
     beforeCurrentStep[currentStep].map((step) => {
       let currentStation = document.querySelectorAll(`li[data-redirect-to="${step}"]`);
       currentStation.forEach((station) => {
