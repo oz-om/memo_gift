@@ -12,7 +12,6 @@ export default async function Checkout({ searchParams }: { searchParams: { catit
     <section className='orders_wrapper'>
       <div className='container'>
         <Suspense fallback={<LoadingSpin />}>
-          {/* @ts-ignore async component */}
           <CheckoutList cartItemId={catitmid} />
         </Suspense>
       </div>

@@ -63,7 +63,7 @@ export default function Order({ cartItem, addresses, openAddressForm }: { cartIt
 
   let [updatedTo, setUpdatedTo] = useState(empty_card ? "" : `${to}`);
   let [updatedFrom, setUpdatedFrom] = useState(empty_card ? "" : `${from}`);
-  let [updatedNote, setUpdatedNote] = useState(without_note ? `${note}` : "");
+  let [updatedNote, setUpdatedNote] = useState(without_note ? "" : `${note}`);
   let [changed, setChanged] = useState(false);
   let alert = toast;
   let [availableAddresses, setAvailableAddresses] = useState<T_Address[]>(addresses);
@@ -264,7 +264,7 @@ export default function Order({ cartItem, addresses, openAddressForm }: { cartIt
             </div>
             <div className='massage col-span-2 md:mt-3'>
               <textarea
-                disabled={!without_note}
+                disabled={without_note}
                 value={updatedNote}
                 onInput={(e) => {
                   if (without_note) {
@@ -275,7 +275,7 @@ export default function Order({ cartItem, addresses, openAddressForm }: { cartIt
                 name='massage'
                 id='massage'
                 placeholder='friendly message'
-                className='w-full resize-none px-3 py-1 outline-none rounded border border-teal-100 focus:border-teal-400 placeholder:font-light disabled:opacity-50'
+                className='w-full resize-none px-3 py-1 text-sm outline-none rounded border border-teal-100 focus:border-teal-400 placeholder:font-light disabled:opacity-50'
               ></textarea>
             </div>
           </div>
