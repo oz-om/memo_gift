@@ -80,6 +80,10 @@ export default function Order({ confirmed }: { confirmed: Order }) {
           </p>
         </div>
       </div>
+      <div className='order_address bg-slate-50'>
+        <h3 className='text-lg uppercase px-2 font-light'>Address:</h3>
+        <p className='text-xs text-zinc-800 font-light pl-2'> {order.address.split("<*>").join(" ")}</p>
+      </div>
       {(!!customGift || !!premade) && (
         <button className='toggle_button w-full  justify-center relative bg-slate-100 border hidden'>
           <i className='bx bxs-chevron-down'></i>
