@@ -20,6 +20,7 @@ export default function NavBar() {
               <Navigate_link name={"Products"} to='/dashboard/products' icon={"bxs-package"} />
               <Navigate_link name={"Add"} to='/dashboard/add' icon={"bx-customize"} />
               <Navigate_link name={"Blogs"} to='/dashboard/blogs' icon={"bx-text"} />
+              <Navigate_link name={"Site"} to='/dashboard/site' icon={"bxs-palette"} />
             </ul>
           </div>
           <div className='logo'>
@@ -32,7 +33,7 @@ export default function NavBar() {
           <div className='account'>
             <div className='account_toggle flex items-center justify-center cursor-pointer'>
               <figure className='w-6 h-6 rounded-full overflow-hidden'>
-                <Image src={`${session?.user.profile_pic ?? ""}`} alt={"profile picture"} width={50} height={50} />
+                <Image src={`${session?.user.profile_pic ?? "https://omzid.serv00.net/images/default.png"}`} alt={"profile picture"} width={50} height={50} />
               </figure>
               <i className='bx bx-chevron-down'></i>
             </div>

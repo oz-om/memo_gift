@@ -307,3 +307,9 @@ model blogTag {
   @@unique([blog_id, tag])
   @@map("blog_tags")
 }
+
+model Site {
+  id           String @id @default(uuid())
+  header_cover String @default("https://omzid.serv00.net/images/header_hero_cover.jpg")
+  header_title String @default("Your go-to for personal, effortless & elevated gifting")
+}

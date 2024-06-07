@@ -13,6 +13,7 @@ const AVAILABLE_LINKS = {
   Products: "after:content-['Products']",
   Add: "after:content-['Add']",
   Blogs: "after:content-['Blogs']",
+  Site: "after:content-['Site']",
 };
 export function Navigate_link({ className, to, icon, name }: { className?: string; to: string; icon: string; name: keyof typeof AVAILABLE_LINKS }) {
   let path = usePathname();

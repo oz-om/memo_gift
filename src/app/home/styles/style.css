@@ -3,9 +3,9 @@
 @tailwind utilities;
 
 @layer utilities {
-  .header_wrapper {
+  /* .header_wrapper {
     background-image: url("/images/header_hero_cover.jpg");
-  }
+  } */
   .header_hero_wrapper .header_hero_title > h2,
   .marketplace_section_wrapper .marketplace_section_title h2 {
     font-size: clamp(2rem, 5vw, 4rem);

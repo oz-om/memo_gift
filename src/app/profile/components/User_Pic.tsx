@@ -36,6 +36,7 @@ export default function User_Pic({ userId, user_pic }: { userId: string; user_pi
       setIsUpdated(true);
     }
   }
+
   async function updateProfilePick() {
     const alert = toast;
     if (!insertedImage.file || !imageUploadSession) return alert.error("please chose an image to upload!", { style: toastStyles });

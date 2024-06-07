@@ -7,13 +7,39 @@ import Link from "next/link";
 import Image from "next/image";
 import BuiltNewCustomGift from "../home/components/client/BuiltNewCustomGift";
 import Cart_wrapper from "./cart/Cart_wrapper";
+import { useEffect, useState } from "react";
+import { CLIENT_APP_API_URL } from "@/utils";
+import { T_HeaderHeroRes } from "../api/home/route";
 
 export default function Header() {
   const path = usePathname();
   const { data: login } = useSession();
+  const [headerHero, setheaderHero] = useState({
+    header_cover: "/images/header_hero_cover.jpg",
+    header_title: "Your go-to for personal, effortless & elevated gifting",
+  });
+
+  useEffect(() => {
+    if (path == "/") {
+      (async () => {
+        const headerHeroReq = await fetch(`${CLIENT_APP_API_URL}/home`);
+        const headerHeroRes: T_HeaderHeroRes = await headerHeroReq.json();
+        if (headerHeroRes.success) {
+          setheaderHero(headerHeroRes.header);
+        }
+      })();
+    }
+  }, []);
+
   if (/^\/dashboard(?:[\/?].*)?$/.test(path)) return <></>;
+
   return (
-    <header className={"" + (path == "/" && "header_wrapper relative  text-white  bg-center bg-cover pb-16")}>
+    <header
+      className={"" + (path == "/" && "header_wrapper relative  text-white  bg-center bg-cover pb-16")}
+      style={{
+        backgroundImage: path == "/" ? `url('${headerHero.header_cover}')` : "",
+      }}
+    >
       {path == "/" && <div className='header__layer absolute left-0 top-0 w-full h-full bg-black/20'></div>}
       <div className='container'>
         <nav className='relative'>
@@ -106,7 +132,7 @@ export default function Header() {
             ) : null}
           </ul>
         </nav>
-        {path == "/" && <Header_hero />}
+        {path == "/" && <Header_hero headerHeroTitle={headerHero.header_title} />}
       </div>
     </header>
   );
