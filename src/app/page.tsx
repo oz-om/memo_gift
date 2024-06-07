@@ -8,6 +8,7 @@ import What_we_do_item from "./home/components/What_we_do_item";
 import { T_getItemsRes } from "./api/items/route";
 import { APP_API_URL } from "@/utils";
 import { T_getPremadesRes } from "./api/premades/route";
+import { T_getBlogsRes } from "./api/blogs/route";
 async function getItems() {
   try {
     const req = await fetch(`${APP_API_URL}/items`, { next: { revalidate: 86400 } });
@@ -33,9 +34,23 @@ async function getPremades() {
     return [];
   }
 }
+async function getBlogs() {
+  try {
+    const req = await fetch(`${APP_API_URL}/blogs`, { next: { revalidate: 86400 } });
+    const res: T_getBlogsRes = await req.json();
+    if (!res.success) {
+      return [];
+    }
+    return res.blogs;
+  } catch (error) {
+    return [];
+  }
+}
 export default async function Home() {
   const recentItems = await getItems();
   const recentPremades = await getPremades();
+  const recentBlogs = await getBlogs();
+
   return (
     <main>
       <section className='what_we_do_wrapper bg-orange-50 py-6'>
@@ -53,14 +68,6 @@ export default async function Home() {
         <div className='container'>
           <Section_title title={"let us help you get your gift started"} className={"collections_sections_title"} />
           <div className='collections_items grid gap-5 min-[300px]:grid-cols-2 sm:grid-cols-4'>
-            {/* <Collection_item image={"/images/collection_01.jpg"} name={"French Cade Lavender Petite Glass Jar Candle"} price={14} />
-            <Collection_item image={"/images/collection_02.jpg"} name={"Cozy Nights Tea Sachet"} price={5} />
-            <Collection_item image={"/images/collection_03.png"} name={"Self Care Shower Steamers"} price={10} />
-            <Collection_item image={"/images/collection_04.png"} name={"A Gentle Reminder"} price={4} />
-            <Collection_item image={"/images/collection_05.jpg"} name={"UMA Small Softcover Notebook | Dark Green"} price={5} />
-            <Collection_item image={"/images/collection_06.png"} name={"Two Teal Pens"} price={35} />
-            <Collection_item image={"/images/collection_07.jpg"} name={"Christmas Tree Spoon Rest"} price={18} />
-            <Collection_item image={"/images/collection_08.png"} name={"Beauty Sleep Hydrogel Face Sheet Mask"} price={13} /> */}
             {recentItems.map((item) => {
               return <Collection_item key={item.id} image={JSON.parse(item.images)[0]} name={item.name} price={item.price} />;
             })}
@@ -71,10 +78,6 @@ export default async function Home() {
         <div className='container'>
           <Section_title title={"memori_gifts favorites"} className='favorites_section_title' />
           <div className='favorites_content grid gap-5 min-[300px]:grid-cols-2 sm:grid-cols-4'>
-            {/* <Collection_item image={"/images/favo_01.png"} name={"KIND OF A BIG TEAL"} price={47} />
-            <Collection_item image={"/images/favo_02.jpg"} name={"GOOD TIDINGS"} price={45} />
-            <Collection_item image={"/images/favo_03.jpg"} name={"MERRY MERRY"} price={48} />
-            <Collection_item image={"/images/favo_04.jpg"} name={"SWEETS"} price={55} /> */}
             {recentPremades.map((premade) => {
               return <Collection_item key={premade.id} image={JSON.parse(premade.images)[0]} name={premade.name} price={premade.price} />;
             })}
@@ -132,7 +135,7 @@ export default async function Home() {
         <div className='container'>
           <Section_title title={"a word from memory_gift"} className='recent_blogs_section_title' />
           <div className='recent_blogs_wrapper relative'>
-            <Recent_blogs />
+            <Recent_blogs blogs={recentBlogs} />
           </div>
         </div>
       </section>

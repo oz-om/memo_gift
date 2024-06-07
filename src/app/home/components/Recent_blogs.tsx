@@ -1,23 +1,10 @@
 "use client";
-import { T_blog, T_getBlogsRes } from "@/app/api/blogs/route";
-import { CLIENT_APP_API_URL, formatDate } from "@/utils";
+import { T_blog } from "@/app/api/blogs/route";
+import { formatDate } from "@/utils";
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 
-async function getBlogs() {
-  try {
-    const req = await fetch(`${CLIENT_APP_API_URL}/blogs`, { next: { revalidate: 86400 } });
-    const res: T_getBlogsRes = await req.json();
-    if (!res.success) {
-      return [];
-    }
-    return res.blogs;
-  } catch (error) {
-    return [];
-  }
-}
-
-export default function Recent_blogs() {
+export default function Recent_blogs({ blogs }: { blogs: T_blog[] }) {
   const blogsCarousel = useRef<HTMLDivElement>(null);
   const firstBlogItem = blogsCarousel.current?.querySelectorAll(".blog_item")[0];
   const firstBlogWidth = firstBlogItem?.clientWidth as number;
@@ -25,7 +12,6 @@ export default function Recent_blogs() {
   const prevPageX = useRef(0);
   const prevScrollLeft = useRef(0);
   const positionDiff = useRef(0);
-  const [blogs, setBlogs] = useState<T_blog[]>([]);
 
   function dragStart(e: React.MouseEvent<HTMLDivElement, MouseEvent> | React.TouchEvent<HTMLDivElement>) {
     const PageX = "touches" in e ? e.touches[0].pageX : e.pageX;
@@ -65,12 +51,6 @@ export default function Recent_blogs() {
   const nextSlideHandel = (e: React.MouseEvent<HTMLButtonElement>) => {
     blogsCarousel.current!.scrollLeft += e.currentTarget.id == "left" ? -firstBlogWidth : firstBlogWidth;
   };
-
-  useEffect(() => {
-    getBlogs().then((blogsRes) => {
-      setBlogs(blogsRes);
-    });
-  }, []);
 
   return (
     <>
