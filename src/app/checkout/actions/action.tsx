@@ -1,4 +1,5 @@
 "use server";
+import { isUser } from "@/app/action";
 import { prisma } from "@/lib/db/prisma";
 import { authOptions } from "@/utils/nextAuthOptions";
 import { Prisma } from "@prisma/client";
@@ -63,11 +64,13 @@ type T_order = Prisma.OrderGetPayload<{
   };
 }>;
 export async function initOrder(orders: string[]): Promise<{ success: true; orders: T_order[] } | { success: false; error: string }> {
-  let userId: string | null = null;
+  const userId = await isUser();
   let createdOrders: T_order[] = [];
-  let session = await getServerSession(authOptions);
-  if (session) {
-    userId = session.user.id;
+  if (!userId) {
+    return {
+      success: false,
+      error: "something went wrong, please try again!",
+    };
   }
 
   try {
