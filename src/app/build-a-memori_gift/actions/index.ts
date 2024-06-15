@@ -557,20 +557,23 @@ export async function setFriendlyMessageToCartItem(params: T_setFriendlyMessageT
     without_note: withoutNote,
     empty_card: emptyCard,
   };
+  if (withoutNote) {
+    friendlyNoteData = {
+      ...friendlyNoteData,
+      note: "",
+      without_note: true,
+    };
+  }
   if (emptyCard) {
     friendlyNoteData = {
       ...friendlyNoteData,
       from: "",
       to: "",
       note: "",
+      without_note: true,
     };
   }
-  if (withoutNote) {
-    friendlyNoteData = {
-      ...friendlyNoteData,
-      note: "",
-    };
-  }
+
   // check if fields required and not empty
   if (!friendlyNoteData.empty_card) {
     const { from, to, note, without_note } = friendlyNoteData;

@@ -176,11 +176,6 @@ export default async function CheckoutList({ cartItemId }: { cartItemId: string 
 
   return (
     <>
-      {/* <div className='orders_list'>
-        {Orders.map(({ cartItem, user }) => {
-          return <Order key={cartItem.id} cartItem={cartItem} addresses={user?.address ?? []} />;
-        })}
-      </div> */}
       <OrdersList Orders={Orders} userSession={session} />
       <div className='total_price flex items-center justify-end gap-x-4 my-3'>
         <span>subtotal: </span>
