@@ -6,6 +6,7 @@ import ChoseCardDialog from "../../components/ChoseCardDialog";
 import { prisma } from "@/lib/db/prisma";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
+import { formatCurrency } from "@/utils";
 
 const getItem = cache(async (id: string) => {
   const product = await prisma.item.findUnique({
@@ -54,8 +55,8 @@ export default async function ItemPage({ params: { item_id } }: { params: { item
               <div className='info flex justify-between items-start mb-4'>
                 <h4 className='title text-3xl capitalize'>{product.name}</h4>
                 <div className='product_price relative'>
-                  <span className='current_price text-teal-500 text-xl'>{product.price}$</span>
-                  <span className='old_price absolute top-full left-0 line-through text-amber-500'>{product.price}$</span>
+                  <span className='current_price text-teal-500 text-xl'>{formatCurrency(product.price)}</span>
+                  <span className='old_price absolute top-full left-0 line-through text-amber-500'>{formatCurrency(product.price)}</span>
                 </div>
               </div>
               <div className='in_stock_status flex gap-x-2 mb-2'>
@@ -87,10 +88,10 @@ export default async function ItemPage({ params: { item_id } }: { params: { item
             <i className='bx bx-link-alt absolute -left-3 -top-3 text-[40px] text-slate-600/50'></i>
           </h4>
           <div className='top_rate grid gap-5 min-[300px]:grid-cols-2 sm:grid-cols-[repeat(auto-fit,_minmax(135px,_1fr))] lg:grid-cols-4'>
-            <Item type={"items"} id={"12345"} name='Baseus Simu Anc True Wireless Earphones s1 Pro Blue6' price={300} image='/images/items_01.png' />
+            {/* <Item type={"items"} id={"12345"} name='Baseus Simu Anc True Wireless Earphones s1 Pro Blue6' price={300} image='/images/items_01.png' />
             <Item type={"items"} id={"12345"} name='IPAD PRO 11 (2021) BLUETOOTH KEYBOARD CASE' price={300} image='/images/items_02.png' />
             <Item type={"items"} id={"12345"} name='JR-W050 20W Magnetic Wireless Power Bank with Ring Holder 10000mAh' price={300} image='/images/items_03.png' />
-            <Item type={"items"} id={"12345"} name='Baseus Simu Anc True Wireless Earphones s1 Pro Blue' price={300} image='/images/items_04.png' />
+            <Item type={"items"} id={"12345"} name='Baseus Simu Anc True Wireless Earphones s1 Pro Blue' price={300} image='/images/items_04.png' /> */}
           </div>
         </div>
       </section>

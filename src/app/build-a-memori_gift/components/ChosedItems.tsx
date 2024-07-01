@@ -4,6 +4,7 @@ import React from "react";
 import Chosed_Item from "./Chosed_Item";
 import GoToStepTwo from "./client/GoToStepTwo";
 import { getCustomGift } from "../actions";
+import { formatCurrency } from "@/utils";
 
 export default async function ChosedItems({ customGiftId }: { customGiftId: string }) {
   let customGift = await getCustomGift(customGiftId);
@@ -34,7 +35,7 @@ export default async function ChosedItems({ customGiftId }: { customGiftId: stri
       <div className='check_out_box fixed bottom-0  bg-teal-50 w-full flex justify-between p-2 mt-auto sm:relative'>
         <div className='price'>
           <span className='text-sm '>Total Price:</span>
-          <span className='text-sm ml-2'>${totalPrice}</span>
+          <span className='text-sm ml-2'>{formatCurrency(totalPrice)}</span>
         </div>
         <div className='next_step'>
           <GoToStepTwo customGiftId={customGift.id} className='bg-teal-400 text-white text-center px-4 py-2 rounded-md mx-auto min-w-max w-2/5 block' />

@@ -60,14 +60,14 @@ export async function getItems(): Promise<{ success: true; data: item[] } | { su
 // create new custom gift
 export async function getCustomGift(customGiftId: string) {
   try {
-    const userId = await isUser();
-    if (!userId) {
+    const user = await isUser();
+    if (!user.id) {
       return null;
     }
     let customGift = await prisma.customGift.findUnique({
       where: {
         id: customGiftId,
-        owner: userId,
+        owner: user.id,
       },
       include: {
         includes: {
@@ -85,14 +85,14 @@ export async function getCustomGift(customGiftId: string) {
 
 export async function isCustomGiftExist(customGift_id: string) {
   try {
-    const ownerId = await isUser();
-    if (!ownerId) {
+    const owner = await isUser();
+    if (!owner.id) {
       return false;
     }
     const customGift = await prisma.customGift.findUnique({
       where: {
         id: customGift_id,
-        owner: ownerId,
+        owner: owner.id,
       },
     });
     if (customGift) {
@@ -470,7 +470,7 @@ export async function setCustomGiftIntoCartItem(customGiftId: string, cartItemId
 }
 
 // setup post card to cartItem
-type TcartItemData = {
+type T_cartItemData = {
   from?: string | null;
   to?: string | null;
   note?: string | null;
@@ -478,7 +478,7 @@ type TcartItemData = {
   empty_card?: boolean;
   post_card?: string | null;
 };
-async function createNewCartItem(data: TcartItemData) {
+async function createNewCartItem(data: T_cartItemData) {
   cookies().delete("cartItemId");
   let cartItem = await prisma.cartItem.create({
     data: {
@@ -595,6 +595,7 @@ export async function setFriendlyMessageToCartItem(params: T_setFriendlyMessageT
   }
 
   let storedCartItemId = cookies().get("cartItemId")?.value;
+
   let idOfCartItem: string | null = null;
   if (cartItemId) {
     idOfCartItem = cartItemId;
@@ -643,7 +644,7 @@ export async function setFriendlyMessageToCartItem(params: T_setFriendlyMessageT
 
     // if this fn called during adding product (premade | item) to cart than we should create ne cartItem  we just need the productId and formData
     if (called !== "customGift" && productId) {
-      await setProductIdIntoCartItemAndSetCartItemToCart(called, productId, friendlyNoteData, variantId);
+      await setProductIdIntoCartItemAndSetCartItemToCart(idOfCartItem, called, productId, friendlyNoteData, variantId);
     }
     revalidatePath("");
     return {
@@ -666,7 +667,7 @@ type T_formData = {
   without_note: boolean;
   empty_card: boolean;
 };
-async function setProductIdIntoCartItemAndSetCartItemToCart(called: "premade" | "item", productId: string, formData: T_formData, variantId: string | null) {
+async function setProductIdIntoCartItemAndSetCartItemToCart(cartItemId: string | null, called: "premade" | "item", productId: string, formData: T_formData, variantId: string | null) {
   let session = await getServerSession(authOptions);
   let userType: "user_id" | "anonymous_user" = "anonymous_user";
   let userId: string | undefined = undefined;
@@ -679,14 +680,27 @@ async function setProductIdIntoCartItemAndSetCartItemToCart(called: "premade" | 
   }
 
   userId = userId ?? crypto.randomUUID();
-  const newCartItem = await prisma.cartItem.create({
-    data: {
-      ...formData,
-      [called + "_id"]: productId,
-      chosed_variant: variantId,
-      custom_gift_id: null,
+  const data = {
+    ...formData,
+    [called + "_id"]: productId,
+    chosed_variant: variantId,
+    custom_gift_id: null,
+  };
+  const newCartItem = await prisma.cartItem.upsert({
+    where: {
+      id: cartItemId ?? "",
     },
+    create: data,
+    update: data,
   });
+  // const newCartItem = await prisma.cartItem.create({
+  //   data: {
+  //     ...formData,
+  //     [called + "_id"]: productId,
+  //     chosed_variant: variantId,
+  //     custom_gift_id: null,
+  //   },
+  // });
   await prisma.cart.create({
     data: {
       [userType]: userId,

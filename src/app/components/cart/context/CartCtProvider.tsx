@@ -11,7 +11,7 @@ export type T_cartContent = {
 };
 const cart: T_cartContent = {
   cart: [],
-  loading: true,
+  loading: false,
   dispatch: () => {},
 };
 

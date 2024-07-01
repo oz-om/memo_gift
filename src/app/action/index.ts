@@ -18,13 +18,38 @@ sgMail.setApiKey(process.env.SENDGRID_API_KEY as string);
 export async function isUser() {
   const session = await getServerSession(authOptions);
   const anonymousUserId = cookies().get("anonymousUserId")?.value;
-  let userId: string | undefined = undefined;
+  let user:
+    | {
+        id: null;
+        username: null;
+        email: null;
+      }
+    | {
+        id: string;
+        email: string;
+        username: string;
+      }
+    | {
+        id: string;
+        email: null;
+        username: string;
+      } = {
+    id: null,
+    username: null,
+    email: null,
+  };
   if (session && session.user) {
-    userId = session.user.id;
+    user = {
+      ...session.user,
+    };
   } else if (anonymousUserId) {
-    userId = anonymousUserId;
+    user = {
+      username: "anonymous",
+      id: anonymousUserId,
+      email: "anonymous@unknown.not",
+    };
   }
-  return userId;
+  return user;
 }
 
 export type T_Address = Prisma.AddressGetPayload<{

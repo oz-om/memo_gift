@@ -4,9 +4,6 @@ import CollectionsHeader from "../components/CollectionsHeader";
 import PremadeProducts from "../components/PremadeProducts";
 import FilteredDataProvider from "../context/Filter_Context";
 import { getPremades } from "../actions";
-import { Suspense } from "react";
-import LoadingSpin from "@/app/components/LoadingSpin";
-import QueryCtProvider from "../context/QueryCtProvider";
 
 export const metadata: Metadata = {
   title: "premade",

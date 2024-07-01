@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@prisma/client':
-        specifier: ^5.14.0
-        version: 5.14.0(prisma@5.14.0)
+        specifier: ^5.16.1
+        version: 5.16.1(prisma@5.16.1)
       '@react-email/components':
         specifier: ^0.0.17
         version: 0.0.17(@types/react@18.2.45)(react@18.2.0)
@@ -20,6 +20,12 @@ importers:
       '@sendgrid/mail':
         specifier: ^8.1.3
         version: 8.1.3
+      '@stripe/react-stripe-js':
+        specifier: ^2.7.1
+        version: 2.7.1(@stripe/stripe-js@3.5.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
+      '@stripe/stripe-js':
+        specifier: ^3.5.0
+        version: 3.5.0
       '@tanstack/react-query':
         specifier: ^5.37.1
         version: 5.37.1(react@18.2.0)
@@ -65,6 +71,9 @@ importers:
       signals-react-safe:
         specifier: ^1.1.2
         version: 1.1.2(react@18.2.0)
+      stripe:
+        specifier: ^15.11.0
+        version: 15.11.0
       zod:
         specifier: ^3.22.4
         version: 3.22.4
@@ -82,28 +91,28 @@ importers:
         specifier: ^2.0.14
         version: 2.0.14
       '@types/react':
-        specifier: ^18.2.42
+        specifier: ^18.2.45
         version: 18.2.45
       '@types/react-dom':
-        specifier: ^18.2.17
+        specifier: ^18.2.18
         version: 18.2.18
       autoprefixer:
-        specifier: ^10.0.1
+        specifier: ^10.4.16
         version: 10.4.16(postcss@8.4.32)
       eslint:
-        specifier: ^8
+        specifier: ^8.56.0
         version: 8.56.0
       eslint-config-next:
         specifier: 14.0.3
         version: 14.0.3(eslint@8.56.0)(typescript@5.3.3)
       postcss:
-        specifier: ^8
+        specifier: ^8.4.32
         version: 8.4.32
       prisma:
-        specifier: ^5.14.0
-        version: 5.14.0
+        specifier: ^5.16.1
+        version: 5.16.1
       tailwindcss:
-        specifier: ^3.3.0
+        specifier: ^3.4.0
         version: 3.4.0
       typescript:
         specifier: ^5.3.3
@@ -263,8 +272,8 @@ packages:
   '@preact/signals-core@1.5.1':
     resolution: {integrity: sha512-dE6f+WCX5ZUDwXzUIWNMhhglmuLpqJhuy3X3xHrhZYI0Hm2LyQwOu0l9mdPiWrVNsE+Q7txOnJPgtIqHCYoBVA==}
 
-  '@prisma/client@5.14.0':
-    resolution: {integrity: sha512-akMSuyvLKeoU4LeyBAUdThP/uhVP3GuLygFE3MlYzaCb3/J8SfsYBE5PkaFuLuVpLyA6sFoW+16z/aPhNAESqg==}
+  '@prisma/client@5.16.1':
+    resolution: {integrity: sha512-wM9SKQjF0qLxdnOZIVAIMKiz6Hu7vDt4FFAih85K1dk/Rr2mdahy6d3QP41K62N9O0DJJA//gUDA3Mp49xsKIg==}
     engines: {node: '>=16.13'}
     peerDependencies:
       prisma: '*'
@@ -272,20 +281,20 @@ packages:
       prisma:
         optional: true
 
-  '@prisma/debug@5.14.0':
-    resolution: {integrity: sha512-iq56qBZuFfX3fCxoxT8gBX33lQzomBU0qIUaEj1RebsKVz1ob/BVH1XSBwwwvRVtZEV1b7Fxx2eVu34Ge/mg3w==}
+  '@prisma/debug@5.16.1':
+    resolution: {integrity: sha512-JsNgZAg6BD9RInLSrg7ZYzo11N7cVvYArq3fHGSD89HSgtN0VDdjV6bib7YddbcO6snzjchTiLfjeTqBjtArVQ==}
 
-  '@prisma/engines-version@5.14.0-25.e9771e62de70f79a5e1c604a2d7c8e2a0a874b48':
-    resolution: {integrity: sha512-ip6pNkRo1UxWv+6toxNcYvItNYaqQjXdFNGJ+Nuk2eYtRoEdoF13wxo7/jsClJFFenMPVNVqXQDV0oveXnR1cA==}
+  '@prisma/engines-version@5.16.0-24.34ace0eb2704183d2c05b60b52fba5c43c13f303':
+    resolution: {integrity: sha512-HkT2WbfmFZ9WUPyuJHhkiADxazHg8Y4gByrTSVeb3OikP6tjQ7txtSUGu9OBOBH0C13dPKN2qqH12xKtHu/Hiw==}
 
-  '@prisma/engines@5.14.0':
-    resolution: {integrity: sha512-lgxkKZ6IEygVcw6IZZUlPIfLQ9hjSYAtHjZ5r64sCLDgVzsPFCi2XBBJgzPMkOQ5RHzUD4E/dVdpn9+ez8tk1A==}
+  '@prisma/engines@5.16.1':
+    resolution: {integrity: sha512-KkyF3eIUtBIyp5A/rJHCtwQO18OjpGgx18PzjyGcJDY/+vNgaVyuVd+TgwBgeq6NLdd1XMwRCI+58vinHsAdfA==}
 
-  '@prisma/fetch-engine@5.14.0':
-    resolution: {integrity: sha512-VrheA9y9DMURK5vu8OJoOgQpxOhas3qF0IBHJ8G/0X44k82kc8E0w98HCn2nhnbOOMwbWsJWXfLC2/F8n5u0gQ==}
+  '@prisma/fetch-engine@5.16.1':
+    resolution: {integrity: sha512-oOkjaPU1lhcA/Rvr4GVfd1NLJBwExgNBE36Ueq7dr71kTMwy++a3U3oLd2ZwrV9dj9xoP6LjCcky799D9nEt4w==}
 
-  '@prisma/get-platform@5.14.0':
-    resolution: {integrity: sha512-/yAyBvcEjRv41ynZrhdrPtHgk47xLRRq/o5eWGcUpBJ1YrUZTYB8EoPiopnP7iQrMATK8stXQdPOoVlrzuTQZw==}
+  '@prisma/get-platform@5.16.1':
+    resolution: {integrity: sha512-R4IKnWnMkR2nUAbU5gjrPehdQYUUd7RENFD2/D+xXTNhcqczp0N+WEGQ3ViyI3+6mtVcjjNIMdnUTNyu3GxIgA==}
 
   '@radix-ui/react-compose-refs@1.0.1':
     resolution: {integrity: sha512-fDSBgd44FKHa1FRMU59qBMPFcl2PZE+2nmqunj+BWFyYYjnhIDWL2ItDs3rrbJDQOtzt5nIebLCQc4QRfz6LJw==}
@@ -444,6 +453,17 @@ packages:
   '@sendgrid/mail@8.1.3':
     resolution: {integrity: sha512-Wg5iKSUOER83/cfY6rbPa+o3ChnYzWwv1OcsR8gCV8SKi+sUPIMroildimlnb72DBkQxcbylxng1W7f0RIX7MQ==}
     engines: {node: '>=12.*'}
+
+  '@stripe/react-stripe-js@2.7.1':
+    resolution: {integrity: sha512-/i13alp27HaSBbMM6kW0jhy8KqdtOL1T/EcRjFjfhvt+CBtMEg8TD7y28W3oZG0+OBDdCyGGnXgNgrKPYQH40g==}
+    peerDependencies:
+      '@stripe/stripe-js': ^1.44.1 || ^2.0.0 || ^3.0.0
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+
+  '@stripe/stripe-js@3.5.0':
+    resolution: {integrity: sha512-pKS3wZnJoL1iTyGBXAvCwduNNeghJHY6QSRSNNvpYnrrQrLZ6Owsazjyynu0e0ObRgks0i7Rv+pe2M7/MBTZpQ==}
+    engines: {node: '>=12.16'}
 
   '@swc/helpers@0.5.2':
     resolution: {integrity: sha512-E4KcWTpoLHqwPHLxidpOqQbcrZVgi0rsmmZXUle1jXmJfuIf/UWpczUJ7MZZ5tlxytgJXyp0w4PGkkeLiuIdZw==}
@@ -694,8 +714,8 @@ packages:
     resolution: {integrity: sha512-QOSvevhslijgYwRx6Rv7zKdMF8lbRmx+uQGx2+vDc+KI/eBnsy9kit5aj23AgGu3pa4t9AgwbnXWqS+iOY+2aA==}
     engines: {node: '>= 6'}
 
-  caniuse-lite@1.0.30001571:
-    resolution: {integrity: sha512-tYq/6MoXhdezDLFZuCO/TKboTzuQ/xR5cFdgXPfDtM7/kchBO3b4VWghE/OAi/DV7tTdhmLjZiZBZi1fA/GheQ==}
+  caniuse-lite@1.0.30001636:
+    resolution: {integrity: sha512-bMg2vmr8XBsbL6Lr0UHXy/21m84FTxDLWn2FSqMd5PrlbMxwJlQnC2YWYxVgp66PZE+BBNF2jYQUBKCo1FDeZg==}
 
   canvas-confetti@1.9.2:
     resolution: {integrity: sha512-6Xi7aHHzKwxZsem4mCKoqP6YwUG3HamaHHAlz1hTNQPCqXhARFpSXnkC9TWlahHY5CG6hSL5XexNjxK8irVErg==}
@@ -1197,6 +1217,9 @@ packages:
   has-property-descriptors@1.0.1:
     resolution: {integrity: sha512-VsX8eaIewvas0xnvinAe9bw4WfIeODpGYikiWYLH+dma0Jw6KHYqWiWfhQlgOVK8D6PvjubK5Uc4P0iIhIcNVg==}
 
+  has-property-descriptors@1.0.2:
+    resolution: {integrity: sha512-55JNKuIW+vq4Ke1BjOTjM2YctQIvCT7GFzHwmfZPGo5wnrgkid0YQtnAleFSqumZm4az3n2BS+erby5ipJdgrg==}
+
   has-proto@1.0.1:
     resolution: {integrity: sha512-7qE+iP+O+bgF9clE5+UoBFzE65mlBiVj3tKCrlNQ0Ogwm0BjpT/gK4SlLYDMybDh5I3TCTKnPPa0oMG7JDYrhg==}
     engines: {node: '>= 0.4'}
@@ -1207,6 +1230,10 @@ packages:
 
   has-tostringtag@1.0.0:
     resolution: {integrity: sha512-kFjcSNhnlGV1kyoGk7OXKSawH5JOb/LzUc5w9B02hOTO0dfFRjbHQKvg1d6cf3HbeUmtU9VbbV3qzZ2Teh97WQ==}
+    engines: {node: '>= 0.4'}
+
+  has-tostringtag@1.0.2:
+    resolution: {integrity: sha512-NqADB8VjPFLM2V0VvHUewwwsw0ZWBaIdgo+ieHtK3hasLz4qeCRjYcqfB6AQrBggRKppKF8L52/VqdVsO47Dlw==}
     engines: {node: '>= 0.4'}
 
   has-unicode@2.0.1:
@@ -1796,8 +1823,8 @@ packages:
   pretty-format@3.8.0:
     resolution: {integrity: sha512-WuxUnVtlWL1OfZFQFuqvnvs6MiAGk9UNsBostyBOB0Is9wb5uRESevA6rnl/rkksXaGX3GzZhPup5d6Vp1nFew==}
 
-  prisma@5.14.0:
-    resolution: {integrity: sha512-gCNZco7y5XtjrnQYeDJTiVZmT/ncqCr5RY1/Cf8X2wgLRmyh9ayPAGBNziI4qEE4S6SxCH5omQLVo9lmURaJ/Q==}
+  prisma@5.16.1:
+    resolution: {integrity: sha512-Z1Uqodk44diztImxALgJJfNl2Uisl9xDRvqybMKEBYJLNKNhDfAHf+ZIJbZyYiBhLMbKU9cYGdDVG5IIXEnL2Q==}
     engines: {node: '>=16.13'}
     hasBin: true
 
@@ -1817,6 +1844,10 @@ packages:
   punycode@2.3.1:
     resolution: {integrity: sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==}
     engines: {node: '>=6'}
+
+  qs@6.12.1:
+    resolution: {integrity: sha512-zWmv4RSuB9r2mYQw3zxQuHWeU+42aKi1wWig/j4ele4ygELZ7PEO6MM7rim9oAQH2A5MWfsAVf/jPvTPgCbvUQ==}
+    engines: {node: '>=0.6'}
 
   queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
@@ -1885,6 +1916,10 @@ packages:
 
   regexp.prototype.flags@1.5.1:
     resolution: {integrity: sha512-sy6TXMN+hnP/wMy+ISxg3krXx7BAtWVO4UouuCN/ziM9UEne0euamVNafDfvC83bRNr95y0V5iijeDQFUNpvrg==}
+    engines: {node: '>= 0.4'}
+
+  regexp.prototype.flags@1.5.2:
+    resolution: {integrity: sha512-NcDiDkTLuPR+++OCKB0nWafEmhg/Da8aUPLPMQbK+bxKKCm1/S5he+AqYa4PlMCVBalb4/yxIRub6qkEx5yJbw==}
     engines: {node: '>= 0.4'}
 
   resolve-from@4.0.0:
@@ -1957,6 +1992,10 @@ packages:
     resolution: {integrity: sha512-tMNCiqYVkXIZgc2Hnoy2IvC/f8ezc5koaRFkCjrpWzGpCd3qbZXPzVy9MAZzK1ch/X0jvSkojys3oqJN0qCmdA==}
     engines: {node: '>= 0.4'}
 
+  set-function-name@2.0.2:
+    resolution: {integrity: sha512-7PGFlmtwsEADb0WYyvCMa1t+yke6daIG4Wirafur5kcf+MhUnPms1UeR0CKQdTZD81yESwMHbtn+TR+dMviakQ==}
+    engines: {node: '>= 0.4'}
+
   shebang-command@2.0.0:
     resolution: {integrity: sha512-kHxr2zZpYtdmrN1qDjrrX/Z1rR1kG8Dx+gkpK1G4eXmvXswmcE1hTWBWYUzlraYw1/yZp6YuDY77YtvbN0dmDA==}
     engines: {node: '>=8'}
@@ -1967,6 +2006,10 @@ packages:
 
   side-channel@1.0.4:
     resolution: {integrity: sha512-q5XPytqFEIKHkGdiMIrY10mvLRvnQh42/+GoBlFW3b2LXLE2xxJpZFdm94we0BaoV3RwJyGqg5wS7epxTv0Zvw==}
+
+  side-channel@1.0.6:
+    resolution: {integrity: sha512-fDW/EZ6Q9RiO8eFG8Hj+7u/oW+XrPTIChwCOM2+th2A6OblDtYYIpve9m+KvI9Z4C9qSEXlaGR6bTEYHReuglA==}
+    engines: {node: '>= 0.4'}
 
   signal-exit@3.0.7:
     resolution: {integrity: sha512-wnD2ZE+l+SPC/uoS0vXeE9L1+0wuaMqKlfz9AMUo38JsyLSBWSFcHR1Rri62LZc12vLr1gb3jl7iwQhgwpAbGQ==}
@@ -2036,6 +2079,10 @@ packages:
   strip-json-comments@3.1.1:
     resolution: {integrity: sha512-6fPc+R4ihwqP6N/aIv2f1gMH8lOVtWQHoqC4yK6oSDVVocumAsfCqjkXnqiYMhmMwS/mEHLp7Vehlt3ql6lEig==}
     engines: {node: '>=8'}
+
+  stripe@15.11.0:
+    resolution: {integrity: sha512-qmZF0PN1jRVpiQrXL8eTb9Jy/6S+aUlcDquKBFT2h3PkaD7RZ444FIojVXUg67FK2zFIUNXgMv02c7csdL5qHg==}
+    engines: {node: '>=12.*'}
 
   styled-jsx@5.1.1:
     resolution: {integrity: sha512-pW7uC1l4mBZ8ugbiZrcIsiIvVx1UmTfw7UkC3Um2tmfUq9Bhk8IiyEIPl6F8agHgjzku6j0xQEZbfA5uSgSaCw==}
@@ -2355,30 +2402,30 @@ snapshots:
 
   '@preact/signals-core@1.5.1': {}
 
-  '@prisma/client@5.14.0(prisma@5.14.0)':
+  '@prisma/client@5.16.1(prisma@5.16.1)':
     optionalDependencies:
-      prisma: 5.14.0
+      prisma: 5.16.1
 
-  '@prisma/debug@5.14.0': {}
+  '@prisma/debug@5.16.1': {}
 
-  '@prisma/engines-version@5.14.0-25.e9771e62de70f79a5e1c604a2d7c8e2a0a874b48': {}
+  '@prisma/engines-version@5.16.0-24.34ace0eb2704183d2c05b60b52fba5c43c13f303': {}
 
-  '@prisma/engines@5.14.0':
+  '@prisma/engines@5.16.1':
     dependencies:
-      '@prisma/debug': 5.14.0
-      '@prisma/engines-version': 5.14.0-25.e9771e62de70f79a5e1c604a2d7c8e2a0a874b48
-      '@prisma/fetch-engine': 5.14.0
-      '@prisma/get-platform': 5.14.0
+      '@prisma/debug': 5.16.1
+      '@prisma/engines-version': 5.16.0-24.34ace0eb2704183d2c05b60b52fba5c43c13f303
+      '@prisma/fetch-engine': 5.16.1
+      '@prisma/get-platform': 5.16.1
 
-  '@prisma/fetch-engine@5.14.0':
+  '@prisma/fetch-engine@5.16.1':
     dependencies:
-      '@prisma/debug': 5.14.0
-      '@prisma/engines-version': 5.14.0-25.e9771e62de70f79a5e1c604a2d7c8e2a0a874b48
-      '@prisma/get-platform': 5.14.0
+      '@prisma/debug': 5.16.1
+      '@prisma/engines-version': 5.16.0-24.34ace0eb2704183d2c05b60b52fba5c43c13f303
+      '@prisma/get-platform': 5.16.1
 
-  '@prisma/get-platform@5.14.0':
+  '@prisma/get-platform@5.16.1':
     dependencies:
-      '@prisma/debug': 5.14.0
+      '@prisma/debug': 5.16.1
 
   '@radix-ui/react-compose-refs@1.0.1(@types/react@18.2.45)(react@18.2.0)':
     dependencies:
@@ -2533,6 +2580,15 @@ snapshots:
       '@sendgrid/helpers': 8.0.0
     transitivePeerDependencies:
       - debug
+
+  '@stripe/react-stripe-js@2.7.1(@stripe/stripe-js@3.5.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)':
+    dependencies:
+      '@stripe/stripe-js': 3.5.0
+      prop-types: 15.8.1
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+
+  '@stripe/stripe-js@3.5.0': {}
 
   '@swc/helpers@0.5.2':
     dependencies:
@@ -2747,7 +2803,7 @@ snapshots:
   autoprefixer@10.4.16(postcss@8.4.32):
     dependencies:
       browserslist: 4.22.2
-      caniuse-lite: 1.0.30001571
+      caniuse-lite: 1.0.30001636
       fraction.js: 4.3.7
       normalize-range: 0.1.2
       picocolors: 1.0.0
@@ -2797,7 +2853,7 @@ snapshots:
 
   browserslist@4.22.2:
     dependencies:
-      caniuse-lite: 1.0.30001571
+      caniuse-lite: 1.0.30001636
       electron-to-chromium: 1.4.616
       node-releases: 2.0.14
       update-browserslist-db: 1.0.13(browserslist@4.22.2)
@@ -2824,7 +2880,7 @@ snapshots:
 
   camelcase-css@2.0.1: {}
 
-  caniuse-lite@1.0.30001571: {}
+  caniuse-lite@1.0.30001636: {}
 
   canvas-confetti@1.9.2: {}
 
@@ -2913,7 +2969,7 @@ snapshots:
       is-regex: 1.1.4
       object-is: 1.1.6
       object-keys: 1.1.1
-      regexp.prototype.flags: 1.5.1
+      regexp.prototype.flags: 1.5.2
 
   deep-is@0.1.4: {}
 
@@ -3478,11 +3534,19 @@ snapshots:
     dependencies:
       get-intrinsic: 1.2.2
 
+  has-property-descriptors@1.0.2:
+    dependencies:
+      es-define-property: 1.0.0
+
   has-proto@1.0.1: {}
 
   has-symbols@1.0.3: {}
 
   has-tostringtag@1.0.0:
+    dependencies:
+      has-symbols: 1.0.3
+
+  has-tostringtag@1.0.2:
     dependencies:
       has-symbols: 1.0.3
 
@@ -3541,7 +3605,7 @@ snapshots:
   is-arguments@1.1.1:
     dependencies:
       call-bind: 1.0.7
-      has-tostringtag: 1.0.0
+      has-tostringtag: 1.0.2
 
   is-array-buffer@3.0.2:
     dependencies:
@@ -3829,7 +3893,7 @@ snapshots:
       '@next/env': 14.0.3
       '@swc/helpers': 0.5.2
       busboy: 1.6.0
-      caniuse-lite: 1.0.30001571
+      caniuse-lite: 1.0.30001636
       postcss: 8.4.31
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
@@ -4052,9 +4116,9 @@ snapshots:
 
   pretty-format@3.8.0: {}
 
-  prisma@5.14.0:
+  prisma@5.16.1:
     dependencies:
-      '@prisma/engines': 5.14.0
+      '@prisma/engines': 5.16.1
 
   prismjs@1.29.0: {}
 
@@ -4069,6 +4133,10 @@ snapshots:
   proxy-from-env@1.1.0: {}
 
   punycode@2.3.1: {}
+
+  qs@6.12.1:
+    dependencies:
+      side-channel: 1.0.6
 
   queue-microtask@1.2.3: {}
 
@@ -4161,6 +4229,13 @@ snapshots:
       define-properties: 1.2.1
       set-function-name: 2.0.1
 
+  regexp.prototype.flags@1.5.2:
+    dependencies:
+      call-bind: 1.0.7
+      define-properties: 1.2.1
+      es-errors: 1.3.0
+      set-function-name: 2.0.2
+
   resolve-from@4.0.0: {}
 
   resolve-pkg-maps@1.0.0: {}
@@ -4244,6 +4319,13 @@ snapshots:
       functions-have-names: 1.2.3
       has-property-descriptors: 1.0.1
 
+  set-function-name@2.0.2:
+    dependencies:
+      define-data-property: 1.1.4
+      es-errors: 1.3.0
+      functions-have-names: 1.2.3
+      has-property-descriptors: 1.0.2
+
   shebang-command@2.0.0:
     dependencies:
       shebang-regex: 3.0.0
@@ -4254,6 +4336,13 @@ snapshots:
     dependencies:
       call-bind: 1.0.5
       get-intrinsic: 1.2.2
+      object-inspect: 1.13.1
+
+  side-channel@1.0.6:
+    dependencies:
+      call-bind: 1.0.7
+      es-errors: 1.3.0
+      get-intrinsic: 1.2.4
       object-inspect: 1.13.1
 
   signal-exit@3.0.7: {}
@@ -4330,6 +4419,11 @@ snapshots:
   strip-bom@3.0.0: {}
 
   strip-json-comments@3.1.1: {}
+
+  stripe@15.11.0:
+    dependencies:
+      '@types/node': 20.10.5
+      qs: 6.12.1
 
   styled-jsx@5.1.1(react@18.2.0):
     dependencies:

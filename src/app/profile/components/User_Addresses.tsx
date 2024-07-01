@@ -110,7 +110,7 @@ export default function User_Addresses({ addresses, session }: { session: Sessio
         })}
         {!addresses.length && <p className='py-5 border rounded px-2 text-slate-400 text-sm'>there is no addresses added yet! add one?</p>}
       </ul>
-      {openAddressForm && <Address_form session={session} addressData={editedAddress} submitAddressAction={submitAddressAction} submitType={formAddressAction} setIsOpen={setOpenAddressForm} isOpen={openAddressForm} />}
+      {openAddressForm && <Address_form userId={session?.user.id || null} addressData={editedAddress} submitAddressAction={submitAddressAction} submitType={formAddressAction} setIsOpen={setOpenAddressForm} isOpen={openAddressForm} />}
     </div>
   );
 }

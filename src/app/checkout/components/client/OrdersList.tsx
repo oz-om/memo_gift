@@ -1,7 +1,5 @@
 "use client";
-// import Address_form from '@/app/components/client/Address_form';
 import { Prisma } from "@prisma/client";
-import { Session } from "next-auth";
 import React, { useState } from "react";
 import Order from "./Order";
 import dynamic from "next/dynamic";
@@ -55,7 +53,7 @@ type T_Orders = Prisma.CartGetPayload<{
   };
 }>[];
 
-export default function OrdersList({ Orders, userSession }: { Orders: T_Orders; userSession: Session | null }) {
+export default function OrdersList({ Orders, userId }: { Orders: T_Orders; userId: string | null }) {
   const [openAddressForm, setOpenAddressForm] = useState(false);
   return (
     <>
@@ -64,7 +62,7 @@ export default function OrdersList({ Orders, userSession }: { Orders: T_Orders; 
           return <Order key={cartItem.id} cartItem={cartItem} addresses={user?.address ?? []} openAddressForm={setOpenAddressForm} />;
         })}
       </div>
-      {openAddressForm && <Address_form session={userSession} addressData={undefined} submitAddressAction={submitAddressAction} submitType='create' isOpen={openAddressForm} setIsOpen={setOpenAddressForm} />}
+      {openAddressForm && <Address_form userId={userId} addressData={undefined} submitAddressAction={submitAddressAction} submitType='create' isOpen={openAddressForm} setIsOpen={setOpenAddressForm} />}
     </>
   );
 }

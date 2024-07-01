@@ -5,7 +5,7 @@ import React from "react";
 import { cookies } from "next/headers";
 import { Prisma } from "@prisma/client";
 import FriendlyMessageForm from "@/app/components/client/FriendlyMessageForm";
-type TcartItem = Prisma.cartItemGetPayload<{
+type T_cartItem = Prisma.cartItemGetPayload<{
   include: {
     postcard: true;
   };
@@ -13,7 +13,7 @@ type TcartItem = Prisma.cartItemGetPayload<{
 export default async function ChoseCardDialog({ productId, called }: { productId: string; called: "premade" | "item" }) {
   let postCards = await prisma.postCard.findMany();
   let cartItemId = cookies().get("cartItemId")?.value;
-  let cartItem: TcartItem = null;
+  let cartItem: T_cartItem = null;
   if (cartItemId) {
     cartItem = await prisma.cartItem.findUnique({
       where: {

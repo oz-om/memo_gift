@@ -1,3 +1,4 @@
+import { formatCurrency } from "@/utils";
 import Image from "next/image";
 import Link from "next/link";
 type T_itemProps = {
@@ -21,11 +22,11 @@ export default function Item(props: T_itemProps) {
     <div className='rounded-md overflow-hidden shadow'>
       <Link href={"/collections/" + type + "/" + id + (props.type == "premade" ? "?v=" + props.variantId : "")}>
         <figure>
-          <Image src={image} alt={name} width={720} height={720} />
+          <Image src={image} alt={name} width={720} height={720} className='aspect-square' />
         </figure>
         <div className='item_details px-2 pb-2'>
           <h4 className='line-clamp-2'>{name}</h4>
-          <span className='font-sans'>{price}$</span>
+          <span className='font-sans'>{formatCurrency(price)}</span>
         </div>
       </Link>
     </div>

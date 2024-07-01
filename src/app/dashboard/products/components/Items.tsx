@@ -13,7 +13,7 @@ export default async function Items() {
           return (
             <div key={item.id} className='added py-3 bg-blue-50 px-2 rounded flex flex-col'>
               <figure className=' overflow-hidden rounded-md mb-2'>
-                <Image src={`${JSON.parse(item!.images)[0]}`} alt={"last added premade"} width={200} height={200} />
+                <Image src={`${JSON.parse(item!.images)[0]}`} alt={"last added premade"} width={200} height={200} className='aspect-square' />
               </figure>
               <div className='name'>{item?.name}</div>
               <div className='details flex justify-between mt-2 mb-5'>

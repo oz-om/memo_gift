@@ -7,19 +7,47 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model customGift {
+  id        String              @id @default(uuid())
+  name      String?             @default("custom-gift")
+  price     Float               @default(0)
+  owner     String
+  createdAt DateTime            @default(now())
+  updatedAt DateTime            @updatedAt
+  includes  customGiftIncudes[]
+  cartItem  cartItem[]
+  user      User                @relation(fields: [owner], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("cosutom_gifts")
+}
+
+model customGiftIncudes {
+  customGift_id String
+  item_id       String
+  quantity      Int        @default(1)
+  customGift    customGift @relation(fields: [customGift_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  item          Item       @relation(fields: [item_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@id([customGift_id, item_id])
+  @@index([item_id, customGift_id], map: "customGiftIncludes_customGift_id_fkey")
+  @@map("custom_gift_includes")
+}
+
 model Item {
-  id         String              @id @default(uuid())
-  name       String
-  desc       String              @db.Text
-  price      Float
-  theme      String
-  images     String              @db.Text
-  createdAt  DateTime            @default(now())
-  updatedAt  DateTime            @updatedAt
-  customG    customGiftIncudes[]
-  premade    includes[]
-  categories itemCategory[]
-  cartItem   cartItem[]
+  id                        String                      @id @default(uuid())
+  name                      String
+  desc                      String                      @db.Text
+  price                     Float
+  theme                     String
+  images                    String                      @db.Text
+  createdAt                 DateTime                    @default(now())
+  updatedAt                 DateTime                    @updatedAt
+  customG                   customGiftIncudes[]
+  premade                   includes[]
+  categories                itemCategory[]
+  cartItem                  cartItem[]
+  orderedProduct            orderedProduct[]
+  orderedCustomGiftIncludes orderedCustomGiftIncludes[]
 
   @@map("items")
 }
@@ -46,17 +74,18 @@ model Category {
 }
 
 model PremadeGift {
-  id         String        @id @default(uuid())
-  name       String
-  desc       String        @db.Text
-  price      Float
-  images     String        @db.Text
-  createdAt  DateTime      @default(now())
-  updatedAt  DateTime      @updatedAt
-  categories boxCategory[]
-  variants   boxVariant[]
-  includes   includes[]
-  cartItem   cartItem[]
+  id             String           @id @default(uuid())
+  name           String
+  desc           String           @db.Text
+  price          Float
+  images         String           @db.Text
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  categories     boxCategory[]
+  variants       boxVariant[]
+  includes       includes[]
+  cartItem       cartItem[]
+  orderedProduct orderedProduct[]
 
   @@map("premade_gifts")
 }
@@ -84,14 +113,15 @@ model boxVariant {
 }
 
 model Variant {
-  id        String       @id @default(uuid())
-  name      String       @unique
-  value     String
-  preview   String
-  createdAt DateTime     @default(now())
-  updatedAt DateTime     @updatedAt
-  premade   boxVariant[]
-  cartItem  cartItem[]
+  id             String           @id @default(uuid())
+  name           String           @unique
+  value          String
+  preview        String
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  premade        boxVariant[]
+  cartItem       cartItem[]
+  orderedProduct orderedProduct[]
 
   @@map("variants")
 }
@@ -107,32 +137,6 @@ model boxCategory {
   @@map("box_categories")
 }
 
-model customGift {
-  id        String              @id @default(uuid())
-  name      String?             @default("custom-gift")
-  price     Float               @default(0)
-  owner     String
-  createdAt DateTime            @default(now())
-  updatedAt DateTime            @updatedAt
-  includes  customGiftIncudes[]
-  cartItem  cartItem[]
-  user      User                @relation(fields: [owner], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  @@map("cosutom_gifts")
-}
-
-model customGiftIncudes {
-  customGift_id String
-  item_id       String
-  quantity      Int        @default(1)
-  customGift    customGift @relation(fields: [customGift_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  item          Item       @relation(fields: [item_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-
-  @@id([customGift_id, item_id])
-  @@index([item_id, customGift_id], map: "customGiftIncudes_customGift_id_fkey")
-  @@map("custom_gift_incudes")
-}
-
 model PostCard {
   id        String   @id @default(uuid())
   name      String
@@ -140,34 +144,35 @@ model PostCard {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  cartItem cartItem[]
+  cartItem       cartItem[]
+  orderedProduct orderedProduct[]
 
   @@map("postcards")
 }
 
 model cartItem {
-  id             String       @id @default(uuid())
-  premade_id     String?
-  custom_gift_id String?
-  item_id        String?
-  from           String?
-  to             String?
-  note           String?
-  without_note   Boolean      @default(false)
-  empty_card     Boolean      @default(false)
-  post_card      String?
-  quantity       Int          @default(1)
-  chosed_variant String?
-  address        String?
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
-  premade        PremadeGift? @relation(fields: [premade_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  customGift     customGift?  @relation(fields: [custom_gift_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  item           Item?        @relation(fields: [item_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  postcard       PostCard?    @relation(fields: [post_card], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  variant        Variant?     @relation(fields: [chosed_variant], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  cart           Cart[]
-  Order          Order[]
+  id                String              @id @default(uuid())
+  premade_id        String?
+  custom_gift_id    String?
+  item_id           String?
+  from              String?
+  to                String?
+  note              String?
+  without_note      Boolean             @default(false)
+  empty_card        Boolean             @default(false)
+  post_card         String?
+  quantity          Int                 @default(1)
+  chosed_variant    String?
+  address           String?
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  premade           PremadeGift?        @relation(fields: [premade_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  customGift        customGift?         @relation(fields: [custom_gift_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  item              Item?               @relation(fields: [item_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  postcard          PostCard?           @relation(fields: [post_card], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  variant           Variant?            @relation(fields: [chosed_variant], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  cart              Cart[]
+  initializedOrders initializedOrders[]
 
   @@map("cart_items")
 }
@@ -185,22 +190,84 @@ model Cart {
   @@map("carts")
 }
 
-model Order {
-  id             String           @id @default(uuid())
+model initializedOrders {
+  anonymous_user String?
+  cartItem_Id    String   @unique
   user_id        String?
-  order_number   BigInt
+  user           User?    @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  cartItem       cartItem @relation(fields: [cartItem_Id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("initialized_orders")
+}
+
+model Order {
+  id             Int            @id @default(autoincrement())
+  user_id        String?
   address        String
   email          String
-  order_status   String           @default("pending")
+  order_status   String         @default("pending")
   product_id     String
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
-  product        cartItem         @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  user           User?            @relation(fields: [user_id], references: [id], onDelete: NoAction)
-  confirmedOrder ConfirmedOrder[]
+  payment_method String
+  amount         Float
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  product        orderedProduct @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user           User?          @relation(fields: [user_id], references: [id], onDelete: NoAction)
 
   @@index([id], map: "order_id_fkey")
   @@map("orders")
+}
+
+model orderedProduct {
+  id                    String             @id @default(cuid())
+  premade_id            String?
+  ordered_customGift_id String?
+  item_id               String?
+  from                  String?
+  to                    String?
+  note                  String?
+  without_note          Boolean            @default(false)
+  empty_card            Boolean            @default(false)
+  post_card             String?
+  quantity              Int                @default(1)
+  chosed_variant        String?
+  address               String?
+  createdAt             DateTime           @default(now())
+  updatedAt             DateTime           @updatedAt
+  premade               PremadeGift?       @relation(fields: [premade_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  orderedCustomGift     orderedCustomGift? @relation(fields: [ordered_customGift_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  item                  Item?              @relation(fields: [item_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  postcard              PostCard?          @relation(fields: [post_card], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  variant               Variant?           @relation(fields: [chosed_variant], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  Order                 Order[]
+
+  @@map("ordered_product")
+}
+
+model orderedCustomGift {
+  id             String                      @id @default(cuid())
+  name           String?                     @default("custom-gift")
+  price          Float                       @default(0)
+  owner          String
+  createdAt      DateTime                    @default(now())
+  updatedAt      DateTime                    @updatedAt
+  orderedProduct orderedProduct[]
+  user           User                        @relation(fields: [owner], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  includes       orderedCustomGiftIncludes[]
+
+  @@map("ordered_customGift")
+}
+
+model orderedCustomGiftIncludes {
+  orderedCustomGift_id String
+  item_id              String
+  quantity             Int               @default(1)
+  orderedCustomGift    orderedCustomGift @relation(fields: [orderedCustomGift_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  item                 Item              @relation(fields: [item_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@id([orderedCustomGift_id, item_id])
+  @@index([item_id, orderedCustomGift_id], map: "orderedCustomGiftIncludes_fkey")
+  @@map("orderedCustomGift_includes")
 }
 
 model ConfirmedOrder {
@@ -209,7 +276,6 @@ model ConfirmedOrder {
   order_id       String
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
-  order          Order          @relation(fields: [order_id], references: [id])
   shippedOrder   ShippedOrder[]
 
   @@index([order_id], map: "confirmed_orders_order_id_fkey")
@@ -245,6 +311,8 @@ model User {
   order              Order[]
   ResetPasswordToken ResetPasswordToken[]
   customGift         customGift[]
+  orderedCustomGift  orderedCustomGift[]
+  initializedOrders  initializedOrders[]
 
   @@index([id], map: "users_id_fkey")
   @@map("users")

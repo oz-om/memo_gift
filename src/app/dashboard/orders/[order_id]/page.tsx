@@ -7,11 +7,8 @@ import { timeDetails } from "@/utils";
 import Image from "next/image";
 import Link from "next/link";
 
-type T_Order = Prisma.ConfirmedOrderGetPayload<{
+type T_Order = Prisma.OrderGetPayload<{
   include: {
-    order: {
-      include: {
-        // product refer to cartItem
         product: {
           include: {
             premade: {
@@ -23,7 +20,7 @@ type T_Order = Prisma.ConfirmedOrderGetPayload<{
                 };
               };
             };
-            customGift: {
+            orderedCustomGift: {
               include: {
                 includes: {
                   include: {
@@ -37,21 +34,16 @@ type T_Order = Prisma.ConfirmedOrderGetPayload<{
           };
         };
         user: true;
-      };
-    };
   };
 }> | null;
 
 const getOrder = cache(async (id: number) => {
   let order: T_Order = null;
-  order = await prisma.confirmedOrder.findUnique({
+  order = await prisma.order.findUnique({
     where: {
       id,
     },
     include: {
-      order: {
-        include: {
-          // product refer to cartItem
           product: {
             include: {
               premade: {
@@ -63,7 +55,7 @@ const getOrder = cache(async (id: number) => {
                   },
                 },
               },
-              customGift: {
+              orderedCustomGift: {
                 include: {
                   includes: {
                     include: {
@@ -77,8 +69,6 @@ const getOrder = cache(async (id: number) => {
             },
           },
           user: true,
-        },
-      },
     },
   });
   if (!order) return notFound();
@@ -87,7 +77,7 @@ const getOrder = cache(async (id: number) => {
 
 export async function generateMetadata({ params: { order_id } }: { params: { order_id: string } }): Promise<Metadata> {
   const order = await getOrder(+order_id);
-  let productThatInOrder = order.order.product.premade ?? order.order.product.customGift ?? order.order.product.item;
+  let productThatInOrder = order.product.premade ?? order.product.orderedCustomGift ?? order.product.item;
   return {
     title: (productThatInOrder?.name ?? "custom gift") + " - Order - Dashboard",
   };
@@ -95,10 +85,10 @@ export async function generateMetadata({ params: { order_id } }: { params: { ord
 
 export default async function ManageOrderPage({ params }: { params: { order_id: string } }) {
   let order = await getOrder(+params.order_id);
-  const product = order.order.product;
+  const product = order.product;
   const { hours, minutes, day } = timeDetails(order.createdAt);
-  const withIncludes = product.customGift ?? product.premade;
-  let orderOwner = order.order.user;
+  const withIncludes = product.orderedCustomGift ?? product.premade;
+  let orderOwner = order.user;
   return (
     <>
       <h4 className='border-b'>order details:</h4>
@@ -109,7 +99,7 @@ export default async function ManageOrderPage({ params }: { params: { order_id: 
               <div className='order_status flex gap-4 justify-between flex-wrap items-center border-b py-3'>
                 <div className='order_type flex gap-x-4 items-center '>
                   <h4>type: </h4>
-                  <span className={"px-2 rounded text-white " + (!!product.premade ? "bg-teal-400" : !!product.customGift ? "bg-blue-400" : "bg-orange-400")}>{product.customGift ? "custom gift" : product.premade ? "premade" : "single item"}</span>
+                  <span className={"px-2 rounded text-white " + (!!product.premade ? "bg-teal-400" : !!product.orderedCustomGift ? "bg-blue-400" : "bg-orange-400")}>{product.orderedCustomGift ? "custom gift" : product.premade ? "premade" : "single item"}</span>
                 </div>
                 <div className='ordered_at_time text-slate-400 text-sm'>
                   {day} at {hours}:{minutes}
@@ -117,7 +107,7 @@ export default async function ManageOrderPage({ params }: { params: { order_id: 
                 <div className={"order_status grow "}>
                   <p>
                     <span>status: </span>
-                    <span className={"text-white rounded px-2 ml-2 " + (order.order.order_status == "pending" ? "bg-orange-400" : "bg-teal-400")}>{order.order.order_status}</span>
+                    <span className={"text-white rounded px-2 ml-2 " + (order.order_status == "pending" ? "bg-orange-400" : "bg-teal-400")}>{order.order_status}</span>
                   </p>
                 </div>
               </div>
@@ -197,7 +187,7 @@ export default async function ManageOrderPage({ params }: { params: { order_id: 
                 </div>
                 <div className='user_email flex gap-4 items-center mt-3'>
                   <h4>email: </h4>
-                  <p className='border rounded px-2 py1'>{order.order.email}</p>
+                  <p className='border rounded px-2 py1'>{order.email}</p>
                 </div>
               </div>
             </div>

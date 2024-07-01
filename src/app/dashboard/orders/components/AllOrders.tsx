@@ -3,34 +3,28 @@ import React from "react";
 import LastOrder from "../../home/components/LastOrder";
 
 export default async function AllOrders() {
-  const allOrders = await prisma.confirmedOrder.findMany({
+  const allOrders = await prisma.order.findMany({
     orderBy: {
       createdAt: "asc",
     },
     where: {
-      order: {
-        order_status: "pending",
-      },
+      order_status: "pending",
     },
     include: {
-      order: {
+      product: {
         include: {
-          product: {
+          item: true,
+          premade: {
             include: {
-              item: true,
-              premade: {
-                include: {
-                  includes: true,
-                },
-              },
-              customGift: {
-                include: {
-                  includes: true,
-                },
-              },
-              variant: true,
+              includes: true,
             },
           },
+          orderedCustomGift: {
+            include: {
+              includes: true,
+            },
+          },
+          variant: true,
         },
       },
     },

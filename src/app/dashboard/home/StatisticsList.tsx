@@ -3,7 +3,7 @@ import React from "react";
 import StatisticOrderValue from "./components/StatisticOrderValue";
 
 export default async function StatisticsList() {
-  let allOrders = await prisma.confirmedOrder.findMany();
+  let allOrders = await prisma.order.findMany();
   let allShippedOrders = await prisma.shippedOrder.findMany();
 
   return (

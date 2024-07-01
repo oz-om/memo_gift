@@ -3,38 +3,34 @@ import { Prisma } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-type T_Order = Prisma.ConfirmedOrderGetPayload<{
+type T_Order = Prisma.OrderGetPayload<{
   include: {
-    order: {
+    product: {
       include: {
-        product: {
+        item: true;
+        premade: {
           include: {
-            item: true;
-            premade: {
-              include: {
-                includes: true;
-              };
-            };
-            customGift: {
-              include: {
-                includes: true;
-              };
-            };
-            variant: true;
+            includes: true;
           };
         };
+        orderedCustomGift: {
+          include: {
+            includes: true;
+          };
+        };
+        variant: true;
       };
     };
   };
 }>;
 export default function LastOrder({ order }: { order: T_Order }) {
-  let product = order.order.product;
-  let targetProduct = product.premade ?? product.customGift ?? product.item;
-  let productType = product.premade ? "premade" : product.customGift ? "customGift" : "item";
-  let isCustomGift = !!product.customGift;
+  let product = order.product;
+  let targetProduct = product.premade ?? product.orderedCustomGift ?? product.item;
+  let productType = product.premade ? "premade" : product.orderedCustomGift ? "customGift" : "item";
+  let isCustomGift = !!product.orderedCustomGift;
   const { hours, minutes, day } = timeDetails(order.createdAt);
 
-  let withIncludes = product.premade ?? product.customGift;
+  let withIncludes = product.premade ?? product.orderedCustomGift;
   return (
     <div className='order sm:flex gap-x-3 odd:bg-blue-50 mb-3 rounded px-2 py-1 border '>
       <div className='order_main_details flex gap-x-3 basis-2/5'>

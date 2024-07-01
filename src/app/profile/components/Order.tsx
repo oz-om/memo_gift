@@ -2,51 +2,47 @@ import { formatDate } from "@/utils";
 import { Prisma } from "@prisma/client";
 import Image from "next/image";
 import React from "react";
-type Order = Prisma.ConfirmedOrderGetPayload<{
+type Order = Prisma.OrderGetPayload<{
   include: {
-    order: {
+    product: {
       include: {
-        product: {
+        orderedCustomGift: {
           include: {
-            customGift: {
+            includes: {
               include: {
-                includes: {
-                  include: {
-                    item: true;
-                  };
-                };
+                item: true;
               };
             };
-            premade: {
-              include: {
-                includes: {
-                  include: {
-                    item: true;
-                  };
-                };
-              };
-            };
-            item: true;
-            variant: true;
           };
         };
+        premade: {
+          include: {
+            includes: {
+              include: {
+                item: true;
+              };
+            };
+          };
+        };
+        item: true;
+        variant: true;
       };
     };
   };
 }>;
 
-export default function Order({ confirmed }: { confirmed: Order }) {
-  const { order, createdAt } = confirmed;
-  const { item, premade, customGift, quantity } = order.product;
-  const product = item ? item : premade ? premade : customGift ? customGift : null;
-  let includes = premade?.includes ?? customGift?.includes;
+export default function Order({ order }: { order: Order }) {
+  const { createdAt } = order.product;
+  const { item, premade, orderedCustomGift, quantity } = order.product;
+  const product = item ? item : premade ? premade : orderedCustomGift ? orderedCustomGift : null;
+  let includes = premade?.includes ?? orderedCustomGift?.includes;
   return (
     <div className='order_wrapper mb-5'>
       <div className='order p-2 rounded border shadow flex flex-col gap-y-2 sm:flex-row sm:justify-around gap-x-5 xl:justify-around '>
         <div className='block_A flex gap-x-2 basis-3/4'>
           <div className='block_A_1 flex flex-col items-center md:flex-row basis-1/4'>
             <div className='order_id min-w-28'>
-              <p className='tracking-wider text-lg'>#{confirmed.id}</p>
+              <p className='tracking-wider text-lg'>#{order.id}</p>
               <p className='text-slate-500 text-sm'>{formatDate(`${createdAt}`)}</p>
             </div>
             <figure className='overflow-hidden size-40 md:size-24 rounded border p-2'>
@@ -82,20 +78,20 @@ export default function Order({ confirmed }: { confirmed: Order }) {
       </div>
       <div className='order_address bg-slate-50'>
         <h3 className='text-lg uppercase px-2 font-light'>Address:</h3>
-        <p className='text-xs text-zinc-800 font-light pl-2'> {order.address.split("<*>").join(" ")}</p>
+        <p className='text-xs text-zinc-800 font-light pl-2'> {order.product.address?.split("<*>").join(" ")}</p>
       </div>
-      {(!!customGift || !!premade) && (
+      {(!!orderedCustomGift || !!premade) && (
         <button className='toggle_button w-full  justify-center relative bg-slate-100 border hidden'>
           <i className='bx bxs-chevron-down'></i>
         </button>
       )}
-      {(!!customGift || !!premade) && (
+      {(!!orderedCustomGift || !!premade) && (
         <div className=' includes-wrapper rounded-b border  bg-slate-50 '>
           <h3 className='text-lg uppercase px-2 font-light'>includes:</h3>
           <div className='includes '>
             {includes?.map((include, i) => {
               let quantity = 1;
-              if ("customGift_id" in include) {
+              if ("orderedCustomGift_id" in include) {
                 quantity = include.quantity;
               }
               const { item } = include;
@@ -105,7 +101,7 @@ export default function Order({ confirmed }: { confirmed: Order }) {
                     <Image src={JSON.parse(item.images)[0]} alt={item.name} className='rounded' width={240} height={240} />
                   </figure>
                   <div className='include_details  w-full grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3  sm:items-center sm:justify-items-center'>
-                    <h3 className='tracking-wider line-clamp-2'>{item.name}</h3>
+                    <h3 className='tracking-wider line-clamp-2 w-full'>{item.name}</h3>
                     <span>
                       <span className='text-slate-400 text-sm'>price:</span> <span className='text-lg'>{item.price}$</span>
                     </span>

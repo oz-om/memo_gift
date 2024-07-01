@@ -1,12 +1,11 @@
 import { prisma } from "@/lib/db/prisma";
-import { authOptions } from "@/utils/nextAuthOptions";
 import { Prisma } from "@prisma/client";
-import { getServerSession } from "next-auth";
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import React from "react";
 import SetupOrder from "./client/SetupOrder";
 import OrdersList from "./client/OrdersList";
+import { isUser } from "@/app/action";
+import { formatCurrency } from "@/utils";
 export type T_Orders = Prisma.CartGetPayload<{
   include: {
     cartItem: {
@@ -52,17 +51,16 @@ export type T_Orders = Prisma.CartGetPayload<{
 }>[];
 
 export default async function CheckoutList({ cartItemId }: { cartItemId: string | undefined }) {
-  let session = await getServerSession(authOptions);
   let userType: "user_id" | "anonymous_user" = "anonymous_user";
   let userId: string | undefined = undefined;
-  if (session) {
-    userId = session.user.id;
-    userType = "user_id";
-  } else {
-    let anonymousUserId = cookies().get("anonymousUserId")?.value;
-    userId = anonymousUserId;
-  }
+  let user = await isUser();
 
+  if (user.email) {
+    userId = user.id;
+    userType = "user_id";
+  } else if (user.id) {
+    userId = user.id;
+  }
   if (!userId) {
     redirect("/");
   }
@@ -73,6 +71,7 @@ export default async function CheckoutList({ cartItemId }: { cartItemId: string 
     let singleCartItem = await prisma.cart.findUnique({
       where: {
         cart_item: cartItemId,
+        [userType]: userId,
       },
       include: {
         cartItem: {
@@ -176,10 +175,10 @@ export default async function CheckoutList({ cartItemId }: { cartItemId: string 
 
   return (
     <>
-      <OrdersList Orders={Orders} userSession={session} />
+      <OrdersList Orders={Orders} userId={userId} />
       <div className='total_price flex items-center justify-end gap-x-4 my-3'>
         <span>subtotal: </span>
-        <p className='font-sans text-2xl'>{totalPrice}$</p>
+        <p className='font-sans text-2xl'>{formatCurrency(totalPrice)}</p>
       </div>
       <div className='confirm_checkout flex justify-end'>
         <SetupOrder orders={Orders} />

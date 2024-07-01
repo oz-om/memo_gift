@@ -109,6 +109,19 @@ export function formatDate(inputDateStr: string) {
   return formattedDate;
 }
 
+// format numbers
+export function formatCurrency(value: number, currencyCode: string = "DH") {
+  value = Number(value);
+
+  const formatter = new Intl.NumberFormat("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+  const formattedValue = formatter.format(value);
+
+  return `${formattedValue} ${currencyCode}`;
+}
+
 export function stringToBoolean(booleanString: "true" | "false" | undefined) {
   if (booleanString === "true") {
     return true;

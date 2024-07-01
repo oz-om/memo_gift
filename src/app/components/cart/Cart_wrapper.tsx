@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Close_cart, Open_cart } from "../client/Navbar";
 import { useCartContent } from "./context/CartCtProvider";
 import LoadingSpin from "../LoadingSpin";
+import { formatCurrency } from "@/utils";
 
 export default function Cart_wrapper() {
   const { cart, loading } = useCartContent();
@@ -41,7 +42,7 @@ export default function Cart_wrapper() {
           <div className='total_price_checkout absolute bottom-0 bg-sky-100 w-full flex justify-between p-2'>
             <div className='price'>
               <span className='text-xl'>Total Price:</span>
-              <span className='text-xl ml-2'>${totalPrice}</span>
+              <span className='text-xl ml-2'>{formatCurrency(totalPrice)}</span>
             </div>
             <div className='checkout'>
               <Link href={"/checkout"} className='text-xl text-slate-600 text-center border border-sky-500 py-1 px-2 rounded-md'>

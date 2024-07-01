@@ -47,7 +47,6 @@ export function Open_cart() {
       try {
         getCartContent()
           .then((cartContent) => {
-            setLoading(false);
             if (cartContent.success) {
               setCartContent(cartContent.cart);
             } else {
@@ -56,8 +55,8 @@ export function Open_cart() {
           })
           .catch(() => {
             alert.error("ops something went wrong, please try again!", { style: toastStyles });
-            setLoading(false);
-          });
+          })
+          .finally(() => setLoading(false));
       } catch (error) {
         alert.error("ops something went wrong, please try again!", { style: toastStyles });
         setLoading(false);

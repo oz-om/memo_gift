@@ -2,7 +2,6 @@ import React from "react";
 import Order from "../components/Order";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/utils/nextAuthOptions";
-import { notFound, redirect } from "next/navigation";
 import { prisma } from "@/lib/db/prisma";
 import { Metadata } from "next";
 
@@ -18,37 +17,29 @@ export default async function OrdersPage() {
     where: {
       user_id: session.user.id,
     },
-    select: {
-      confirmedOrder: {
+    include: {
+      product: {
         include: {
-          order: {
+          orderedCustomGift: {
             include: {
-              product: {
+              includes: {
                 include: {
-                  customGift: {
-                    include: {
-                      includes: {
-                        include: {
-                          item: true,
-                        },
-                      },
-                    },
-                  },
-                  premade: {
-                    include: {
-                      includes: {
-                        include: {
-                          item: true,
-                        },
-                      },
-                    },
-                  },
                   item: true,
-                  variant: true,
                 },
               },
             },
           },
+          premade: {
+            include: {
+              includes: {
+                include: {
+                  item: true,
+                },
+              },
+            },
+          },
+          item: true,
+          variant: true,
         },
       },
     },
@@ -61,8 +52,8 @@ export default async function OrdersPage() {
       <div className='container'>
         <h4 className='text-lg uppercase mb-3'>orders list:</h4>
         <div className='orders_list'>
-          {orders.map(({ confirmedOrder }) => {
-            return <Order key={confirmedOrder[0].id} confirmed={confirmedOrder[0]} />;
+          {orders.map((order) => {
+            return <Order key={order.id} order={order} />;
           })}
         </div>
       </div>

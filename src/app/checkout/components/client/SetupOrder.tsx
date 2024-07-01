@@ -9,8 +9,7 @@ import { initOrder } from "../../actions/action";
 
 export default function SetupOrder({ orders }: { orders: T_Orders }) {
   const router = useRouter();
-  async function setupOrder(e: React.MouseEvent<HTMLAnchorElement>) {
-    e.preventDefault();
+  async function setupOrder() {
     let ordersId = orders.map((order) => order.cartItem.id);
     let alert = toast;
     alert.loading("just a second...", { style: toastStyles });
@@ -20,12 +19,12 @@ export default function SetupOrder({ orders }: { orders: T_Orders }) {
       alert.error(res.error, { style: toastStyles });
       return;
     }
-    router.push("/");
+    router.push("/checkout/payment");
     router.refresh();
   }
   return (
-    <Link onClick={setupOrder} href={"/checkout/shipping"}>
-      <button className='uppercase px-8 py-2 text-teal-300 bg-slate-800 border border-teal-500 rounded-md hover:bg-slate-700'>complete order</button>
-    </Link>
+    <button onClick={setupOrder} className='uppercase px-8 py-2 text-teal-300 bg-slate-800 border border-teal-500 rounded-md hover:bg-slate-700'>
+      complete order
+    </button>
   );
 }

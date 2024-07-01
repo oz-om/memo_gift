@@ -83,13 +83,12 @@ export default function FriendlyMessageForm(props: T_friendlyMessageFormProps) {
   async function setFriendlyNote(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-    if (called == "premade") {
+    if (called == "premade" && !params.get("v")) {
       // if there is no variant selected
-      if (!params.get("v")) {
-        showErrorMessage("please select a variant to continue");
-        return;
-      }
+      showErrorMessage("please select a variant to continue");
+      return;
     }
+
     try {
       let res = await setFriendlyMessageToCartItem({
         customGiftId: params.get("cgid"),

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import React from "react";
 import DeleteChosedItem, { Decrement, Increment } from "./client/quantityControl";
+import { formatCurrency } from "@/utils";
 
 type chosedItemProps = {
   id: string;
@@ -26,7 +27,7 @@ export default function Chosed_Item({ id, image, name, quantity, totalPrice, cus
           <Increment itemId={id} customGiftId={customGiftId} />
         </div>
         <div className='chosed_item_total_price'>
-          <span className='chosed_item_total_price text-xl font-bold text-teal-400 text-center'>{totalPrice}$</span>
+          <span className='chosed_item_total_price text-xl font-bold text-teal-400 text-center'>{formatCurrency(totalPrice)}</span>
         </div>
         <div className='chosed_item_rm justify-center gap-y-2'>
           <DeleteChosedItem itemId={id} customGiftId={customGiftId} />

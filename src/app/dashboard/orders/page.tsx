@@ -19,7 +19,6 @@ export default function OrdersPage() {
       </section>
       <section className='all_orders_wrapper px-2 bg-white/50 rounded shadow'>
         <Suspense fallback={<LastOrdersLoading />}>
-          {/* @ts-ignore async component */}
           <AllOrders />
         </Suspense>
       </section>

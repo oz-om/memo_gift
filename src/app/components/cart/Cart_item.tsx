@@ -1,6 +1,7 @@
 import { Prisma } from "@prisma/client";
 import Image from "next/image";
 import Duplicate, { DecrementCartItemQuantity, DeleteCartItem, EditCartItem, IncrementCartItemQuantity } from "../client/cartItemOperations";
+import { formatCurrency } from "@/utils";
 
 export type cartItem = Prisma.cartItemGetPayload<{
   select: {
@@ -45,13 +46,13 @@ export default function Cart_item({ cartItem, cartItemId }: { cartItem: cartItem
   let withIncludes = !!customGift || !!premade;
 
   let includes = customGift ? customGift.includes : premade ? premade?.includes : null;
-
+  const cartItemPrice = customGift ? (customGift.price * quantity).toFixed(2) : premade ? (premade.price * quantity).toFixed(2) : (Number(item?.price) * quantity).toFixed(2);
   return (
     <div className='cart_item bg-white odd:my-4 p-4 mx-1 rounded-md'>
       <div className='box_name flex justify-between px-4'>
         <h4 className='line-clamp-2'>{customGift ? "custom gift" : premade ? premade.name : item?.name}</h4>
         <div className='price'>
-          <span className='font-sans'>{customGift ? (customGift.price * quantity).toFixed(2) : premade ? (premade.price * quantity).toFixed(2) : (Number(item?.price) * quantity).toFixed(2)}$</span>
+          <span className='font-sans'>{formatCurrency(+cartItemPrice)}</span>
         </div>
       </div>
       <div className='includes_items whitespace-nowrap overflow-x-auto my-2 custom-scroll-bar'>

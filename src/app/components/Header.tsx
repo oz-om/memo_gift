@@ -22,10 +22,14 @@ export default function Header() {
   useEffect(() => {
     if (path == "/") {
       (async () => {
-        const headerHeroReq = await fetch(`${CLIENT_APP_API_URL}/home`);
-        const headerHeroRes: T_HeaderHeroRes = await headerHeroReq.json();
-        if (headerHeroRes.success) {
-          setheaderHero(headerHeroRes.header);
+        try {
+          const headerHeroReq = await fetch(`${CLIENT_APP_API_URL}/home`);
+          const headerHeroRes: T_HeaderHeroRes = await headerHeroReq.json();
+          if (headerHeroRes.success) {
+            setheaderHero(headerHeroRes.header);
+          }
+        } catch (error) {
+          console.log(error);
         }
       })();
     }
@@ -37,7 +41,7 @@ export default function Header() {
     <header
       className={"" + (path == "/" && "header_wrapper relative  text-white  bg-center bg-cover pb-16")}
       style={{
-        backgroundImage: path == "/" ? `url('${headerHero.header_cover}')` : "",
+        backgroundImage: path == "/" ? `url('${headerHero?.header_cover ?? "/images/header_hero_cover.jpg"}')` : "",
       }}
     >
       {path == "/" && <div className='header__layer absolute left-0 top-0 w-full h-full bg-black/20'></div>}
@@ -132,7 +136,7 @@ export default function Header() {
             ) : null}
           </ul>
         </nav>
-        {path == "/" && <Header_hero headerHeroTitle={headerHero.header_title} />}
+        {path == "/" && <Header_hero headerHeroTitle={headerHero?.header_title ?? "Your go-to for personal, effortless & elevated gifting"} />}
       </div>
     </header>
   );

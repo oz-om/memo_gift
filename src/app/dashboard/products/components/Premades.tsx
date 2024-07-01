@@ -21,7 +21,7 @@ export default async function Premades() {
           return (
             <div key={premade.id} className='premade py-3 bg-violet-50 px-2 rounded flex flex-col'>
               <figure className=' overflow-hidden rounded-md mb-2'>
-                <Image src={`${JSON.parse(premade!.images)[0]}`} alt={"last added premade"} width={200} height={200} />
+                <Image src={`${JSON.parse(premade!.images)[0]}`} alt={"last added premade"} width={200} height={200} className='aspect-square' />
               </figure>
               <div className='name'>{premade?.name}</div>
               <div className='details flex justify-between mt-2 mb-5'>

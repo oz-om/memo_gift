@@ -4,7 +4,6 @@ import { useRef, useState, useTransition } from "react";
 import { toast } from "react-hot-toast";
 import { signal } from "signals-react-safe";
 import { setCookie, getCookie } from "cookies-next";
-import { Session } from "next-auth";
 import { T_Address, T_submitAddressAction } from "@/app/action";
 
 export const formState = signal(false);
@@ -24,7 +23,7 @@ type T_fieldKey = keyof T_AddressInfo;
 
 type T_addressSubmitAction = (submitAddressAction: T_submitAddressAction) => Promise<{ success: true; address: T_Address } | { success: false; error: string }>;
 
-export default function Address_form({ session, addressData, submitAddressAction, submitType, isOpen, setIsOpen }: { session: Session | null; addressData?: T_AddressInfo; submitAddressAction: T_addressSubmitAction; submitType: "create" | "update"; isOpen: boolean; setIsOpen: React.Dispatch<React.SetStateAction<boolean>> }) {
+export default function Address_form({ userId, addressData, submitAddressAction, submitType, isOpen, setIsOpen }: { userId: string | null; addressData?: T_AddressInfo; submitAddressAction: T_addressSubmitAction; submitType: "create" | "update"; isOpen: boolean; setIsOpen: React.Dispatch<React.SetStateAction<boolean>> }) {
   let [address, setAddress] = useState<T_AddressInfo>(
     addressData ?? {
       first_name: "",
@@ -86,10 +85,10 @@ export default function Address_form({ session, addressData, submitAddressAction
       id: crypto.randomUUID(),
     };
 
-    if (session) {
+    if (userId) {
       let res = await submitAddressAction({
         action: submitType,
-        userId: session.user.id,
+        userId: userId,
         addressId: addressData?.id ?? "",
         address: addressString,
       });
