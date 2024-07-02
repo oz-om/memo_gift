@@ -175,7 +175,7 @@ export default async function CheckoutList({ cartItemId }: { cartItemId: string 
 
   return (
     <>
-      <OrdersList Orders={Orders} userId={userId} />
+      <OrdersList Orders={Orders} userId={user.email ? user.id : null} />
       <div className='total_price flex items-center justify-end gap-x-4 my-3'>
         <span>subtotal: </span>
         <p className='font-sans text-2xl'>{formatCurrency(totalPrice)}</p>
