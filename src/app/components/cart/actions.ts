@@ -4,7 +4,7 @@ import { isUser } from "@/app/action";
 import { prisma } from "@/lib/db/prisma";
 import { authOptions } from "@/utils/nextAuthOptions";
 import { Prisma } from "@prisma/client";
-import { Session, getServerSession } from "next-auth";
+import { getServerSession } from "next-auth";
 
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
@@ -43,15 +43,14 @@ export type T_cart = Prisma.CartGetPayload<{
 }>;
 export async function getCartContent(): Promise<{ success: true; cart: T_cart[] } | { success: false; error: string }> {
   try {
-    const session = await getServerSession(authOptions);
-    let userId: string | undefined;
+    let userId: string | null = null;
     let userType: "user_id" | "anonymous_user" = "anonymous_user";
-    if (!session) {
-      let anonymousUser = cookies().get("anonymousUserId")?.value;
-      userId = anonymousUser;
-    } else {
-      userId = session.user.id;
+    const user = await isUser();
+    if (user.email) {
+      userId = user.id;
       userType = "user_id";
+    } else if (user.id) {
+      userId = user.id;
     }
 
     let cart: T_cart[] = [];

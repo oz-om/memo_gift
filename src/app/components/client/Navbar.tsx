@@ -53,9 +53,6 @@ export function Open_cart() {
               alert.error(cartContent.error, { style: toastStyles });
             }
           })
-          .catch(() => {
-            alert.error("ops something went wrong, please try again!", { style: toastStyles });
-          })
           .finally(() => setLoading(false));
       } catch (error) {
         alert.error("ops something went wrong, please try again!", { style: toastStyles });
