@@ -77,7 +77,7 @@ function ItemOrder({ name, image, quantity, price }: { name: string; image: stri
   return (
     <div className='order shadow rounded p-4'>
       <div className='order_type'>
-        <h4 className='text-xl'>{name}</h4>
+        <h4 className='text-xl max-w-48 line-clamp-2'>{name}</h4>
         <p className='text-sm'>
           type: <span className='font-bold'>item</span>
         </p>

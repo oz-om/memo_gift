@@ -200,7 +200,7 @@ export async function createPaymentIntent(): Promise<{ success: true; clientKey:
       currency: "MAD",
       metadata: {
         cartItems: JSON.stringify(inishilazedOrder.map((initOrder) => initOrder.cartItem_Id)),
-        userId: user.id,
+        userId: user.email ? user.id : null,
       },
     });
 
@@ -219,31 +219,3 @@ export async function createPaymentIntent(): Promise<{ success: true; clientKey:
     };
   }
 }
-
-// export async function confirmOrder(orders: T_order[]): Promise<{ success: true } | { success: false; error: string }> {
-//   try {
-//     for (let i = 0; i < orders.length; i++) {
-//       await prisma.$transaction([
-//         prisma.confirmedOrder.create({
-//           data: {
-//             payment_method: "free",
-//             order_id: orders[i].id,
-//           },
-//         }),
-//         prisma.cart.delete({
-//           where: {
-//             cart_item: orders[i].product_id,
-//           },
-//         }),
-//       ]);
-//     }
-//     return {
-//       success: true,
-//     };
-//   } catch (error) {
-//     return {
-//       success: false,
-//       error: "ops something went wrong!, please try again",
-//     };
-//   }
-// }
