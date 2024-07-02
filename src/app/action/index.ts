@@ -46,7 +46,7 @@ export async function isUser() {
     user = {
       username: "anonymous",
       id: anonymousUserId,
-      email: "anonymous@unknown.not",
+      email: null,
     };
   }
   return user;
