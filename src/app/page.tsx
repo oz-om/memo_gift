@@ -11,7 +11,7 @@ import { T_getPremadesRes } from "./api/premades/route";
 import { T_getBlogsRes } from "./api/blogs/route";
 async function getItems() {
   try {
-    const req = await fetch(`${APP_API_URL}/items`, { next: { revalidate: 86400 } });
+    const req = await fetch(`${APP_API_URL}/items`, { next: { revalidate: 7200 } });
     const res: T_getItemsRes = await req.json();
     if (!res.success) {
       return [];
@@ -24,7 +24,7 @@ async function getItems() {
 }
 async function getPremades() {
   try {
-    const req = await fetch(`${APP_API_URL}/premades`, { next: { revalidate: 86400 } });
+    const req = await fetch(`${APP_API_URL}/premades`, { next: { revalidate: 7200 } });
     const res: T_getPremadesRes = await req.json();
     if (!res.success) {
       return [];
@@ -36,7 +36,7 @@ async function getPremades() {
 }
 async function getBlogs() {
   try {
-    const req = await fetch(`${APP_API_URL}/blogs`, { next: { revalidate: 86400 } });
+    const req = await fetch(`${APP_API_URL}/blogs`, { next: { revalidate: 7200 } });
     const res: T_getBlogsRes = await req.json();
     if (!res.success) {
       return [];
