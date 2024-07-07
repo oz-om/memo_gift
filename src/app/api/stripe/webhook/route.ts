@@ -66,6 +66,12 @@ export async function POST(req: NextRequest) {
               });
             });
             await Promise.all(includesPromises);
+            // by deleting the customGift the cart item will deleted automatically to make db clean if we delete cartItem directly the customGift will still exist
+            await prisma.customGift.delete({
+              where: {
+                id: orderedItem.custom_gift_id,
+              },
+            });
           }
 
           // make a copy of the cart item as ordered product
@@ -101,11 +107,17 @@ export async function POST(req: NextRequest) {
               amount: orderedProduct.quantity * (orderedProduct.orderedCustomGift?.price ?? orderedProduct.premade?.price ?? orderedProduct.item?.price)!,
             },
           });
-          await prisma.cartItem.delete({
-            where: {
-              id: itemId,
-            },
-          });
+          // delete cart item manually cause it doesn't include a customGift
+          if (orderedItem.premade_id || (orderedItem.item_id && !orderedItem.custom_gift_id)) {
+            let productType: "premade_id" | "item_id" = orderedItem.premade_id ? "premade_id" : "item_id";
+            let productId = orderedItem.premade_id ?? orderedItem.item_id;
+            await prisma.cartItem.delete({
+              where: {
+                id: itemId,
+                [productType]: productId,
+              },
+            });
+          }
           return createOrder;
         });
         await Promise.all(orderedProductsPromises);

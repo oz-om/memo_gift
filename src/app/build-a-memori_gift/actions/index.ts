@@ -115,14 +115,15 @@ async function createNewCustomGift(userId: string) {
 }
 export async function createCustomGift(): Promise<{ create: true; customGiftId: string } | { create: false; error: string }> {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session) {
-      return {
-        create: false,
-        error: "you should have an account to be able to create your own custom box gift ",
-      };
+    let userId: string;
+    const user = await isUser();
+    if (!user.id) {
+      userId = crypto.randomUUID();
+      cookies().set("anonymousUserId", userId);
+    } else {
+      userId = user.id;
     }
-    const userId = session.user.id;
+
     const existingCustomGiftId = cookies().get("customGiftId")?.value;
 
     if (!existingCustomGiftId && userId) {
@@ -855,11 +856,11 @@ async function stepTwoScan(cartItemId: string, customGiftId: string): Promise<{ 
       };
     }
     // check if that cartItem is exist and check if customGift that linked with this cartItem is not empty
-    let totalPrice = cartItem?.customGift?.includes.reduce((acc, { item, quantity }) => {
+    let totalPrice = cartItem.customGift?.includes.reduce((acc, { item, quantity }) => {
       acc += item.price * quantity;
       return +acc.toFixed(2);
     }, 0);
-    if (!cartItem || !totalPrice || totalPrice <= 0) {
+    if (!totalPrice || totalPrice <= 0) {
       return {
         step: "two",
         scanned: false,

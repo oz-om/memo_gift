@@ -16,7 +16,6 @@ model customGift {
   updatedAt DateTime            @updatedAt
   includes  customGiftIncudes[]
   cartItem  cartItem[]
-  user      User                @relation(fields: [owner], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@map("cosutom_gifts")
 }
@@ -252,7 +251,6 @@ model orderedCustomGift {
   createdAt      DateTime                    @default(now())
   updatedAt      DateTime                    @updatedAt
   orderedProduct orderedProduct[]
-  user           User                        @relation(fields: [owner], references: [id], onDelete: Cascade, onUpdate: Cascade)
   includes       orderedCustomGiftIncludes[]
 
   @@map("ordered_customGift")
@@ -310,8 +308,6 @@ model User {
   cart               Cart[]
   order              Order[]
   ResetPasswordToken ResetPasswordToken[]
-  customGift         customGift[]
-  orderedCustomGift  orderedCustomGift[]
   initializedOrders  initializedOrders[]
 
   @@index([id], map: "users_id_fkey")
