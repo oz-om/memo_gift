@@ -105,8 +105,6 @@ export async function isCustomGiftExist(customGift_id: string) {
   }
 }
 async function createNewCustomGift(userId: string) {
-  console.log(userId);
-
   let customGift = await prisma.customGift.create({
     data: {
       owner: userId,

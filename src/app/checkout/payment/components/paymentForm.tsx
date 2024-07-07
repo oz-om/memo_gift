@@ -11,9 +11,11 @@ export default function PaymentForm({ price, initializedOrders }: { price: numbe
   const [email, setEmail] = useState<string>("");
   const [loadingPaymentElement, setLoadingPaymentElement] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState({ error: false, message: "" });
 
   async function submitPayment() {
     if (!stripe || !elements || email.trim().length == 0) return;
+    setError({ error: false, message: "" });
     setIsSubmitting(true);
     stripe
       .confirmPayment({
@@ -37,10 +39,10 @@ export default function PaymentForm({ price, initializedOrders }: { price: numbe
           switch (error.type) {
             case "card_error":
             case "validation_error":
-              console.log(error.message);
+              setError({ error: true, message: error.type });
               break;
             default:
-              console.log("payment process failed");
+              setError({ error: true, message: "payment process failed" });
               break;
           }
         }
@@ -57,6 +59,8 @@ export default function PaymentForm({ price, initializedOrders }: { price: numbe
           </div>
         </div>
       </div>
+      {error.error && <p className='text-sm font-medium tracking-wider text-red-400 bg-red-100 text-center px-2 my-2 rounded max-w-screen-sm mx-auto'>{error.message}</p>}
+
       <div className='pay_wrapper'>
         <form action={submitPayment} id='payment-form' className='max-w-sm mx-auto mt-3'>
           <PaymentElement

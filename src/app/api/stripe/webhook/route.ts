@@ -36,6 +36,7 @@ export async function POST(req: NextRequest) {
             },
           });
           if (!orderedItem) {
+            console.log(`Ordered item with id ${itemId} not found`);
             throw new Error(`Ordered item with id ${itemId} not found`);
           }
 
@@ -113,9 +114,10 @@ export async function POST(req: NextRequest) {
       // save event id in db to prevent duplicated events event.id
       // send email notification to receipt email that his order created
     }
-    return new Response();
+    return new Response("", { status: 200 });
   } catch (error) {
+    console.log("error during saving order", error);
     await stripe.refunds.create({ charge: chargeId });
-    return new NextResponse("failed, something went wrong", { status: 500 });
+    return new NextResponse("failed, something went wrong during saving order", { status: 500 });
   }
 }
