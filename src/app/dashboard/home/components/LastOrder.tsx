@@ -3,7 +3,7 @@ import { Prisma } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-type T_Order = Prisma.OrderGetPayload<{
+export type T_Order = Prisma.OrderGetPayload<{
   include: {
     product: {
       include: {
@@ -28,11 +28,11 @@ export default function LastOrder({ order }: { order: T_Order }) {
   let targetProduct = product.premade ?? product.orderedCustomGift ?? product.item;
   let productType = product.premade ? "premade" : product.orderedCustomGift ? "customGift" : "item";
   let isCustomGift = !!product.orderedCustomGift;
-  const { hours, minutes, day } = timeDetails(order.createdAt);
+  const { hours, minutes, day, dayOfMonth, monthNumber, year } = timeDetails(order.createdAt);
 
   let withIncludes = product.premade ?? product.orderedCustomGift;
   return (
-    <div className='order sm:flex gap-x-3 odd:bg-blue-50 mb-3 rounded px-2 py-1 border '>
+    <div className={"order sm:flex gap-x-3  mb-3 rounded px-2 py-1 border  " + (order.order_status === "shipped" ? "opacity-55 odd:bg-blue-50" : order.order_status === "rejected" ? "bg-red-50" : "odd:bg-blue-50")}>
       <div className='order_main_details flex gap-x-3 basis-2/5'>
         <figure className='bg-white border w-24 h-24 rounded relative overflow-hidden'>
           {product.quantity >= 1 && <span className='include_item_quantity absolute top-0 left-0 text-[10px] w-4 h-4 pt-[1px] grid place-content-center font-semibold border border-teal-50 bg-teal-500 text-teal-50 rounded-full '>{product.quantity}</span>}
@@ -40,9 +40,14 @@ export default function LastOrder({ order }: { order: T_Order }) {
         </figure>
         <div className='name'>
           <h4>{isCustomGift ? "custom gift" : targetProduct?.name}</h4>
-          <span className='text-slate-400 text-sm'>
-            {day} at {hours}:{minutes}
-          </span>
+          <p className='text-slate-400 text-xs flex flex-col'>
+            <span>
+              {day} at {hours}:{minutes}
+            </span>
+            <span>
+              {dayOfMonth} - {monthNumber} - {year}
+            </span>
+          </p>
         </div>
       </div>
       <div className='order_extra_details flex gap-x-3 justify-around grow basis-3/5'>
@@ -58,10 +63,11 @@ export default function LastOrder({ order }: { order: T_Order }) {
           <p className='mb-2'>price</p>
           <span className='text-center block'>{(targetProduct!.price * product.quantity).toFixed(2)}$</span>
         </div>
-        <div className='go_to grid place-content-center flex-1'>
+        <div className='go_to flex flex-1 gap-x-2 items-center justify-center '>
           <Link href={"/dashboard/orders/" + order.id} className='px-2 py-1 rounded bg-violet-500 text-white text-xs cursor-pointer'>
             manage
           </Link>
+          <div className='order_status text-2xl'>{order.order_status === "pending" ? <i title='pending' className='bx bxs-time-five text-orange-400'></i> : order.order_status === "shipped" ? <i title='shipped' className='bx bxs-check-circle text-teal-400'></i> : <i title='rejected' className='bx bxs-error text-red-400'></i>}</div>
         </div>
       </div>
     </div>

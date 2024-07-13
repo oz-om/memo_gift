@@ -19,7 +19,7 @@ export default function Add_items_dialog({ reset }: { reset: boolean }) {
   let [chosedItems, setChosedItems] = useState<includeItemType[]>([]);
 
   useSignalEffect(() => {
-    if (premade.value.includes.length !== chosedItems.length) {
+    if (premade.value.includes.length !== chosedItems.length || JSON.stringify(premade.value.includes) !== JSON.stringify(chosedItems)) {
       setChosedItems([...premade.value.includes]);
     }
   });
@@ -39,8 +39,8 @@ export default function Add_items_dialog({ reset }: { reset: boolean }) {
         <div className='chosed_items container'>
           <p className='capitalize'>chosed items:</p>
           <div className='items my-2 grid gap-5 grid-cols-[repeat(auto-fit,_theme(width.20))]'>
-            {chosedItems.map(({ id, name, images, price }) => {
-              return <Chosed_item key={id} id={id} images={images} name={name} price={price} includes={chosedItems} />;
+            {chosedItems.map(({ id, name, images, price, quantity }) => {
+              return <Chosed_item key={id} id={id} images={images} name={name} price={price} quantity={quantity} includes={chosedItems} />;
             })}
           </div>
           {chosedItems.length == 0 && <p className='text-slate-400 text-center text-xs py-2 border rounded-md mb-2'>there is no chosed items yet</p>}

@@ -21,6 +21,7 @@
     "bcrypt": "^5.1.1",
     "canvas-confetti": "^1.9.2",
     "cookies-next": "^4.1.0",
+    "dayjs": "^1.11.11",
     "next": "14.0.3",
     "next-auth": "^4.24.5",
     "nodemailer": "^6.9.13",
@@ -29,7 +30,9 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hot-toast": "^2.4.1",
+    "react-infinite-scroll-component": "^6.1.0",
     "react-quilljs": "^1.3.3",
+    "react-tailwindcss-datepicker": "^1.6.6",
     "signals-react-safe": "^1.1.2",
     "stripe": "^15.11.0",
     "zod": "^3.22.4"

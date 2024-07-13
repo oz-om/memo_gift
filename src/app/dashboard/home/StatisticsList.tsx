@@ -3,15 +3,31 @@ import React from "react";
 import StatisticOrderValue from "./components/StatisticOrderValue";
 
 export default async function StatisticsList() {
-  let allOrders = await prisma.order.findMany();
-  let allShippedOrders = await prisma.shippedOrder.findMany();
+  const today = new Date();
+  const startOfDay = new Date(today);
+  startOfDay.setUTCHours(0, 0, 0, 0);
+  const endOfDay = new Date(today);
+  endOfDay.setUTCHours(23, 59, 59, 999);
+
+  let allOrders = await prisma.order.findMany({
+    where: {
+      createdAt: {
+        gte: startOfDay,
+        lte: endOfDay,
+      },
+    },
+  });
+  let rejectedOrders = allOrders.filter((order) => order.order_status === "rejected");
+  let shippedOrders = allOrders.filter((order) => order.order_status === "shipped");
+  let orders = allOrders.filter((order) => order.order_status !== "rejected");
 
   return (
     <div className='orders_today_wrapper grid grid-cols-1 min-[300px]:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 place-content-center '>
       <StatisticOrder name='orders' icon='bx-cart-download' value={`${allOrders.length}`} className='orders_count from-blue-600 to-blue-100 bg-gradient-to-br' />
-      <StatisticOrder name='shipped' icon='bxs-package' value={`${allShippedOrders.length}`} className='orders_shipped from-teal-600 to-teal-100 bg-gradient-to-br' />
-      <StatisticOrder name='pending' icon='bxs-component' value={`${allOrders.length - allShippedOrders.length}`} className='orders_still from-orange-600 to-orange-100 bg-gradient-to-br' />
-      <StatisticOrder name='complete' icon='bx-line-chart' value={allOrders.length ? `${(allShippedOrders.length * 100) / allOrders.length}%` : "0%"} className='orders_complete_percentage from-violet-600 to-violet-100 bg-gradient-to-br' />
+      <StatisticOrder name='shipped' icon='bxs-package' value={`${shippedOrders.length}`} className='orders_shipped from-teal-600 to-teal-100 bg-gradient-to-br' />
+      <StatisticOrder name='pending' icon='bxs-component' value={`${orders.length - shippedOrders.length}`} className='orders_still from-orange-600 to-orange-100 bg-gradient-to-br' />
+      <StatisticOrder name='rejected' icon='bxs-error' value={`${rejectedOrders.length}`} className='rejected_orders from-red-600 to-violet-100 bg-gradient-to-br' />
+      {/* <StatisticOrder name='complete' icon='bx-line-chart' value={allOrders.length ? `${(allShippedOrders.length * 100) / allOrders.length}%` : "0%"} className='orders_complete_percentage from-violet-600 to-violet-100 bg-gradient-to-br' /> */}
     </div>
   );
 }

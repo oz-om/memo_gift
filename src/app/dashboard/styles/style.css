@@ -71,6 +71,7 @@ nav .choices .choice.active-choice:after {
 /* // item chose theme select */
 .select {
   --select-color: #f0f9f6;
+  position: relative;
 }
 
 .select::after {

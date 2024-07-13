@@ -90,7 +90,7 @@ export default function Filter_includes() {
                 <option value='Books We Love'>Books We Love</option>
               </select>
             </li>
-            <li className='select filter_by_color'>
+            <li className='select  filter_by_color'>
               <span className='text-teal-700'>Color:</span>
               <select onChange={handelFilterQueries} name='color' className='filter-by px-2'>
                 <option value=''>All</option>

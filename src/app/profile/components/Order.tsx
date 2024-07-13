@@ -37,7 +37,7 @@ export default function Order({ order }: { order: Order }) {
   const product = item ? item : premade ? premade : orderedCustomGift ? orderedCustomGift : null;
   let includes = premade?.includes ?? orderedCustomGift?.includes;
   return (
-    <div className='order_wrapper mb-5'>
+    <div className={"order_wrapper mb-5 rounded border " + (order.order_status == "shipped" ? "border-teal-300" : order.order_status == "rejected" && "border-red-300")}>
       <div className='order p-2 rounded border shadow flex flex-col gap-y-2 sm:flex-row sm:justify-around gap-x-5 xl:justify-around '>
         <div className='block_A flex gap-x-2 basis-3/4'>
           <div className='block_A_1 flex flex-col items-center md:flex-row basis-1/4'>
@@ -69,9 +69,9 @@ export default function Order({ order }: { order: Order }) {
           </div>
         </div>
         <div className='block_B status flex justify-between sm:flex-col sm:justify-evenly lg:flex-row lg:items-center gap-x-10 basis-1/4'>
-          <p className='text-sm px-2 bg-orange-100 border border-orange-300 text-orange-500 rounded w-28 text-center'>{order.order_status}</p>
+          <p className={"text-sm px-2  border rounded w-28 text-center " + (order.order_status == "pending" ? "border-orange-300 text-orange-500 bg-orange-100" : order.order_status == "shipped" ? "bg-teal-100 border-teal-300 text-teal-500" : "border-red-500 bg-red-100 text-red-500")}>{order.order_status}</p>
           <p className='order_status text-green-500 border border-green-300 px-2 flex items-center gap-x-1 rounded w-28 justify-center'>
-            <span>payed</span>
+            <span>{order.order_status == "rejected" ? "refunded" : "payed"}</span>
             <i className='bx bx-check-circle'></i>
           </p>
         </div>

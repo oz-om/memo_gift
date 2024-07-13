@@ -18,9 +18,8 @@ export default function StatisticOrderValue({ value, name }: { value: number; na
     // Clear interval on cleanup
     return () => clearInterval(intervalId);
   }, [value]); // Only re-run the effect if targetValue changes
-  return (
-    <div className='count text-5xl px-3 text-stroke text-white transition-all'>
-      {currentValue} {name == "complete" && "%"}
-    </div>
-  );
+  return <div className='count text-5xl px-3 text-stroke text-white transition-all'>{currentValue}</div>;
+  {
+    /* {name == "complete" && "%"} */
+  }
 }

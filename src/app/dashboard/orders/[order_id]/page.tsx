@@ -6,6 +6,7 @@ import { Prisma } from "@prisma/client";
 import { timeDetails } from "@/utils";
 import Image from "next/image";
 import Link from "next/link";
+import { SetAsRejected, SetAsShipped } from "./components/orderControls";
 
 type T_Order = Prisma.OrderGetPayload<{
   include: {
@@ -31,6 +32,7 @@ type T_Order = Prisma.OrderGetPayload<{
         };
         item: true;
         variant: true;
+        postcard: true;
       };
     };
     user: true;
@@ -66,6 +68,7 @@ const getOrder = cache(async (id: number) => {
           },
           item: true,
           variant: true,
+          postcard: true,
         },
       },
       user: true,
@@ -107,7 +110,7 @@ export default async function ManageOrderPage({ params }: { params: { order_id: 
                 <div className={"order_status grow "}>
                   <p>
                     <span>status: </span>
-                    <span className={"text-white rounded px-2 ml-2 " + (order.order_status == "pending" ? "bg-orange-400" : "bg-teal-400")}>{order.order_status}</span>
+                    <span className={"text-white rounded px-2 ml-2 " + (order.order_status == "pending" ? "bg-orange-400" : order.order_status == "rejected" ? "bg-red-400" : "bg-teal-400")}>{order.order_status}</span>
                   </p>
                 </div>
               </div>
@@ -143,7 +146,7 @@ export default async function ManageOrderPage({ params }: { params: { order_id: 
                     </figure>
                     <div className='item_name'>{product.item?.name}</div>
                     <div className='view'>
-                      <Link href={"/dashboard/products/item"} className='bg-orange-400 text-white rounded px-2 flex items-center w-fit'>
+                      <Link href={"/dashboard/products/item/" + product.item?.id} className='bg-orange-400 text-white rounded px-2 flex items-center w-fit'>
                         <span>view</span> <i className='bx bx-arrow-back bx-flip-horizontal'></i>
                       </Link>
                     </div>
@@ -161,6 +164,44 @@ export default async function ManageOrderPage({ params }: { params: { order_id: 
               <div className='quantity flex gap-4 items-center mt-5'>
                 <h4>quantity:</h4>
                 <p className='border rounded px-2 py1'>{product.quantity}</p>
+              </div>
+              <div className='order_postcard my-2'>
+                <h4>post card:</h4>
+                <div className='post_card_info flex gap-2'>
+                  <div className='postcard_preview'>
+                    {product.postcard ? (
+                      <Image src={product.postcard.image} alt={product.postcard.name} width={240} height={240} className='aspect-square border rounded' />
+                    ) : (
+                      <p className='text-sm p-2 border rounded grid place-content-center h-full'>
+                        <span>no post card chosed</span>
+                      </p>
+                    )}
+                  </div>
+                  {!product.empty_card ? (
+                    <div className='postcard_details flex flex-col gap-2'>
+                      <div className='recipient_sender flex justify-between gap-x-3'>
+                        <p className='flex flex-col'>
+                          <span className='text-sm'>from:</span>
+                          <span className='font-medium px-1 bg-slate-100 rounded'>{product.from}</span>
+                        </p>
+                        <p className='flex flex-col'>
+                          <span className='text-sm'>to:</span>
+                          <span className='font-medium px-1 bg-slate-100 rounded'>{product.to}</span>
+                        </p>
+                      </div>
+                      {!product.without_note && (
+                        <p className='flex flex-col'>
+                          <span>note:</span>
+                          <span className='font-medium px-1 bg-slate-100 rounded'>{product.note}</span>
+                        </p>
+                      )}
+                    </div>
+                  ) : (
+                    <p className='text-sm p-2 border rounded grid place-content-center h-full'>
+                      <span>no post card details</span>
+                    </p>
+                  )}
+                </div>
               </div>
               <div className='address'>
                 <h4>address: </h4>
@@ -192,15 +233,17 @@ export default async function ManageOrderPage({ params }: { params: { order_id: 
               </div>
             </div>
           </div>
-          <div className='order_controls flex text-white flex-wrap justify-end gap-4 mt-5'>
+          <div className='order_controls flex text-white flex-wrap justify-end gap-4 my-5'>
+            {order.order_status !== "shipped" && order.order_status !== "rejected" ? (
+              <>
+                <SetAsShipped orderId={order.id} />
+                <SetAsRejected orderId={order.id} />
+              </>
+            ) : (
+              <p className='bg-slate-600 text-teal-300 px-2 py-1 rounded '>{order.order_status}</p>
+            )}
             <div className='contact_with_owner'>
               <div className='report bg-orange-400 px-2 py-1 rounded cursor-pointer'>report order owner</div>
-            </div>
-            <div className='reject_order'>
-              <div className='reject bg-red-400 px-2 py-1 rounded cursor-pointer'>reject order</div>
-            </div>
-            <div className='set_as_shipped'>
-              <div className='shipped bg-teal-400 px-2 py-1 rounded cursor-pointer'>convert to shipped</div>
             </div>
           </div>
         </div>

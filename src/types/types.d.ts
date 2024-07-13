@@ -31,14 +31,13 @@ export type T_PremadeVariant = {
   value: string;
   preview: string;
 };
-export type includeItemType = Prisma.ItemGetPayload<{
-  select: {
-    id: true;
-    name: true;
-    price: true;
-    images: true;
-  };
-}>;
+export type includeItemType = {
+  id: string;
+  name: string;
+  price: number;
+  images: string;
+  quantity: number;
+};
 
 // post card types
 type T_PostCard = {

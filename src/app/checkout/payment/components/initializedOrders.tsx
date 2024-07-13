@@ -43,7 +43,7 @@ function BoxOrder({ name, variantName, variantPreview, includes, quantity, price
             box: <span className='font-bold'>{variantName}</span>
           </h4>
           <figure>
-            <Image src={variantPreview} alt={variantName} width={120} height={120} />
+            <Image src={variantPreview} alt={variantName} width={120} height={120} className='aspect-square' />
           </figure>
         </div>
         <div className='includes ml-2'>
@@ -52,7 +52,7 @@ function BoxOrder({ name, variantName, variantPreview, includes, quantity, price
             {includes.map(({ name, image, quantity }) => {
               return (
                 <figure key={name} className='size-8 inline-block mr-1 align-middle rounded-lg overflow-hidden relative'>
-                  <Image src={image} alt={name} width={50} height={50} />
+                  <Image src={image} alt={name} width={50} height={50} className='aspect-square' />
                   {quantity >= 1 && <span className='include_item_quantity absolute top-0 right-0 text-[10px] w-4 h-4 pt-[1px] grid place-content-center font-semibold border border-teal-50 bg-teal-500 text-teal-50 rounded-full '>{quantity}</span>}
                 </figure>
               );
@@ -84,7 +84,7 @@ function ItemOrder({ name, image, quantity, price }: { name: string; image: stri
       </div>
       <div className='order_header'>
         <figure>
-          <Image src={image} alt={image} width={150} height={150} className='max-h-40' />
+          <Image src={image} alt={image} width={150} height={150} className='max-h-40 aspect-square' />
         </figure>
       </div>
       <div className='order_details flex justify-between'>

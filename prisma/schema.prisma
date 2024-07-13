@@ -199,19 +199,27 @@ model initializedOrders {
   @@map("initialized_orders")
 }
 
+enum ORDER_STATUS {
+  pending
+  shipped
+  rejected
+}
+
 model Order {
-  id             Int            @id @default(autoincrement())
+  id             Int              @id @default(autoincrement())
   user_id        String?
   address        String
   email          String
-  order_status   String         @default("pending")
+  order_status   ORDER_STATUS
   product_id     String
   payment_method String
   amount         Float
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
-  product        orderedProduct @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  user           User?          @relation(fields: [user_id], references: [id], onDelete: NoAction)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  product        orderedProduct   @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user           User?            @relation(fields: [user_id], references: [id], onDelete: NoAction)
+  shippedOrder   ShippedOrder[]
+  rejectedOrder  rejectedOrders[]
 
   @@index([id], map: "order_id_fkey")
   @@map("orders")
@@ -268,26 +276,26 @@ model orderedCustomGiftIncludes {
   @@map("orderedCustomGift_includes")
 }
 
-model ConfirmedOrder {
-  id             Int            @id @default(autoincrement())
-  payment_method String
-  order_id       String
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
-  shippedOrder   ShippedOrder[]
+model rejectedOrders {
+  id        Int      @id @default(autoincrement())
+  order_id  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  @@index([order_id], map: "confirmed_orders_order_id_fkey")
-  @@map("confirmed_orders")
+  order Order @relation(fields: [order_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@index([order_id], map: "rejectedOrders_order_id_fkey")
+  @@map("rejected_orders")
 }
 
 model ShippedOrder {
-  id                 Int            @id @default(autoincrement())
-  confirmed_order_id Int
-  createdAt          DateTime       @default(now())
-  updatedAt          DateTime       @updatedAt
-  confirmedOrder     ConfirmedOrder @relation(fields: [confirmed_order_id], references: [id])
+  id        Int      @id @default(autoincrement())
+  order_id  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  order     Order    @relation(fields: [order_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
-  @@index([confirmed_order_id], map: "shipped_orders_confirmed_order_id_fkey")
+  @@index([order_id], map: "shipped_orders_order_id_fkey")
   @@map("shipped_orders")
 }
 

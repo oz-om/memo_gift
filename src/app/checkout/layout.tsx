@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./styles/style.css";
 
 export const metadata: Metadata = {
-  title: "checkout & shipping",
+  title: "payment success",
   description: "make memories beautiful with amazing gifts",
 };
 

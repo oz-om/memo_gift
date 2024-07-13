@@ -47,7 +47,7 @@ export default function FilterContextProvider({ children }: { children: React.Re
   const { data, isPending } = useQuery({
     queryKey: ["getItems"],
     queryFn: async () => getItems(),
-    staleTime: 1000 * 60 * 15,
+    staleTime: 1000 * 60 * 5,
   });
 
   const setFullData = (data: T_data[]) => dispatch({ type: "fullData", payload: data });

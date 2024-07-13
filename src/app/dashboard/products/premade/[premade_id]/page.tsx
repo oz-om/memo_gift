@@ -8,6 +8,9 @@ import UpdatePremadeDetails from "../components/UpdatePremadeDetails";
 import PremadeImages from "../components/PremadeImages";
 import PremadeVariants from "../components/PremadeVariants";
 import PremadeCategories from "../components/PremadeCategories";
+import Image from "next/image";
+import Link from "next/link";
+import PremadeIncludes from "../components/PremadeIncludes";
 export type T_PremadeProductType = Prisma.PremadeGiftGetPayload<{
   include: {
     includes: {
@@ -116,6 +119,7 @@ export default async function premadePage({ params: { premade_id } }: { params: 
           <section>
             <PremadeVariants variants={premade.variants} getAllVariants={getAllVariants} />
             <PremadeCategories categories={premade.categories} />
+            <PremadeIncludes includes={premade.includes} />
           </section>
         </section>
         <section className='premade_images bg-white rounded mt-2 mb-4 shadow px-2 py-4'>

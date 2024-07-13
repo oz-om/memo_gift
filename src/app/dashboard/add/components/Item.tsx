@@ -1,7 +1,11 @@
 import { includeItemType, T_setInputsValue } from "@/types/types";
 import Image from "next/image";
 
-type itemProps = includeItemType & {
+type itemProps = {
+  id: string;
+  images: string;
+  name: string;
+  price: number;
   includes?: includeItemType[];
   setPremade?: T_setInputsValue;
 };
@@ -24,6 +28,7 @@ export default function Item({ id, images, name, price, includes, setPremade }: 
             name,
             images,
             price,
+            quantity: 1,
           },
         ]);
       }

@@ -47,7 +47,7 @@ export default function FilteredDataProvider({ children, ...props }: { children:
   const { data, isPending } = useQuery({
     queryKey: [queryKey],
     queryFn: async () => getData(),
-    staleTime: 1000 * 60 * 155,
+    staleTime: 1000 * 60 * 5,
   });
   useEffect(() => {
     if (!isPending) {

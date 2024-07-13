@@ -1,5 +1,7 @@
 import { z } from "zod";
 type resCallbackType = { upload: true; id: string } | { upload: false };
+// dashboard orders number of orders to get for each page
+export const ORDERS_LIMIT_PAGINATION: number = 20;
 
 // urls
 export const APP_API_URL = process.env.APP_API_URL as string;
@@ -55,44 +57,45 @@ export const toastStyles = {
   padding: "2px",
   fontSize: "12px",
 };
-
-// day  hours:minutes => "Monday 13:55"
-export function timeDetails(time: Date) {
+// format time / number
+export function formatNumber(number: number | string) {
+  const formatter = new Intl.NumberFormat("en-US", {
+    minimumIntegerDigits: 2,
+  });
+  const formattedNumber = formatter.format(Number(number));
+  return formattedNumber;
+}
+export function timeDetails(time: Date): {
+  day: string;
+  monthName: string;
+  monthNumber: string;
+  dayOfMonth: string;
+  minutes: string;
+  hours: string;
+  year: number;
+} {
   const createdAt = new Date(time);
-  const hours = createdAt.getHours();
-  const minutes = createdAt.getMinutes();
-  const dayOfWeek = createdAt.getDay();
-  let day: string = "Sunday";
+  const hours = formatNumber(createdAt.getHours());
+  const minutes = formatNumber(createdAt.getMinutes());
+  const dayOfMonth = formatNumber(createdAt.getDate());
+  const monthFormatter = (type: "numeric" | "long") => new Intl.DateTimeFormat("en-US", { month: type }).format(createdAt);
+  const monthNumber = formatNumber(monthFormatter("numeric"));
+  const monthName = formatNumber(monthFormatter("long"));
+  const year = createdAt.getFullYear();
 
-  switch (dayOfWeek) {
-    case 0:
-      day = "Sunday";
-      break;
-    case 1:
-      day = "Monday";
-      break;
-    case 2:
-      day = "Tuesday";
-      break;
-    case 3:
-      day = "Wednesday";
-      break;
-    case 4:
-      day = "Thursday";
-      break;
-    case 5:
-      day = "Friday";
-      break;
-    case 6:
-      day = "Saturday";
-      break;
-  }
+  const weekdays = new Intl.DateTimeFormat("en-US", { weekday: "long" }).format(createdAt);
+
   return {
+    day: weekdays,
+    monthName,
+    dayOfMonth,
+    year,
     hours,
     minutes,
-    day,
+    monthNumber,
   };
 }
+
 // month day_in_month, year =>  "May 6, 2024"
 export function formatDate(inputDateStr: string) {
   const date = new Date(inputDateStr);
@@ -109,7 +112,7 @@ export function formatDate(inputDateStr: string) {
   return formattedDate;
 }
 
-// format numbers
+// format currency
 export function formatCurrency(value: number, currencyCode: string = "DH") {
   value = Number(value);
 
