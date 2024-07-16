@@ -12,8 +12,19 @@ export async function POST(req: NextRequest) {
   const body = await req.text();
   const event = stripe.webhooks.constructEvent(body, signature, process.env.STRIPE_WEBHOOK_KEY!);
   let chargeId;
-  // to do:
+
   // check if event id is already existing in db if yes than return success its already purchased
+  const existingEvent = await prisma.stripeEvent.findUnique({
+    where: {
+      event_id: event.id,
+      event_type: event.type,
+    },
+  });
+  if (existingEvent) {
+    console.log("this payment event is already processed");
+    return new Response("", { status: 200 });
+  }
+
   try {
     if (event.type === "charge.succeeded") {
       chargeId = event.data.object.id;
@@ -122,8 +133,15 @@ export async function POST(req: NextRequest) {
         });
         await Promise.all(orderedProductsPromises);
       });
-      // to do:
+
       // save event id in db to prevent duplicated events event.id
+      await prisma.stripeEvent.create({
+        data: {
+          event_id: event.id,
+          event_type: event.type,
+        },
+      });
+      // to do:
       // send email notification to receipt email that his order created
     }
     return new Response("", { status: 200 });

@@ -9,9 +9,16 @@ import { T_getItemsRes } from "./api/items/route";
 import { APP_API_URL } from "@/utils";
 import { T_getPremadesRes } from "./api/premades/route";
 import { T_getBlogsRes } from "./api/blogs/route";
+
+const cacheConfig: RequestInit = {
+  next: {
+    revalidate: 7200,
+  },
+  cache: "no-cache",
+};
 async function getItems() {
   try {
-    const req = await fetch(`${APP_API_URL}/items`, { next: { revalidate: 7200 } });
+    const req = await fetch(`${APP_API_URL}/items`, cacheConfig);
     const res: T_getItemsRes = await req.json();
     if (!res.success) {
       return [];
@@ -24,7 +31,7 @@ async function getItems() {
 }
 async function getPremades() {
   try {
-    const req = await fetch(`${APP_API_URL}/premades`, { next: { revalidate: 7200 } });
+    const req = await fetch(`${APP_API_URL}/premades`, cacheConfig);
     const res: T_getPremadesRes = await req.json();
     if (!res.success) {
       return [];
@@ -36,7 +43,7 @@ async function getPremades() {
 }
 async function getBlogs() {
   try {
-    const req = await fetch(`${APP_API_URL}/blogs`, { next: { revalidate: 7200 } });
+    const req = await fetch(`${APP_API_URL}/blogs`, cacheConfig);
     const res: T_getBlogsRes = await req.json();
     if (!res.success) {
       return [];

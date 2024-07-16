@@ -16,6 +16,8 @@ export const metadata: Metadata = {
   },
 };
 
+export const fetchCache = "force-no-store";
+
 export default async function Dashboard() {
   return (
     <>

@@ -62,7 +62,7 @@ export async function getOrders(type: ORDER_STATUS | null = null, pagination: { 
       },
     },
   });
-  console.log("we found " + filteredOrders.length + " of type " + type + " with date : ", date);
+  // console.log("we found " + filteredOrders.length + " of type " + type + " with date : ", date);
 
   return filteredOrders;
 }

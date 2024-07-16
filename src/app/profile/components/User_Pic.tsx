@@ -66,7 +66,7 @@ export default function User_Pic({ userId, user_pic }: { userId: string; user_pi
   return (
     <div className='container flex gap-x-4 items-center'>
       <figure className='overflow-hidden rounded-full border-teal-700 border-2 size-20 shrink-0'>
-        <Image src={insertedImage.url} alt={"user profile"} width={240} height={120} />
+        <Image src={insertedImage.url} alt={"user profile"} width={240} height={120} className='h-full' />
       </figure>
       <div className='change_pick bg-slate-100 text-teal-500 rounded px-2 flex gap-x-2 items-center'>
         <input onChange={pickPreview} type='file' name='user_pick' id='userPick' hidden className='hidden' />

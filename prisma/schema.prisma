@@ -385,3 +385,10 @@ model Site {
   header_cover String @default("https://omzid.serv00.net/images/header_hero_cover.jpg")
   header_title String @default("Your go-to for personal, effortless & elevated gifting")
 }
+
+model StripeEvent {
+  event_id   String @unique
+  event_type String
+
+  @@map("stripe_event")
+}
