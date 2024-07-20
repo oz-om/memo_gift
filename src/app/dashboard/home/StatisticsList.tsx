@@ -1,24 +1,20 @@
 import React from "react";
 import StatisticOrderValue from "./components/StatisticOrderValue";
 import { T_OrdersGetAPIResponse } from "@/app/api/dashboard/orders_statistics/route";
-import { Prisma } from "@prisma/client";
 
 export default async function StatisticsList() {
-  console.log("we now on this step to get orders");
+  const allOrdersReq = await fetch(`${process.env.APP_API_URL}/dashboard/orders_statistics`, {
+    cache: "no-cache",
+  });
 
-  // const allOrdersReq = await fetch(`${process.env.APP_API_URL}/dashboard/orders_statistics`, {
-  //   cache: "no-cache",
-  // });
+  const allOrdersRes: T_OrdersGetAPIResponse = await allOrdersReq.json();
 
-  // const allOrdersRes: T_OrdersGetAPIResponse = await allOrdersReq.json();
-  // console.log("we now have orders " + allOrdersRes);
+  if (!allOrdersRes.success) {
+    return <p>can't get latest StatisticsList info</p>;
+  }
 
-  // if (!allOrdersRes.success) {
-  //   return <p>can't get latest StatisticsList info</p>;
-  // }
+  const allOrders = allOrdersRes.orders;
 
-  // const allOrders = allOrdersRes.orders;
-  const allOrders: Prisma.OrderGetPayload<{}>[] = [];
   let rejectedOrders = allOrders.filter((order) => order.order_status === "rejected");
   let shippedOrders = allOrders.filter((order) => order.order_status === "shipped");
   let orders = allOrders.filter((order) => order.order_status !== "rejected");
