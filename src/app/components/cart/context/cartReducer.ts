@@ -11,7 +11,6 @@ export function cartReducer(state: T_cartContent, action: T_cartReducerAction): 
       return { ...state, cart: payload };
     case type == "increment" ? "increment" : "decrement":
       const inc_updated = in_decrement(state.cart, type, payload);
-      if (!inc_updated) return state;
       return { ...state, cart: inc_updated };
     case "deleteCartItem":
       const updatedAfterDelete = deleteCartItem(state.cart, payload);
@@ -26,20 +25,19 @@ export function cartReducer(state: T_cartContent, action: T_cartReducerAction): 
 }
 
 function in_decrement(cartItems: T_cart[], action: "increment" | "decrement", targetItemId: string) {
-  const restItems = cartItems.filter((cartItem) => cartItem.cart_item !== targetItemId);
+  const updatedItems = cartItems.map((item) => {
+    if (item.cart_item === targetItemId) {
+      if (action == "increment") {
+        item.cartItem.quantity++;
+        console.log(item.cartItem.quantity);
+      } else {
+        item.cartItem.quantity--;
+      }
+    }
+    return item;
+  });
 
-  let targetItem = cartItems.find((cartItem) => cartItem.cart_item === targetItemId);
-
-  if (!targetItem) {
-    return;
-  }
-  if (action == "increment") {
-    targetItem.cartItem.quantity++;
-  } else {
-    targetItem.cartItem.quantity--;
-  }
-
-  return [targetItem, ...restItems];
+  return updatedItems;
 }
 
 function deleteCartItem(cartContent: T_cart[], targetCartItemId: string) {

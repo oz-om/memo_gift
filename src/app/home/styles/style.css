@@ -14,8 +14,8 @@
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   }
   .what_we_do_wrapper .what_we_do_content.custom-scroll-bar {
-    --sb-track-color: theme("colors.orange.200");
-    --sb-thumb-color: theme("colors.orange.400");
+    --sb-track-color: theme("colors.orange.50");
+    --sb-thumb-color: theme("colors.orange.100");
     padding-bottom: theme("padding.4");
   }
   .marketplace_section_wrapper {

@@ -10,12 +10,11 @@ import { APP_API_URL } from "@/utils";
 import { T_getPremadesRes } from "./api/premades/route";
 import { T_getBlogsRes } from "./api/blogs/route";
 
+export const fetchCache = "force-no-store";
 const cacheConfig: RequestInit = {
-  next: {
-    revalidate: 7200,
-  },
   cache: "no-cache",
 };
+
 async function getItems() {
   try {
     const req = await fetch(`${APP_API_URL}/items`, cacheConfig);
@@ -63,7 +62,7 @@ export default async function Home() {
       <section className='what_we_do_wrapper bg-orange-50 py-6'>
         <div className='container'>
           <Section_title title={"what we do"} className={"what_we_do"} />
-          <div className='what_we_do_content block whitespace-nowrap overflow-x-auto min-[480px]:grid min-[480px]:md-layout text-center gap-5 custom-scroll-bar'>
+          <div className='what_we_do_content whitespace-nowrap overflow-x-auto w-full inline-block sm:grid sm:md-layout text-center gap-5 custom-scroll-bar'>
             <What_we_do_item image={"/images/ready_to_ship.png"} title={"ready to ship"} route={"/"} routeName={"get to gifting"} desc={"Pre-curated, preselected products centered around a specific theme. Ships in a gift box and includes a hand written note & photo. No packing slip or pricing included, ever."} />
             <What_we_do_item image={"/images/build_memori_gift.png"} title={"build a memori_gift"} route={"/"} routeName={"get personal"} desc={"Fully customizable product selection. Includes a hand written note. No packing slip or pricing included, ever."} />
             <What_we_do_item image={"/images/marketplace.png"} title={"the marketplace"} route={"/"} routeName={"treat yourself"} desc={"All the products you love, all in one place. Ships in a muslin bag and includes pricing and a packing slip. No hand written note here."} />

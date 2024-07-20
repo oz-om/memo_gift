@@ -1,22 +1,15 @@
-import { prisma } from "@/lib/db/prisma";
 import React from "react";
 import StatisticOrderValue from "./components/StatisticOrderValue";
+import { T_OrdersGetAPIResponse } from "@/app/api/dashboard/orders_statistics/route";
 
 export default async function StatisticsList() {
-  const today = new Date();
-  const startOfDay = new Date(today);
-  startOfDay.setUTCHours(0, 0, 0, 0);
-  const endOfDay = new Date(today);
-  endOfDay.setUTCHours(23, 59, 59, 999);
+  const allOrdersReq = await fetch(`${process.env.APP_API_URL}/dashboard/orders_statistics`);
+  const allOrdersRes: T_OrdersGetAPIResponse = await allOrdersReq.json();
+  if (!allOrdersRes.success) {
+    return <p>can't get latest StatisticsList info</p>;
+  }
 
-  let allOrders = await prisma.order.findMany({
-    where: {
-      createdAt: {
-        gte: startOfDay,
-        lte: endOfDay,
-      },
-    },
-  });
+  const allOrders = allOrdersRes.orders;
   let rejectedOrders = allOrders.filter((order) => order.order_status === "rejected");
   let shippedOrders = allOrders.filter((order) => order.order_status === "shipped");
   let orders = allOrders.filter((order) => order.order_status !== "rejected");

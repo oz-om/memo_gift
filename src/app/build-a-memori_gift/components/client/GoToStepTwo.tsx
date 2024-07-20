@@ -19,7 +19,6 @@ export default function GoToStepTwo({ className, customGiftId }: { className: st
     try {
       let res = await setCustomGiftIntoCartItem(customGiftId, cartItemId);
       alert.remove();
-      setPending(false);
       if (!res.success) {
         alert.error(`${res.error}`, { style: toastStyles });
         return;
@@ -27,12 +26,13 @@ export default function GoToStepTwo({ className, customGiftId }: { className: st
       router.push("?step=two&cgid=" + customGiftId + "&catitmid=" + res.cartItemId);
     } catch (error) {
       alert.remove();
-      setPending(false);
       alert.error(`something went wrong, please try agin!`, { style: toastStyles });
+    } finally {
+      setPending(false);
     }
   }
   return (
-    <button disabled={pending} onClick={nextStepHandler} className={className}>
+    <button disabled={pending} onClick={nextStepHandler} className={className + (pending ? " pointer-events-none" : "")}>
       Next Step
     </button>
   );

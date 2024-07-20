@@ -375,10 +375,10 @@ export async function setCustomGiftIntoCartItem(customGiftId: string, cartItemId
       return +acc.toFixed(2);
     }, 0);
 
-    if (totalPrice <= 0) {
+    if (totalPrice < 5.3) {
       return {
         success: false,
-        error: "please chose one item at least",
+        error: `total price ${totalPrice} is not valid, price should be greater than 5.3`,
       };
     }
     // check if custom gift is on a cart Item or Note
