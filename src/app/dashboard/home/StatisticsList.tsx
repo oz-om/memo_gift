@@ -2,18 +2,30 @@ import React from "react";
 import StatisticOrderValue from "./components/StatisticOrderValue";
 import { T_OrdersGetAPIResponse } from "@/app/api/dashboard/orders_statistics/route";
 
+async function getOrdersStatistics(): Promise<T_OrdersGetAPIResponse> {
+  try {
+    const allOrdersReq = await fetch(`${process.env.APP_API_URL}/dashboard/orders_statistics`, {
+      cache: "no-cache",
+    });
+
+    const allOrdersRes: T_OrdersGetAPIResponse = await allOrdersReq.json();
+    return allOrdersRes;
+  } catch (error) {
+    return {
+      success: false,
+      error: "",
+    };
+  }
+}
+
 export default async function StatisticsList() {
-  const allOrdersReq = await fetch(`${process.env.APP_API_URL}/dashboard/orders_statistics`, {
-    cache: "no-cache",
-  });
+  const allOrdersReq = await getOrdersStatistics();
 
-  const allOrdersRes: T_OrdersGetAPIResponse = await allOrdersReq.json();
-
-  if (!allOrdersRes.success) {
+  if (!allOrdersReq.success) {
     return <p>can't get latest StatisticsList info</p>;
   }
 
-  const allOrders = allOrdersRes.orders;
+  const allOrders = allOrdersReq.orders;
 
   let rejectedOrders = allOrders.filter((order) => order.order_status === "rejected");
   let shippedOrders = allOrders.filter((order) => order.order_status === "shipped");
