@@ -1,48 +1,18 @@
 import "./home/styles/style.css";
 import Link from "next/link";
 import Section_title from "./home/components/Section_title";
-import Collection_item from "./home/components/Collection_item";
+import { Collection_Items_Wrapper, Premades_Wrapper } from "./home/components/Collection_item";
 import Recent_blogs from "./home/components/Recent_blogs";
 import Trusted_by_list from "./home/components/Trusted_by_list";
 import What_we_do_item from "./home/components/What_we_do_item";
-import { T_getItemsRes } from "./api/items/route";
 import { APP_API_URL } from "@/utils";
-import { T_getPremadesRes } from "./api/premades/route";
 import { T_getBlogsRes } from "./api/blogs/route";
 
 export const fetchCache = "force-no-store";
 const cacheConfig: RequestInit = {
   cache: "no-store",
-  next: {
-    revalidate: 1,
-  },
 };
 
-async function getItems() {
-  try {
-    const req = await fetch(`${APP_API_URL}/items`, cacheConfig);
-    const res: T_getItemsRes = await req.json();
-    if (!res.success) {
-      return [];
-    }
-
-    return res.items;
-  } catch (error) {
-    return [];
-  }
-}
-async function getPremades() {
-  try {
-    const req = await fetch(`${APP_API_URL}/premades`, cacheConfig);
-    const res: T_getPremadesRes = await req.json();
-    if (!res.success) {
-      return [];
-    }
-    return res.premades;
-  } catch (error) {
-    return [];
-  }
-}
 async function getBlogs() {
   try {
     const req = await fetch(`${APP_API_URL}/blogs`, cacheConfig);
@@ -56,8 +26,6 @@ async function getBlogs() {
   }
 }
 export default async function Home() {
-  const recentItems = await getItems();
-  const recentPremades = await getPremades();
   const recentBlogs = await getBlogs();
 
   return (
@@ -76,21 +44,13 @@ export default async function Home() {
       <section className='collections_section_wrapper py-6'>
         <div className='container'>
           <Section_title title={"let us help you get your gift started"} className={"collections_sections_title"} />
-          <div className='collections_items grid gap-5 min-[300px]:grid-cols-2 sm:grid-cols-4'>
-            {recentItems.map((item) => {
-              return <Collection_item key={item.id} image={JSON.parse(item.images)[0]} name={item.name} price={item.price} />;
-            })}
-          </div>
+          <Collection_Items_Wrapper cacheConfig={cacheConfig} />
         </div>
       </section>
       <section className='favorites_section_wrapper bg-teal-50 py-6'>
         <div className='container'>
           <Section_title title={"memori_gifts favorites"} className='favorites_section_title' />
-          <div className='favorites_content grid gap-5 min-[300px]:grid-cols-2 sm:grid-cols-4'>
-            {recentPremades.map((premade) => {
-              return <Collection_item key={premade.id} image={JSON.parse(premade.images)[0]} name={premade.name} price={premade.price} />;
-            })}
-          </div>
+          <Premades_Wrapper cacheConfig={cacheConfig} />
         </div>
       </section>
       <section className='marketplace_section_wrapper  bg-center bg-cover text-white text-center py-20'>
