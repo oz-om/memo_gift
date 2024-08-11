@@ -213,7 +213,7 @@ export default async function ManageOrderPage({ params }: { params: { order_id: 
               <div className='info'>
                 <div className='flex items-center gap-4'>
                   <figure className='w-20 h-20 rounded-full overflow-hidden border'>
-                    <Image src={orderOwner ? `${orderOwner.profile_pic}` : "https://omzid.serv00.net/images/default.png"} alt={"user pic"} width={80} height={80} />
+                    <Image src={orderOwner ? `${orderOwner.profile_pic}` : "https://omzid.serv00.net/images/default.png"} alt={"user pic"} width={80} height={80} className='h-full' />
                   </figure>
                   <div className='user_details'>
                     <div className='user_full_name flex items-center gap-4'>

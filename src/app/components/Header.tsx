@@ -57,8 +57,8 @@ export default function Header() {
                     {!!login && (
                       <Link href={"/profile"}>
                         <div className='user flex items-center ml-2 mt-2 gap-x-2 mb-4'>
-                          <figure className='w-8 rounded-full overflow-hidden'>
-                            <Image src={`${login?.user.profile_pic}`} alt={"user profile"} width={100} height={100} />
+                          <figure className='size-8 rounded-full overflow-hidden'>
+                            <Image src={`${login?.user.profile_pic}`} alt={"user profile"} width={100} height={100} className='h-full' />
                           </figure>
 
                           <p className='text-black'>{login?.user.username}</p>
