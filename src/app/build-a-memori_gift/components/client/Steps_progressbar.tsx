@@ -71,7 +71,6 @@ export default function Steps_progressbar({}) {
     <section className='build_steps_progress_section'>
       <div className='container'>
         <div className='steps_bar'>
-          <p className='text-slate-400 text-sm mb-6'>progress: 1/3 steps</p>
           <div className='steps'>
             <ul className='steps_number flex justify-evenly '>
               <li data-redirect-to='one' onClick={handleSearchParams} className='step_number basis-1/3 text-center relative  active_step'>

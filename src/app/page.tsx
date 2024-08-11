@@ -12,7 +12,7 @@ import { T_getBlogsRes } from "./api/blogs/route";
 
 export const fetchCache = "force-no-store";
 const cacheConfig: RequestInit = {
-  cache: "no-cache",
+  cache: "no-store",
 };
 
 async function getItems() {
