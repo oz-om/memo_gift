@@ -11,7 +11,6 @@ import { T_getItemsRes } from "./api/items/route";
 import { T_getPremadesRes } from "./api/premades/route";
 
 const cacheConfig: RequestInit = {
-  cache: "no-cache",
   next: {
     revalidate: 60000,
   },
@@ -78,7 +77,7 @@ export default async function Home() {
           <Section_title title={"let us help you get your gift started"} className={"collections_sections_title"} />
           <div className='collections_items grid gap-5 min-[300px]:grid-cols-2 sm:grid-cols-4'>
             {recentItems.map((item) => {
-              return <Collection_item key={item.id} image={JSON.parse(item.images)[0]} name={item.name} price={item.price} />;
+              return <Collection_item key={item.id} id={item.id} image={JSON.parse(item.images)[0]} name={item.name} price={item.price} type='items' />;
             })}
           </div>
         </div>
@@ -88,7 +87,7 @@ export default async function Home() {
           <Section_title title={"memori_gifts favorites"} className='favorites_section_title' />
           <div className='favorites_content grid gap-5 min-[300px]:grid-cols-2 sm:grid-cols-4'>
             {recentPremades.map((premade) => {
-              return <Collection_item key={premade.id} image={JSON.parse(premade.images)[0]} name={premade.name} price={premade.price} />;
+              return <Collection_item key={premade.id} id={premade.id} image={JSON.parse(premade.images)[0]} name={premade.name} price={premade.price} type='premade' />;
             })}
           </div>
         </div>
